@@ -6,3 +6,4 @@
 - Paul DEVILLIERS
 - Marie-Luc MOSELLE 
 - Paul GSELL (Il est bg en vrai)
+- Quentin GUIONNAUD
