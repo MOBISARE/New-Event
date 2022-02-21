@@ -8,6 +8,7 @@
 - Paul GSELL (Il est bg en vrai)
 - Quentin GUIONNAUD
 - Timéo JACQUIER
+- Mohammad LOULOU
 
 ## Installation & lancement
 
