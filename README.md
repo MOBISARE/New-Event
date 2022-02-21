@@ -1,5 +1,4 @@
 # newEvent
 
 ## Membres
---------------------------------
 - Florian MATHIEU
