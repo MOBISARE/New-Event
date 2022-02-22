@@ -1,13 +1,13 @@
 import React from 'react'
-import Test from './components/test/Test'
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
 
 class App extends React.Component {
   render() {
     return(
-      <div>
-        <h1 className='text-cyan-500'>App</h1>
-        <Test/>
-      </div>
+      <Routes>
+        <Route path='/' element={<Home/>} />
+      </Routes>
     );
   };
 }
