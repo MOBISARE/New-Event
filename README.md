@@ -10,6 +10,7 @@
 - Timéo JACQUIER
 - Mohammad LOULOU
 - Venique ZHANG
+- Alexandre TONNELIER
 
 ## Installation & lancement
 
