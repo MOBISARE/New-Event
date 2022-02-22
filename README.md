@@ -9,6 +9,7 @@
 - Quentin GUIONNAUD
 - Timéo JACQUIER
 - Mohammad LOULOU
+- Venique ZHANG
 
 ## Installation & lancement
 
