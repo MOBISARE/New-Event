@@ -11,4 +11,10 @@ function getEvenementModification(id) {
     return vara
 }
 
+function getEvenementCreation(id) {
+    return {
+        "bleg": id
+    }
+}
+
 module.exports.getEvenementModification = getEvenementModification

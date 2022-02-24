@@ -11,6 +11,7 @@
 - Mohammad LOULOU
 - Venique ZHANG
 - Alexandre TONNELIER
+- Roxane BERNARD
 
 ## Installation & lancement
 
