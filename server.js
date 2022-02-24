@@ -18,7 +18,7 @@ app.get('/evenement/creer/:id', (req, res)=>{
     cbEvenement.getEvenementCreation(req, res)
 })
 
-app.post('/evenement/modifier/:id', (req, res) => {
+app.post('api/evenement/modifier/:id', (req, res) => {
     //recupere information du formulaire
 
     //enregistre les modifications

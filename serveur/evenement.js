@@ -28,3 +28,4 @@ function getEvenementCreation(id) {
 }
 
 module.exports.getEvenementModification = getEvenementModification
+module.exports.getEvenementCreation = getEvenementCreation
