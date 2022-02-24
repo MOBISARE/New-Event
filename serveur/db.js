@@ -8,7 +8,8 @@ let data = JSON.parse(rawdata);
 let connection = mysql.createConnection({
     host: data.host,
     user: data.user,
-    password: data.password
+    password: data.password,
+    database: 'new_event'
 });
 
 connection.connect(function (err) {
@@ -18,4 +19,4 @@ connection.connect(function (err) {
     }
 })
 
-module.exports.connexion = connection
+module.exports.DB = connection
