@@ -10,14 +10,15 @@ const port = 5000;
 
 //modifier evenement
 app.get('/evenement/modifier/:id', (req, res) => {
-    //parametre id
-    data = cbEvenement.getEvenementModification(req.params.id)
-    //envoie les donnees
-    console.log(data)
-    res.json(data)
+    cbEvenement.getEvenementModification(req, res)
 })
 
-app.post('/evenement/modifier/:id', (req, res) => {
+//créer evenement
+app.get('/evenement/creer/:id', (req, res)=>{
+    cbEvenement.getEvenementCreation(req, res)
+})
+
+app.post('api/evenement/modifier/:id', (req, res) => {
     //recupere information du formulaire
 
     //enregistre les modifications
