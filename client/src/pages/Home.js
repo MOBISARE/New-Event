@@ -71,8 +71,6 @@ class Home extends React.Component {
                     <div className='flex justify-center mt-48'>
                         <Button bg_class='bg-gradient-to-r from-purple_gradient to-blue h-16 w-60' text_class='text-gray text-2xl' to='/inscription'>S'inscrire</Button>
                     </div>
-                    
-
                 </div>
                 
             </div>

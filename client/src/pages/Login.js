@@ -1,15 +1,32 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import Button from '../components/Button'
+import InputField from '../components/InputField'
 
 class Login extends React.Component {
     render(){
         return(
-            <div>
-                <div className='py-24 bg-gradient-to-r from-purple_gradient to-blue h-screen w-full'>
-                    
+            <div className='py-24 bg-gradient-to-r from-purple_gradient to-blue h-screen w-full flex items-center justify-center'>
+
+                <div className='w-[600px] h-[370px] rounded-3xl shadow-lg bg-gray py-6 px-20'>
+
+                    <h1 className='text-5xl font-bold text-darkgray text-center'>Connexion</h1>
+
+                    <form className='flex flex-col gap-5 mt-10'>
+                        <InputField id='email' className='w-full'>Adresse e-mail</InputField>
+                        <InputField id='email' className='w-full'>Mot de passe</InputField>
+                        <Button>Connexion</Button>
+                    </form>
+
+                    <div className='flex justify-between mt-3'>
+                        <Link to='/'>Mot de passe oublié ?</Link>
+                        <Link to='/inscription'>Créer un compte</Link>
+                    </div>
+
                 </div>
 
+                
             </div>
         );
     }
