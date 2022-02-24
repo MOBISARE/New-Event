@@ -1,5 +1,5 @@
-CREATE DATABASE test;
-USE test;
+CREATE DATABASE new_event;
+USE new_event;
 
 CREATE TABLE `compte` (
   `id_compte` int(10) unsigned NOT NULL AUTO_INCREMENT,
