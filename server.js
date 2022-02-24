@@ -1,3 +1,5 @@
+const cbEvenement = require("./serveur/evenement")
+
 const express = require('express');
 
 const app = express();
@@ -5,17 +7,14 @@ const app = express();
 const port = 5000;
 
 //routage
-app.get('/api/test', (req, res) => {
-    const test = { id: "oui" };
-
-    res.json(test);
-})
 
 //modifier evenement
 app.get('/evenement/modifier/:id', (req, res) => {
-    //recupere information de evenement
-
-    //affiche le formulaire
+    //parametre id
+    data = cbEvenement.getEvenementModification(req.params.id)
+    //envoie les donnees
+    console.log(data)
+    res.json(data)
 })
 
 app.post('/evenement/modifier/:id', (req, res) => {
