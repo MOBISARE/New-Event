@@ -17,7 +17,7 @@ app.get('/api/evenement/modifier/:id', (req, res) => {
 })
 
 //créer evenement
-app.get('/evenement/creer/:id', (req, res)=>{
+app.get('api/evenement/creer/:id', (req, res)=>{
     //parametre id
     data = cbEvenement.getEvenementCreation(req.params.id)
     //envoie les donnees
