@@ -16,10 +16,10 @@ class Register extends React.Component {
 
                     {/* BackButton + Title */}
                     <div className='grid grid-flow-col grid-cols-12'>
-                        <Link to={'/'} className='col-span-1'>
-                        <span className='material-icons text-5xl relative -left-14'>
-                            keyboard_arrow_left
-                        </span>
+                        <Link to={'/'} className='col-span-1 relative -left-14'>
+                            <span className='material-icons text-5xl'>
+                                keyboard_arrow_left
+                            </span>
                         </Link>
 
                         <h1 className='text-5xl font-bold text-darkgray text-center col-span-10'>Inscription</h1>

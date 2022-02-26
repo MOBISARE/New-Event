@@ -4,9 +4,37 @@ import { Link } from 'react-router-dom';
 import Button from '../components/Button'
 
 class Home extends React.Component {
+
+    constructor(props){
+        super(props);
+
+        this.state = {scrollhidden: false};
+        this.scrollButton = React.createRef();
+        this.firstMenu = React.createRef();
+    }
+
+    scrollToFirstMenu = () => {
+        this.firstMenu.current.scrollIntoView({ behavior: 'smooth'});
+    }
+
+    updateScroll = () => {
+        if(this.state.scrollhidden == (window.scrollY == 0))
+            this.setState({scrollhidden: (window.scrollY != 0)});
+    }
+    
+    componentDidMount = () => {
+        window.addEventListener('scroll', this.updateScroll);
+    }
+    
+    componentWillUnmount = () => {
+        window.removeEventListener('scroll', this.updateScroll);
+    }
+
     render(){
+        var scrollTransitionClasses = this.state.scrollhidden ? 'transition-all text-transparent invisible' : ''
+
         return(
-            <div>
+            <div onScroll={this.updateScroll}>
                 <div className='container fixed h-16 p-2 px-5 max-w-full flex justify-between bg-white shadow-md z-50'>
                     <Link to='/'><img className='object-cover h-full' src='/images/Logo.png'></img></Link>
 
@@ -14,7 +42,6 @@ class Home extends React.Component {
                         <Button bg_class='bg-blue' text_class='text-gray' to='/inscription'>Inscription</Button>
                         <Button bg_class='bg-darkgray' text_class='text-gray' to='/connexion'>Connexion</Button>
                     </div>
-
                 
                 </div>
 
@@ -26,13 +53,13 @@ class Home extends React.Component {
                     </div>
                 </div>
 
-                <span className='material-icons text-5xl text-white fixed inset-x-0 bottom-[5%] text-center animate-bounce cursor-pointer' style={{clip: "rect(top, right, bottom, left)"}}>
+                <span className={'material-icons text-5xl text-white fixed inset-x-0 bottom-[5%] text-center animate-bounce cursor-pointer ' + scrollTransitionClasses} onClick={this.scrollToFirstMenu} ref={this.scrollButton}>
                     expand_more
                 </span>
 
-                <div className=' bg-gray h-[1500px] w-full'>
+                <div className=' bg-gray h-[1500px] w-full' ref={this.firstMenu}>
 
-                    <h2 className='text-5xl font-black text-center text-darkgray py-16'>Qui sommes-nous ?</h2>
+                    <h2 className='text-5xl font-black text-center text-darkgray py-28'>Qui sommes-nous ?</h2>
 
                     <div className='relative text-center h-[600px]'>
                         <div className='absolute right-[55%] w-[400px] inset-y-0 flex items-center z-10'>
