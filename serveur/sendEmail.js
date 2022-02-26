@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-HOST = "new.event.mail@gmail.com";
+HOST = "smtp.gmail.com";
 USER = "new.event.mail@gmail.com";
 PASS = "BlegusMogus";
 SERVICE = "google.com";
@@ -10,19 +10,18 @@ const sendEmail = async(email, subject, text) => {
     let testAccount = await nodemailer.createTestAccount();
 
     try {
-        const transporter = nodemailer.transporter({
-            host: "smtp.ethereal.email",
-            //service: SERVICE,
-            port: 587,
+        const transporter = nodemailer.createTransport({
+            host: HOST,
+            port: 465,
             secure: true,
             auth: {
-                user: testAccount.user,
-                pass: testAccount.pass,
-            },
+                user: USER,
+                pass: PASS
+            }
         });
 
-        await transporter.sendEmail({
-            from: '"Yo FOO" <foo@aled.com>',
+        await transporter.sendMail({
+            from: USER,
             to: email,
             subject: subject,
             text: text,
@@ -33,5 +32,7 @@ const sendEmail = async(email, subject, text) => {
         console.log(error, "email non envoyé");
     }
 };
+
+sendEmail("lespagnolcesttropbien@gmail.com", "TestJs", "Pitié que ça fonctionne");
 
 module.exports = sendEmail;
