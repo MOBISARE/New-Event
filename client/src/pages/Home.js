@@ -18,8 +18,8 @@ class Home extends React.Component {
     }
 
     updateScroll = () => {
-        if(this.state.scrollhidden == (window.scrollY == 0))
-            this.setState({scrollhidden: (window.scrollY != 0)});
+        if(this.state.scrollhidden === (window.scrollY === 0))
+            this.setState({scrollhidden: (window.scrollY !== 0)});
     }
     
     componentDidMount = () => {
@@ -45,7 +45,7 @@ class Home extends React.Component {
                 
                 </div>
 
-                <div className='py-24 bg-gradient-to-r from-purple_gradient to-blue h-[1080px] w-full'>
+                <div className='py-24 bg-gradient-to-r from-purple to-blue h-[1080px] w-full'>
                     <div className='p-11 left-[10%] top-1/4 w-[665px] absolute'>
                         <h1 className='text-9xl leading-[0.6] text-gray font-logo font-black left-0'>newEvent</h1>
                         <h3 className='text-4xl text-gray font-medium text-right'>créateur d'événement</h3>
@@ -59,7 +59,7 @@ class Home extends React.Component {
 
                 <div className=' bg-gray h-[1500px] w-full' ref={this.firstMenu}>
 
-                    <h2 className='text-5xl font-black text-center text-darkgray py-28'>Qui sommes-nous ?</h2>
+                    <h2 className='text-5xl font-black text-center text-darkgray pt-28'>Qui sommes-nous ?</h2>
 
                     <div className='relative text-center h-[600px]'>
                         <div className='absolute right-[55%] w-[400px] inset-y-0 flex items-center z-10'>
@@ -96,7 +96,7 @@ class Home extends React.Component {
                     <h1 className='text-6xl font-bold text-gray text-center'>Rejoins nous !</h1>
 
                     <div className='flex justify-center mt-48'>
-                        <Button bg_class='bg-gradient-to-r from-purple_gradient to-blue h-16 w-60' text_class='text-gray text-2xl' to='/inscription'>S'inscrire</Button>
+                        <Button bg_class='bg-gradient-to-r from-purple to-blue h-16 w-60' text_class='text-gray text-2xl' to='/inscription'>S'inscrire</Button>
                     </div>
                 </div>
                 

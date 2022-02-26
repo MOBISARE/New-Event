@@ -7,6 +7,7 @@ import Main from './pages/Main'
 import About from './pages/About'
 import MyEvents from './pages/MyEvents'
 import ConnectedView from './pages/ConnectedView'
+import LostPassword from './pages/LostPassword';
 
 class App extends React.Component {
     render() {
@@ -17,6 +18,7 @@ class App extends React.Component {
                     <Route path='/' element={<Home/>} />
                     <Route path='/connexion' element={<Login/>} />
                     <Route path='/inscription' element={<Register/>} />
+                    <Route path='/reinitialisation-mot-de-passe' element={<LostPassword/>} />
                 </Routes>
             )
         } else {
