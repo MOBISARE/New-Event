@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import Button from '../components/Button'
+import FormButton from '../components/FormButton'
 import InputField from '../components/InputField'
 
 class LostPassword extends React.Component {
@@ -17,35 +18,33 @@ class LostPassword extends React.Component {
             case 0:
                 return (
                     <form className='flex flex-col gap-5 mt-10'>
-                        <InputField id='email' className='w-full'>Adresse e-mail</InputField>
+                        <InputField id='email' type='email' className='w-full' required>Adresse e-mail</InputField>
 
-                        <div onClick={() => this.setState({formState: this.state.formState+1})}>
-                            <Button>Confirmation</Button>
-                        </div>
+                        <FormButton>Confirmation</FormButton>
                     </form>
                 )
             case 1:
                 return (
                     <form className='flex flex-col gap-5 mt-10'>
-                        <InputField id='email' className='w-full'>Adresse e-mail</InputField>
+                        <InputField id='email' type='email' className='w-full' disabled>Adresse e-mail</InputField>
                         <div className='flex flex-row gap-5 items-end'>
-                            <InputField id='code' className='w-full'>Code de récupération</InputField>
+                            <InputField id='code' className='w-full' required>Code de récupération</InputField>
                             <Button bg_class='bg-purple'>Renvoyer</Button>
                         </div>
 
                         <div onClick={() => this.setState({formState: this.state.formState+1})}>
-                            <Button>Confirmation</Button>
+                            <FormButton>Confirmation</FormButton>
                         </div>
                     </form>
                 )
             case 2:
                 return (
                     <form className='flex flex-col gap-5 mt-10'>
-                        <InputField id='password' className='w-full'>Nouveau mot de passe</InputField>
-                        <InputField id='cpassword' className='w-full'>Confirmer le mote de passe</InputField>
+                        <InputField id='password' className='w-full' required>Nouveau mot de passe</InputField>
+                        <InputField id='cpassword' className='w-full' required>Confirmer le mot de passe</InputField>
 
                         <div onClick={() => this.setState({formState: this.state.formState+1})}>
-                            <Button>Confirmation</Button>
+                            <FormButton>Confirmation</FormButton>
                         </div>
                     </form>
                 )

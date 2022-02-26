@@ -59,7 +59,7 @@ class Home extends React.Component {
 
                 <div className=' bg-gray h-[1500px] w-full' ref={this.firstMenu}>
 
-                    <h2 className='text-5xl font-black text-center text-darkgray py-28'>Qui sommes-nous ?</h2>
+                    <h2 className='text-5xl font-black text-center text-darkgray pt-28'>Qui sommes-nous ?</h2>
 
                     <div className='relative text-center h-[600px]'>
                         <div className='absolute right-[55%] w-[400px] inset-y-0 flex items-center z-10'>
