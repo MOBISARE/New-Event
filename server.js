@@ -1,9 +1,10 @@
 const cbEvenement = require("./serveur/evenement")  //callback evenement
 
-const express = require('express');
+const express = require('express')
 
-const app = express();
-
+const app = express()
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 const port = 5000;
 
 //routage
@@ -12,14 +13,10 @@ const port = 5000;
 app.get('/api/evenement/modifier/:id', (req, res) => {
     //parametre id
     cbEvenement.getEvenementModification(req.params.id, res)
-    //envoie les donnees
-    //res.json(data)
 })
 
-app.post('api/evenement/modifier/:id', (req, res) => {
-    //recupere information du formulaire
-
-    //enregistre les modifications
+app.put('/api/evenement/modifier/:id', (req, res) => {
+    cbEvenement.putEvenementModification(req.body, req.params.id, res)
 })
 
 //*************************************************************
