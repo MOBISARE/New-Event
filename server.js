@@ -1,4 +1,5 @@
 const cbEvenement = require("./serveur/evenement")  //callback evenement
+const cbCompte = require("./serveur/compte")
 
 const express = require('express');
 
@@ -34,6 +35,15 @@ app.get('/api/evenement/creer/:id', (req, res) => {
     app.get('/evenement/modifier/:id', (req, res) => {
         cbEvenement.getEvenementModification(req, res)
     })
+})
+
+//se connecter
+app.get('api/compte/connexion/:id', (req, res)=>{
+    //parametre id
+    data = cbCompte.getCompteConnexion(req.params.id)
+    //envoie les donnees
+    console.log(data)
+    res.json(data)
 })
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
