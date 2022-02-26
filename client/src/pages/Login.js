@@ -25,13 +25,13 @@ class Login extends React.Component {
                     {/* Form */}
                     <form className='flex flex-col gap-5 mt-10'>
                         <InputField id='email' className='w-full'>Adresse e-mail</InputField>
-                        <InputField id='email' className='w-full'>Mot de passe</InputField>
+                        <InputField id='mdp' className='w-full'>Mot de passe</InputField>
                         <Button>Connexion</Button>
                     </form>
 
                     {/* Links */}
                     <div className='flex justify-between mt-3'>
-                        <Link to='/'>Mot de passe oublié ?</Link>
+                        <Link to='/reinitialisation-mot-de-passe'>Mot de passe oublié ?</Link>
                         <Link to='/inscription'>Créer un compte</Link>
                     </div>
 

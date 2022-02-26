@@ -27,9 +27,6 @@ class PictureField extends React.Component {
         if(this.hiddenInput.current.files[0]){
             reader.readAsDataURL(this.hiddenInput.current.files[0]);
         }
-        else
-            this.previewImage.current.src = "";
-        
     }
 
     render(){

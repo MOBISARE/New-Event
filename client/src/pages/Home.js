@@ -18,8 +18,8 @@ class Home extends React.Component {
     }
 
     updateScroll = () => {
-        if(this.state.scrollhidden == (window.scrollY == 0))
-            this.setState({scrollhidden: (window.scrollY != 0)});
+        if(this.state.scrollhidden === (window.scrollY === 0))
+            this.setState({scrollhidden: (window.scrollY !== 0)});
     }
     
     componentDidMount = () => {
