@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import Button from '../components/Button'
+import FormButton from '../components/FormButton';
 import InputField from '../components/InputField'
 
 class Login extends React.Component {
+
+    handleLogin = (e) => {
+        e.preventDefault();
+        console.log(e);
+    }
+    
     render(){
         return(
             <div className='py-24 bg-gradient-to-r from-purple to-blue h-screen w-full flex items-center justify-center'>
@@ -23,10 +29,10 @@ class Login extends React.Component {
                     </div>
 
                     {/* Form */}
-                    <form className='flex flex-col gap-5 mt-10'>
-                        <InputField id='email' className='w-full'>Adresse e-mail</InputField>
-                        <InputField id='mdp' className='w-full'>Mot de passe</InputField>
-                        <Button>Connexion</Button>
+                    <form className='flex flex-col gap-5 mt-10' onSubmit={this.handleLogin}>
+                        <InputField id='email' className='w-full' required>Adresse e-mail</InputField>
+                        <InputField id='mdp' className='w-full' required>Mot de passe</InputField>
+                        <FormButton value='Connexion'></FormButton>
                     </form>
 
                     {/* Links */}
