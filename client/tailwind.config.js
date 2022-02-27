@@ -19,7 +19,8 @@ module.exports = {
         'purple' : '#aa55ff',
         'gray': '#f5f7fa',
         'darkgray': '#172342',
-        'transparentgray': 'rgba(0, 0, 0, 0.2)'
+        'transparentgray': 'rgba(0, 0, 0, 0.2)',
+        'green': '#5be7c4'
       },
     },
   },
