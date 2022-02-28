@@ -11,13 +11,16 @@ const port = 5000;
 //routage
 
 //***************modifier evenement**************************
-app.get('/api/evenement/modifier/:id', (req, res) => {
+app.get('/api/evenement/modifier/:id', async (req, res) => {
     //parametre id
-    cbEvenement.getEvenementModification(req.params.id, res)
+    let data = await cbEvenement.getEvenementModification(req.params.id)
+    if (data == null) res.sendStatus(404)
+    else res.json(data)
 })
 
-app.put('/api/evenement/modifier/:id', (req, res) => {
-    cbEvenement.putEvenementModification(req.body, req.params.id, res)
+app.put('/api/evenement/modifier/:id', async (req, res) => {
+    await cbEvenement.putEvenementModification(req.body, req.params.id)
+    res.redirect('/api/evenement/modifier/' + req.params.id)
 })
 
 //*************************************************************
@@ -35,7 +38,7 @@ app.get('/api/evenement/creer/:id', (req, res) => {
 })
 
 //se connecter
-app.get('api/compte/connexion/:id', (req, res)=>{
+app.get('api/compte/connexion/:id', (req, res) => {
     //parametre id
     data = cbCompte.getCompteConnexion(req.params.id)
     //envoie les donnees
