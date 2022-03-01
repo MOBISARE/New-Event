@@ -64,7 +64,7 @@ class Main extends React.Component {
                          className='absolute bottom-0 left-0 w-2/5' alt=''/>
                 </div>
 
-                <h1 className='font-bold text-7xl mt-36'>Rechercher un
+                <h1 className='font-bold text-7xl mt-24'>Rechercher un
                     <div className='text-transparent bg-clip-text bg-gradient-to-r from-purple to-blue'>
                         événement</div>
                 </h1>
