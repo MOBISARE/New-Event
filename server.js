@@ -14,13 +14,15 @@ const port = 5000;
 app.get('/api/evenement/modifier/:id', async (req, res) => {
     //parametre id
     let data = await cbEvenement.getEvenement(req.params.id)
-    if (data == null) res.sendStatus(404)
+    if (data == -1) res.sendStatus(500)
+    else if (data == -2) res.sendStatus(404)
     else res.json(data)
 })
 
 app.put('/api/evenement/modifier/:id', async (req, res) => {
-    await cbEvenement.putEvenementModification(req.body, req.params.id)
-    res.redirect('/api/evenement/modifier/' + req.params.id)
+    let result = await cbEvenement.putEvenementModification(req.body, req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/evenement/modifier/' + req.params.id)
 })
 
 //*************************************************************
