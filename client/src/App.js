@@ -27,7 +27,7 @@ class App extends React.Component {
             return (
                 <Routes>
                     <Route path='/' element={<ConnectedView/>}>
-                        <Route path='accueil' element={<Main/>}/>
+                        <Route path='' element={<Main/>}/>
                         <Route path='a-propos' element={<About/>}/>
                         <Route path='mes-evenements' element={<MyEvents/>}/>
                         <Route path='evenement' element={<Event/>}/>
