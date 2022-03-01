@@ -10,6 +10,7 @@ import About from './pages/About'
 import MyEvents from './pages/MyEvents'
 import ConnectedView from './pages/ConnectedView'
 import Event from './pages/Event'
+import CreateEvent from './pages/CreateEvent'
 
 class App extends React.Component {
     render() {
@@ -31,6 +32,7 @@ class App extends React.Component {
                         <Route path='a-propos' element={<About/>}/>
                         <Route path='mes-evenements' element={<MyEvents/>}/>
                         <Route path='evenement' element={<Event/>}/>
+                        <Route path='creer-evenement' element={<CreateEvent/>} />
                     </Route>
                 </Routes>
             );

@@ -5,9 +5,9 @@ class EventCard extends React.Component {
     render() {
         return(
             <Link to='/evenement' className='w-72 rounded-lg bg-white m-3 flex flex-col justify-center shadow'>
-                <img className='w-72 h-48 object-cover bg-transparentgray rounded-t-lg'
-                     src={ this.props.imgUrl+"r" } onError={event => {event.target.src="/images/image_black_24dp.svg"}} alt="Image de l'événement"/>
-                <div className='p-2  border-t-8 border-green'>
+                <img className='w-72 h-48 object-cover bg-green rounded-t-lg'
+                     src={""} alt=" "/>
+                <div className='p-2 border-t-8 border-green'>
                     <h5 className='text-lg font-bold'>{ this.props.title }</h5>
                     <p className='break-word' style={{hyphens:'auto'}}>
                         { this.props.description }

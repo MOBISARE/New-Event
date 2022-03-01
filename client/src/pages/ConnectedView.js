@@ -60,7 +60,9 @@ function ConnectedView() {
                 </div>
             </nav>
 
-            <Outlet/>
+            <div className='mx-10 xl:mx-64'>
+                <Outlet/>
+            </div>
         </div>
     )
 }
