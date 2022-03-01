@@ -71,7 +71,13 @@ async function putEvenementModification(body, id) {
     return result.changedRows
 }
 
-function getEvenementCreation(id) {
+async function getEvenementCreation(body) {
+    let lastEvent;
+    try {
+        lastEvent = DB.query('SELECT MAX(evenement.id_evenement) FROM evenement')
+    }catch (err){
+        console.log(err)
+    }
     return {
         "bleg": id
     }
