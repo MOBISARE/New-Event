@@ -1,13 +1,14 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Home from './pages/guest/Home'
+import Login from './pages/guest/Login';
+import Register from './pages/guest/Register';
+import LostPassword from './pages/guest/LostPassword'
+
 import Main from './pages/Main'
 import About from './pages/About'
 import MyEvents from './pages/MyEvents'
 import ConnectedView from './pages/ConnectedView'
-import LostPassword from './pages/LostPassword'
 import Event from './pages/Event'
 
 class App extends React.Component {

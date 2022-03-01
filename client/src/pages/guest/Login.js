@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import FormButton from '../components/FormButton';
-import InputField from '../components/InputField'
+import FormButton from '../../components/FormButton';
+import InputField from '../../components/InputField'
 
 class Login extends React.Component {
 
@@ -30,8 +30,8 @@ class Login extends React.Component {
 
                     {/* Form */}
                     <form className='flex flex-col gap-5 mt-10' onSubmit={this.handleLogin}>
-                        <InputField id='email' className='w-full' required>Adresse e-mail</InputField>
-                        <InputField id='mdp' className='w-full' required>Mot de passe</InputField>
+                        <InputField id='email' type='email' className='w-full' required>Adresse e-mail</InputField>
+                        <InputField id='mdp' type='password' className='w-full' required>Mot de passe</InputField>
                         <FormButton value='Connexion'></FormButton>
                     </form>
 

@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 
-import Checkbox from '../components/Checkbox';
-import FormButton from '../components/FormButton';
-import InputField from '../components/InputField';
-import PictureField from '../components/PictureField';
+import Checkbox from '../../components/Checkbox';
+import FormButton from '../../components/FormButton';
+import InputField from '../../components/InputField';
+import PictureField from '../../components/PictureField';
 
 class Register extends React.Component {
 
