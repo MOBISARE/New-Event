@@ -8,7 +8,7 @@ class Home extends React.Component {
     constructor(props){
         super(props);
 
-        this.state = {scrollhidden: false};
+        this.state = {scrollhidden: false, scrollanimation: false};
         this.scrollButton = React.createRef();
         this.firstMenu = React.createRef();
     }
@@ -18,8 +18,13 @@ class Home extends React.Component {
     }
 
     updateScroll = () => {
-        if(this.state.scrollhidden === (window.scrollY === 0))
-            this.setState({scrollhidden: (window.scrollY !== 0)});
+        if(this.state.scrollanimation === (window.scrollY === 0)){
+            this.setState({scrollanimation: (window.scrollY !== 0)});
+            
+            if((window.scrollY === 0)) this.setState({scrollhidden: false});
+            else setTimeout(() => {if(this.state.scrollanimation) this.setState({scrollhidden: true})}, 200);
+        }
+            
     }
     
     componentDidMount = () => {
@@ -31,7 +36,8 @@ class Home extends React.Component {
     }
 
     render(){
-        var scrollTransitionClasses = this.state.scrollhidden ? 'transition-all text-transparent invisible' : ''
+        var scrollTransitionClasses = this.state.scrollanimation ? 'transition-opacity opacity-0 duration-200' : 'opacity-100'
+        scrollTransitionClasses += this.state.scrollhidden ? ' hidden' : ''
 
         return(
             <div onScroll={this.updateScroll}>
