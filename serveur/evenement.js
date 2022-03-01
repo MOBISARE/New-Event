@@ -1,7 +1,7 @@
 const DB = require("./db").DB
 var async = require('async')
 
-async function getEvenementModification(id) {
+async function getEvenement(id) {
     let evenement;
     let participants = []
     let besoins = []
@@ -11,7 +11,7 @@ async function getEvenementModification(id) {
             + 'FROM evenement '
             + 'WHERE id_evenement = ?', [id])
     } catch (err) {
-        throw err
+        console.log(err)
     }
     evenement = evenement[0]
 
@@ -22,7 +22,7 @@ async function getEvenementModification(id) {
             participants.push(e.id_compte)
         })
     } catch (err) {
-        throw err
+        console.log(err)
     }
 
     try {
@@ -31,7 +31,7 @@ async function getEvenementModification(id) {
             besoins.push(e.id_besoin)
         })
     } catch (err) {
-        throw err
+        console.log(err)
     }
 
     if (evenement == undefined) return null
@@ -69,7 +69,7 @@ async function putEvenementModification(body, id) {
             })
         }
     } catch (err) {
-        throw err
+        console.log(err)
     }
     return result.changedRows
 }
@@ -80,6 +80,6 @@ function getEvenementCreation(id) {
     }
 }
 
-module.exports.getEvenementModification = getEvenementModification
+module.exports.getEvenement = getEvenement
 module.exports.putEvenementModification = putEvenementModification
 module.exports.getEvenementCreation = getEvenementCreation

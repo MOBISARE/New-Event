@@ -13,7 +13,7 @@ const port = 5000;
 //***************modifier evenement**************************
 app.get('/api/evenement/modifier/:id', async (req, res) => {
     //parametre id
-    let data = await cbEvenement.getEvenementModification(req.params.id)
+    let data = await cbEvenement.getEvenement(req.params.id)
     if (data == null) res.sendStatus(404)
     else res.json(data)
 })
