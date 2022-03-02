@@ -28,7 +28,7 @@ class App extends React.Component {
             return (
                 <div>
                     <Navbar/>
-                    <div className='pt-10'>
+                    <div className='pt-14'>
                         <Routes>
                             <Route path='/' element={<Main/>}/>
                             <Route path='a-propos' element={<About/>}/>
