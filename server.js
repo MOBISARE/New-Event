@@ -53,7 +53,6 @@ app.get('/api/compte/modifier/:id', async (req, res) => {
     //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
-    else if (data == -2) res.sendStatus(404)
     else res.json(data)
 })
 
@@ -63,5 +62,24 @@ app.put('/api/compte/modifier/:id', async (req, res) => {
     else res.redirect('/api/compte/modifier/' + req.params.id)
 })
 //************************************************
+
+
+//********************supprimer compte*************
+app.get('/api/compte/supprimer/:id', async (req, res) => {
+    console.log("yop")
+    //parametre id
+    let data = await cbCompte.getCompte(req.params.id)
+    if (data == -1) res.sendStatus(500)
+    else res.json(data)
+})
+
+app.put('/api/compte/supprimer/:id', async (req, res) => {
+    let result = await cbCompte.supprCompte(req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/compte/supprimer/' + req.params.id)
+})
+//************************************************
+
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

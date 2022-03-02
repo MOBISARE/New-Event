@@ -1,3 +1,5 @@
+const { DB } = require("./db")
+
 function getCompteConnexion(id) {//Recupere les donnees de l'utilisateur
     var res = []
     DB.query('SELECT * FROM `compte`', function (error, results, fields) {
@@ -8,7 +10,35 @@ function getCompteConnexion(id) {//Recupere les donnees de l'utilisateur
     return res
 }
 
-//modifie le compte
+async function getCompte(id) {
+    let compte;
+    try {
+        // recupere les informations du compte
+        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
+    } catch (err) {
+        console.log(err)
+        return -1           // erreur lors de l execution de la requete (500)
+    }
+
+    if (compte == undefined) return -2       // evenement inconnu (404)
+    else return {
+        id: compte.id_compte,
+        email: compte.email,
+        mot_de_passe:compte.mot_de_passe, 
+        prenom:compte.prenom, 
+        nom:compte.nom, 
+        naissance:compte.naissance, 
+        ville:compte.ville, 
+        departement:compte.departement,
+        no_telephone:compte.no_telephone, 
+        role:compte.role, 
+        etat:compte.etat, 
+        img_profil:compte.img_profil, 
+        notif_email:compte.notif_email
+    }
+}
+
+//modifier le compte
 async function putCompteModification(body, id) {
     let result = 0
     try {
@@ -23,5 +53,19 @@ async function putCompteModification(body, id) {
     return result.changedRows
 }
 
-module.exports.getCompteConnexion = getCompteConnexion;
+//supprimer le compte
+async function supprCompte(id){
+    let result=0
+    try{
+        result=await DB.query('UPDATE compte SET etat = 1 WHERE id_compte=?',) //je sais pas si 1 c'est actif ou pas 
+
+    }catch(err){
+        console.log(err)
+        return -1 //erreur lors de l execution de la requete (500)
+    }
+}
+
+module.exports.getCompteConnexion = getCompteConnexion
+module.exports.getCompte=getCompte
 module.exports.putCompteModification = putCompteModification
+module.exports.supprCompte=supprCompte
