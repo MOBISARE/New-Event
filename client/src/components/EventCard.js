@@ -4,10 +4,10 @@ import {Link} from "react-router-dom"
 class EventCard extends React.Component {
     render() {
         return(
-            <Link to='/evenement' className='w-60 rounded-lg bg-white m-3 flex flex-col justify-center shadow'>
-                <img className='w-60 h-60 bg-transparentgray rounded-t-lg'
-                     src={ this.props.imgUrl } alt="Image de l'événement"/>
-                <div className='p-2  border-t-8 border-green'>
+            <Link to='/evenement' className='w-72 rounded-lg bg-white m-3 flex flex-col justify-center shadow'>
+                <img className='w-72 h-48 object-cover bg-green rounded-t-lg'
+                     src={""} alt=" "/>
+                <div className='p-2 border-t-8 border-green'>
                     <h5 className='text-lg font-bold'>{ this.props.title }</h5>
                     <p className='break-word' style={{hyphens:'auto'}}>
                         { this.props.description }

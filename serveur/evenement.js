@@ -1,40 +1,36 @@
 const DB = require("./db").DB
 var async = require('async')
 
-async function getEvenementModification(id) {
+async function getEvenement(id) {
     let evenement;
     let participants = []
     let besoins = []
-
     try {
+        // recupere les informations de l evenement
         evenement = await DB.query('SELECT evenement.id_evenement, titre, description, departement, debut, fin, archivage, etat, img_banniere, id_proprietaire '
             + 'FROM evenement '
             + 'WHERE id_evenement = ?', [id])
-    } catch (err) {
-        throw err
-    }
-    evenement = evenement[0]
 
-    let rows = []
-    try {
+        evenement = evenement[0]
+
+        let rows = []
+        // recupere les participants de l evenement
         rows = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ?', [id])
         rows.forEach(e => {
             participants.push(e.id_compte)
         })
-    } catch (err) {
-        throw err
-    }
 
-    try {
+        // recupere les besoins de l evenement
         rows = await DB.query('SELECT id_besoin FROM besoin WHERE id_evenement = ?', [id])
         rows.forEach(e => {
             besoins.push(e.id_besoin)
         })
     } catch (err) {
-        throw err
+        console.log(err)
+        return -1           // erreur lors de l execution de la requete (500)
     }
 
-    if (evenement == undefined) return null
+    if (evenement == undefined) return -2       // evenement inconnu (404)
     else return {
         id: evenement.id_evenement,
         titre: evenement.titre,
@@ -69,17 +65,24 @@ async function putEvenementModification(body, id) {
             })
         }
     } catch (err) {
-        throw err
+        console.log(err)
+        return -1           // erreur lors de l execution de la requete (500)
     }
     return result.changedRows
 }
 
-function getEvenementCreation(id) {
+async function getEvenementCreation(body) {
+    let lastEvent;
+    try {
+        lastEvent = DB.query('SELECT MAX(evenement.id_evenement) FROM evenement')
+    }catch (err){
+        console.log(err)
+    }
     return {
         "bleg": id
     }
 }
 
-module.exports.getEvenementModification = getEvenementModification
+module.exports.getEvenement = getEvenement
 module.exports.putEvenementModification = putEvenementModification
 module.exports.getEvenementCreation = getEvenementCreation

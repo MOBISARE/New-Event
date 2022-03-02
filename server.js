@@ -12,29 +12,30 @@ const port = 5000;
 
 //***************modifier evenement**************************
 app.get('/api/evenement/modifier/:id', async (req, res) => {
+    console.log("yop")
     //parametre id
-    let data = await cbEvenement.getEvenementModification(req.params.id)
-    if (data == null) res.sendStatus(404)
+    let data = await cbEvenement.getEvenement(req.params.id)
+    if (data == -1) res.sendStatus(500)
+    else if (data == -2) res.sendStatus(404)
     else res.json(data)
 })
 
 app.put('/api/evenement/modifier/:id', async (req, res) => {
-    await cbEvenement.putEvenementModification(req.body, req.params.id)
-    res.redirect('/api/evenement/modifier/' + req.params.id)
+    let result = await cbEvenement.putEvenementModification(req.body, req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/evenement/modifier/' + req.params.id)
 })
 
 //*************************************************************
 
 //créer evenement
-app.get('/api/evenement/creer/:id', (req, res) => {
+app.get('/api/evenement/creer/:id', async (req, res) => {
     //parametre id
-    data = cbEvenement.getEvenementCreation(req.params.id)
+    console.log("bleg")
+    data = cbEvenement.getEvenementCreation(req.body)
     //envoie les donnees
     console.log(data)
     res.json(data)
-    app.get('/evenement/modifier/:id', (req, res) => {
-        cbEvenement.getEvenementModification(req, res)
-    })
 })
 
 //se connecter
@@ -45,5 +46,22 @@ app.get('api/compte/connexion/:id', (req, res) => {
     console.log(data)
     res.json(data)
 })
+
+//********************modifier compte*************
+app.get('/api/compte/modifier/:id', async (req, res) => {
+    console.log("yop")
+    //parametre id
+    let data = await cbCompte.getCompte(req.params.id)
+    if (data == -1) res.sendStatus(500)
+    else if (data == -2) res.sendStatus(404)
+    else res.json(data)
+})
+
+app.put('/api/compte/modifier/:id', async (req, res) => {
+    let result = await cbCompte.putCompteModification(req.body, req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/compte/modifier/' + req.params.id)
+})
+//************************************************
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

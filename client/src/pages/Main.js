@@ -1,7 +1,6 @@
 import React from 'react';
 
 import EventCard from '../components/EventCard'
-import InputField from '../components/InputField'
 
 let fakeEvents = [
     {
@@ -57,7 +56,7 @@ class Main extends React.Component {
         )
 
         return(
-            <div className='text-center flex flex-col items-center'>
+            <div className='text-center flex flex-col items-center '>
                 <div className='bg-gray h-screen w-screen fixed -z-50'>
                     <img src='/images/blob1.svg'
                          className='absolute top-0 right-0 w-2/5' alt=''/>
@@ -65,14 +64,15 @@ class Main extends React.Component {
                          className='absolute bottom-0 left-0 w-2/5' alt=''/>
                 </div>
 
-                <h1 className='font-bold text-6xl mt-36'>Rechercher un
+                <h1 className='font-bold text-7xl mt-24'>Rechercher un
                     <div className='text-transparent bg-clip-text bg-gradient-to-r from-purple to-blue'>
                         événement</div>
                 </h1>
 
-                <div className='relative bg-white w-1/2 max-w-xl rounded-full h-10 flex items-center p-4 mt-10'>
+                <div className='relative bg-white w-1/2 max-w-xl rounded-full h-12 flex items-center p-2 mt-10 text-xl drop-shadow'
+                     id='searchbar'>
                     <button className='flex'>
-                        <span className="material-icons">
+                        <span className="material-icons text-3xl">
                             search
                         </span>
                     </button>
@@ -81,20 +81,28 @@ class Main extends React.Component {
                     <button className='flex' onClick={
                         () => document.getElementById('advanced-searchbar').classList.toggle('hidden')
                     }>
-                        <span className="material-icons">
+                        <span className="material-icons text-3xl">
                             manage_search
                         </span>
                     </button>
 
                     <div id='advanced-searchbar'
-                         className='hidden absolute top-10 left-0 right-0 bg-white rounded-b-xl mx-4 p-2 drop-shadow flex'>
-                        <InputField className='w-32'>A partir du</InputField>
-                        <InputField className='w-32'>Jusqu'au</InputField>
-                        <InputField className='w-32'>Ville</InputField>
+                         className='hidden absolute top-11 left-0 right-0 bg-white rounded-b-xl mx-4 p-4 drop-shadow text-base flex flex-wrap'>
+                        <div className='flex content-center mr-4 mb-2'>
+                            <span className='mr-2'>Dates : </span>
+                            <input className='h-7 rounded-full pt-1 pr-0 w-32' type='date'/>
+                            <span className='mx-2'> -- </span>
+                            <input className='h-7 rounded-full pt-1 pr-0 w-32' type='date'/>
+                        </div>
+                        <div className='flex content-center'>
+                            <span className='mr-2'>Ville : </span>
+                            <input className='h-7 rounded-full pt-1 pr-0 min-w-32'
+                                   placeholder='Nancy' type='text'/>
+                        </div>
                     </div>
                 </div>
 
-                <div className='mt-14 right-0'>
+                <div className='mt-14 w-full text-right mr-14'>
                     <span>Tri : </span>
                     <select className='rounded-full'>
                         <option>Populaire</option>
