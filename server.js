@@ -12,7 +12,6 @@ const port = 5000;
 
 //***************modifier evenement**************************
 app.get('/api/evenement/modifier/:id', async (req, res) => {
-    console.log("yop")
     //parametre id
     let data = await cbEvenement.getEvenement(req.params.id)
     if (data == -1) res.sendStatus(500)
@@ -29,13 +28,20 @@ app.put('/api/evenement/modifier/:id', async (req, res) => {
 //*************************************************************
 
 //créer evenement
+//Je n'ai aucune idée de si ça marche 
 app.get('/api/evenement/creer/:id', async (req, res) => {
     //parametre id
     console.log("bleg")
-    data = cbEvenement.getEvenementCreation(req.body)
-    //envoie les donnees
-    console.log(data)
-    res.json(data)
+    let data = await cbEvenement.getEvenementCreation(req.params.body)
+
+    if (data == -1) res.sendStatus(500)
+    else res.json(data)
+})
+
+app.put('/api/evenement/creer/:id', async (req, res) => {
+    let result = await cbCompte.putEvenementCreation(req.body, req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/compte/creer/' + req.params.id)
 })
 
 //se connecter
