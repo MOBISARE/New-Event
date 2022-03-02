@@ -1,20 +1,11 @@
 import React from 'react';
-import {Outlet, Link} from "react-router-dom"
+import { Link } from 'react-router-dom';
 
-function Notification() {
-    return(
-        <div>
-            <p>Contenu de la notification</p>
 
-        </div>
-    )
-}
-
-function ConnectedView() {
-
-    return(
-        <div>
-            <nav className='container h-16 p-2 px-5 max-w-full xl:px-64 flex justify-between bg-white shadow-md z-50'>
+class Navbar extends React.Component {
+    render(){
+        return(
+            <nav className='fixed container h-16 p-2 px-5 max-w-full xl:px-64 flex justify-between bg-white shadow-md z-50'>
                 <Link to='/'><img className='object-cover h-full' src='/images/Logo.png' alt='Logo newEvent'/></Link>
                 <div className='flex gap-5 items-center'>
                     <Link id='link-mainpage' to='/' className={' font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple to-blue'}>
@@ -54,17 +45,13 @@ function ConnectedView() {
                         </span>
                         </button>
                         <div id='dropdown-notifications' className='text-left bg-white absolute right-0 drop-shadow-2xl border' hidden>
-                            <Notification/>
+                            test
                         </div>
                     </div>
                 </div>
             </nav>
-
-            <div className='mx-10 xl:mx-64'>
-                <Outlet/>
-            </div>
-        </div>
-    )
+        );
+    }
 }
 
-export default ConnectedView;
+export default Navbar;
