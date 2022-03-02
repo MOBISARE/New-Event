@@ -63,7 +63,7 @@ class MyEvents extends React.Component {
 
         return(
             <div>
-                <div className='mt-6'>
+                <div className='pt-6'>
                     <span className='text-3xl mr-2'>Mes événements</span>
                     <Link to='/creer-evenement'>
                         <span className="material-icons">

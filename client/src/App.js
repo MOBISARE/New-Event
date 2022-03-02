@@ -8,9 +8,9 @@ import LostPassword from './pages/guest/LostPassword'
 import Main from './pages/Main'
 import About from './pages/About'
 import MyEvents from './pages/MyEvents'
-import ConnectedView from './pages/ConnectedView'
 import Event from './pages/Event'
 import CreateEvent from './pages/CreateEvent'
+import Navbar from './components/Navbar';
 
 class App extends React.Component {
     render() {
@@ -26,15 +26,20 @@ class App extends React.Component {
             )
         } else {
             return (
-                <Routes>
-                    <Route path='/' element={<ConnectedView/>}>
-                        <Route path='' element={<Main/>}/>
-                        <Route path='a-propos' element={<About/>}/>
-                        <Route path='mes-evenements' element={<MyEvents/>}/>
-                        <Route path='evenement' element={<Event/>}/>
-                        <Route path='creer-evenement' element={<CreateEvent/>} />
-                    </Route>
-                </Routes>
+                <div>
+                    <Navbar/>
+                    <div className='pt-10'>
+                        <Routes>
+                            <Route path='/' element={<Main/>}/>
+                            <Route path='a-propos' element={<About/>}/>
+                            <Route path='mes-evenements' element={<MyEvents/>}/>
+                            <Route path='evenement' element={<Event/>}/>
+                            <Route path='creer-evenement' element={<CreateEvent/>} />
+                        </Routes>
+                    </div>
+                    
+                </div>
+                
             );
         }
     };
