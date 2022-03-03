@@ -1,4 +1,4 @@
-const cbEvenement = require("./serveur/evenement")  //callback evenement
+const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
 
 const express = require('express')
@@ -11,16 +11,16 @@ const port = 5000;
 //routage
 
 //***************modifier evenement**************************
-app.get('/api/evenement/modifier/:id', async (req, res) => {
+app.get('/api/evenement/modifier/:id', async(req, res) => {
     console.log("yop")
-    //parametre id
+        //parametre id
     let data = await cbEvenement.getEvenement(req.params.id)
     if (data == -1) res.sendStatus(500)
     else if (data == -2) res.sendStatus(404)
     else res.json(data)
 })
 
-app.put('/api/evenement/modifier/:id', async (req, res) => {
+app.put('/api/evenement/modifier/:id', async(req, res) => {
     let result = await cbEvenement.putEvenementModification(req.body, req.params.id)
     if (result == -1) res.sendStatus(500)
     else res.redirect('/api/evenement/modifier/' + req.params.id)
@@ -29,22 +29,36 @@ app.put('/api/evenement/modifier/:id', async (req, res) => {
 //*************************************************************
 
 //créer evenement
-app.get('/api/evenement/creer/:id', async (req, res) => {
+app.get('/api/evenement/creer/:id', async(req, res) => {
     //parametre id
     console.log("bleg")
     data = cbEvenement.getEvenementCreation(req.body)
-    //envoie les donnees
+        //envoie les donnees
     console.log(data)
     res.json(data)
 })
 
 //se connecter
-app.get('api/compte/connexion/:id', (req, res) => {
+app.get('/api/compte/connexion/:id', (req, res) => {
     //parametre id
     data = cbCompte.getCompteConnexion(req.params.id)
-    //envoie les donnees
+        //envoie les donnees
     console.log(data)
     res.json(data)
+})
+
+app.post('/api/compte/inscription', (req, res) => {
+    console.log(req.body)
+    data = cbCompte.inscription(
+        req.body.nom,
+        req.body.prenom,
+        req.body.email,
+        req.body.mot_de_passe,
+        req.body.naissance,
+        req.body.ville,
+        req.body.no_telephone,
+        req.body.img_profil)
+    console.log(data)
 })
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
