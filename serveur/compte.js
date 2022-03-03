@@ -14,7 +14,7 @@ async function getCompte(id) {
     let compte;
     try {
         // recupere les informations du compte
-        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
+        compte = DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
     } catch (err) {
         console.log(err)
         return -1           // erreur lors de l execution de la requete (500)
@@ -42,7 +42,7 @@ async function getCompte(id) {
 async function putCompteModification(body, id) {
     let result = 0
     try {
-        result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [{
+        result = DB.query('UPDATE compte SET ? WHERE id_compte = ?', [{
             email: body.email, mot_de_passe:body.mot_de_passe, prenom:body.prenom, nom:body.nom, naissance:body.naissance, ville:body.ville, departement:body.departement,
             no_telephone:body.no_telephone, role:body.role, etat:body.etat, img_profil:body.img_profil, notif_email:body.notif_email
         }, id])
@@ -55,10 +55,9 @@ async function putCompteModification(body, id) {
 
 //supprimer le compte
 async function supprCompte(id){
-    let result=0
+    let result=0    
     try{
-        result=await DB.query('UPDATE compte SET etat = 1 WHERE id_compte=?',) //je sais pas si 1 c'est actif ou pas 
-
+        result= DB.query('UPDATE compte SET ? WHERE id_compte=?',[id])
     }catch(err){
         console.log(err)
         return -1 //erreur lors de l execution de la requete (500)
