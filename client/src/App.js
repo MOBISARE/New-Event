@@ -28,7 +28,7 @@ class App extends React.Component {
             return (
                 <div>
                     <Navbar/>
-                    <div className='pt-14'>
+                    <div className='pt-14 px-16 max-w-[1600px] mx-auto'>
                         <Routes>
                             <Route path='/' element={<Main/>}/>
                             <Route path='a-propos' element={<About/>}/>
