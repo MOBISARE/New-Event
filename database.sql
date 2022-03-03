@@ -146,6 +146,18 @@ CREATE TABLE `notif_modifier` (
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+CREATE TABLE `recuperation` (
+  `id_recuperation` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `token_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `token_id` varchar(255) NOT NULL,
+  `id_compte` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id_recuperation`),
+  KEY `recuperation_fk_compte` (`id_compte`),
+  CONSTRAINT `recuperation_fk_compte` FOREIGN KEY (`id_compte`) REFERENCES `compte` (`id_compte`) ON DELETE NO ACTION ON
+  UPDATE
+    NO ACTION
+) ENGINE = InnoDB AUTO_INCREMENT = 3 DEFAULT CHARSET = utf8mb4;
+
 
 
 
