@@ -44,6 +44,18 @@ app.put('/api/evenement/creer/:id', async (req, res) => {
     else res.redirect('/api/compte/creer/' + req.params.id)
 })
 
+
+// ***********Consulter ses événements******
+app.get('api/evenement/consult/:id', async (req, res) => {
+    let data = await cbEvenement.getEvenementConsultation(req.params.body)
+
+    //Retourne les id de tout les événements où il participe
+    //J'sais pas si il faut retourner juste les id ou le contenu de tout les événements
+    if (data == -1) res.sendStatus(500)
+    else if (data == -2) res.sendStatus(404)
+    else res.json(data)
+})
+
 //se connecter
 app.get('api/compte/connexion/:id', (req, res) => {
     //parametre id
