@@ -155,4 +155,4 @@ module.exports.getEvenement = getEvenement
 module.exports.putEvenementModification = putEvenementModification
 module.exports.getEvenementCreation = getEvenementCreation
 module.exports.putEvenementCreation = putEvenementCreation
-module.exports.getEvenementCreation = getEvenementCreation
+module.exports.getEvenementConsultation = getEvenementConsultation

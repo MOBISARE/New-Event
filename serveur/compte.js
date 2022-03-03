@@ -1,13 +1,30 @@
+const { NULL } = require("mysql/lib/protocol/constants/types")
 const { DB } = require("./db")
 
-function getCompteConnexion(id) {//Recupere les donnees de l'utilisateur
+async function getCompteConnexion(req, id) {//Recupere les donnees de l'utilisateur
     var res = []
-    DB.query('SELECT * FROM `compte`', function (error, results, fields) {
-        if (error) throw error
-        res = results[0]
-    })
-    console.log(res)
-    return res
+    let  result
+    try{
+        //Récupérer résultat du formulaire
+        console.log(req.body)
+        
+
+        //Comparer aux données de la base
+        result = await DB.query('SELECT email, mot_de_passe FROM compte WHERE id_compte = ?', [req.body.id_compte])
+        res = result[0]
+        if((req.body.email == result.email)&&(req.body.mot_de_passe == result.mot_de_passe)){
+            console.log(res)
+            return res
+        }
+        else{
+            res = NULL;
+            return res;
+        }
+    }
+    catch(err){
+        console.log(err)
+        return -1 
+    }
 }
 
 async function getCompte(id) {

@@ -18,8 +18,8 @@ async function startRecuperation(id) {
 
         token = DB.query('INSERT INTO recuperation(token_id, id_compte) VALUES (?, ?)', [tokenStr, id]);
 
-        email = DB.query('SELECT email FROM compte WHERE id_compte = ?', [id]);
-
+        email = await DB.query('SELECT email FROM compte WHERE id_compte = ?', [id]);
+        email = email[0];
         sendEmail(email.email, "recup mdp", "lien et tout tmtc");
 
     } catch (err) {

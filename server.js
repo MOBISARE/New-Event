@@ -57,9 +57,17 @@ app.get('api/evenement/consult/:id', async (req, res) => {
 })
 
 //se connecter
-app.get('api/compte/connexion/:id', (req, res) => {
+app.get('/api/compte/connexion/:id', (req, res) => {
     //parametre id
     data = cbCompte.getCompteConnexion(req.params.id)
+    //envoie les donnees
+    console.log(data)
+    res.json(data)
+})
+
+app.post('/api/compte/connexion/:id', (req, res) => {
+    //parametre id
+    data = cbCompte.getCompteConnexion(req.body, req.params.id)
     //envoie les donnees
     console.log(data)
     res.json(data)
