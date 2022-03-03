@@ -69,13 +69,13 @@ app.get('api/compte/connexion/:id', (req, res) => {
 app.get('/api/compte/modifier/:id', async (req, res) => {
     console.log("yop")
     //parametre id
-    let data = cbCompte.getCompte(req.params.id)
+    let data = await cbCompte.getCompte(req.params.body)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
 })
 
 app.put('/api/compte/modifier/:id', async (req, res) => {
-    let result = cbCompte.putCompteModification(req.body, req.params.id)
+    let result = await cbCompte.putCompteModification(req.body, req.params.id)
     if (result == -1) res.sendStatus(500)
     else res.redirect('/api/compte/modifier/' + req.params.id)
 })
@@ -86,13 +86,13 @@ app.put('/api/compte/modifier/:id', async (req, res) => {
 app.get('/api/compte/supprimer/:id', async (req, res) => {
     console.log("yop")
     //parametre id
-    let data = cbCompte.getCompte(req.params.id)
+    let data = await cbCompte.getCompte(req.params.body)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
 })
 
 app.put('/api/compte/supprimer/:id', async (req, res) => {
-    let result = cbCompte.supprCompte(req.params.id)
+    let result = await cbCompte.supprCompte(req.params.id)
     if (result == -1) res.sendStatus(500)
     else res.redirect('/api/compte/supprimer/' + req.params.id)
 })

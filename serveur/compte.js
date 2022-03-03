@@ -22,7 +22,7 @@ async function getCompte(id) {
 
     if (compte == undefined) return -2       // evenement inconnu (404)
     else return {
-        id: compte.id_compte,
+        id_compte: compte.id_compte,
         email: compte.email,
         mot_de_passe:compte.mot_de_passe, 
         prenom:compte.prenom, 
