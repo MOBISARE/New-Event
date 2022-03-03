@@ -69,7 +69,7 @@ app.get('api/compte/connexion/:id', (req, res) => {
 app.get('/api/compte/modifier/:id', async (req, res) => {
     console.log("yop")
     //parametre id
-    let data = await cbCompte.getCompte(req.params.body)
+    let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
 })
@@ -86,7 +86,7 @@ app.put('/api/compte/modifier/:id', async (req, res) => {
 app.get('/api/compte/supprimer/:id', async (req, res) => {
     console.log("yop")
     //parametre id
-    let data = await cbCompte.getCompte(req.params.body)
+    let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
 })

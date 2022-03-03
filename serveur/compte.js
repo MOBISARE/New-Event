@@ -15,6 +15,7 @@ async function getCompte(id) {
     try {
         // recupere les informations du compte
         compte = DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
+        compte=compte[0]
     } catch (err) {
         console.log(err)
         return -1           // erreur lors de l execution de la requete (500)
