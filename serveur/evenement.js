@@ -75,6 +75,7 @@ async function getEvenementCreation(id) {
     let lastEvent;
     try {
         lastEvent = DB.query('SELECT MAX(evenement.id_evenement) FROM evenement')
+        lastEvent = lastEvent[0]
         console.log("0")
     }catch (err){
         console.log(err)
