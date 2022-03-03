@@ -57,7 +57,7 @@ async function putCompteModification(body, id) {
 async function supprCompte(id){
     let result=0    
     try{
-        result= DB.query('UPDATE compte SET ? WHERE id_compte=?',[id])
+        result= DB.query('UPDATE compte SET etat=1 WHERE id_compte=?',[id])
     }catch(err){
         console.log(err)
         return -1 //erreur lors de l execution de la requete (500)
