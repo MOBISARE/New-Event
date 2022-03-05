@@ -20,7 +20,9 @@ module.exports = {
         'gray': '#f5f7fa',
         'darkgray': '#172342',
         'transparentgray': 'rgba(0, 0, 0, 0.2)',
-        'green': '#5be7c4'
+        'darkergray': '#6b6b6b',
+        'green': '#5be7c4',
+        'green-valid': '#489F2A'
       },
     },
   },

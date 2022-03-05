@@ -11,6 +11,7 @@ import MyEvents from './pages/MyEvents'
 import Event from './pages/Event'
 import CreateEvent from './pages/CreateEvent'
 import Navbar from './components/Navbar';
+import Error from './pages/Error'
 
 class App extends React.Component {
     render() {
@@ -26,18 +27,19 @@ class App extends React.Component {
             )
         } else {
             return (
-                <div>
+                <div className='bg-gray w-screen min-h-screen h-full'>
                     <Navbar/>
-                    <div className='pt-14 px-16 max-w-[1600px] mx-auto'>
+                    <div className='py-24 px-16 max-w-[1300px] mx-auto'>
                         <Routes>
                             <Route path='/' element={<Main/>}/>
                             <Route path='a-propos' element={<About/>}/>
                             <Route path='mes-evenements' element={<MyEvents/>}/>
-                            <Route path='evenement' element={<Event/>}/>
+                            <Route path='evenement/:id' element={<Event/>}/>
                             <Route path='creer-evenement' element={<CreateEvent/>} />
+                            <Route path='*' element={<Error/>}/>
                         </Routes>
                     </div>
-                    
+
                 </div>
                 
             );

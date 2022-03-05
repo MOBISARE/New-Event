@@ -45,6 +45,7 @@ class Main extends React.Component {
         const eventCards = events.map(value =>
             <EventCard
                 key={value.id}
+                id={value.id}
                 title={value.title}
                 description={value.description}
                 imgUrl={value.imgUrl}
@@ -87,17 +88,20 @@ class Main extends React.Component {
                     </button>
 
                     <div id='advanced-searchbar'
-                         className='hidden absolute top-[3.2rem] left-0 right-0 bg-white rounded-b-xl mx-4 p-4 text-base flex flex-wrap border border-t-0 border-transparentgray'>
-                        <div className='flex content-center mr-4 mb-2'>
-                            <span className='mr-2'>Dates : </span>
-                            <input className='h-7 rounded-full pt-1 pr-0 w-32' type='date'/>
-                            <span className='mx-2'> -- </span>
-                            <input className='h-7 rounded-full pt-1 pr-0 w-32' type='date'/>
-                        </div>
-                        <div className='flex content-center'>
-                            <span className='mr-2'>Ville : </span>
-                            <input className='h-7 rounded-full pt-1 pr-0 min-w-32'
-                                   placeholder='Nancy' type='text'/>
+                         className='hidden absolute top-[3.25rem] left-0 right-0 bg-white rounded-b-3xl mx-4 px-4 py-2 text-base text-darkergray
+                          flex flex-wrap border border-t-0 border-transparentgray place-content-center'>
+                        <div className='flex flex-wrap justify-center'>
+                            <div className='flex place-content-center mr-4 mb-2'>
+                                <span className='mr-2'>Dates : </span>
+                                <input className='h-7 rounded-full pt-1 pr-0 w-34' type='date'/>
+                                <span className='mx-2'> -- </span>
+                                <input className='h-7 rounded-full pt-1 pr-0 w-34' type='date'/>
+                            </div>
+                            <div className='flex place-content-center'>
+                                <span className='mr-2'>Ville : </span>
+                                <input className='h-7 rounded-full pt-1 pr-0 min-w-32'
+                                       placeholder='Nancy' type='text'/>
+                            </div>
                         </div>
                     </div>
                 </div>
