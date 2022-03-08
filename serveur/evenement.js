@@ -71,18 +71,88 @@ async function putEvenementModification(body, id) {
     return result.changedRows
 }
 
-async function getEvenementCreation(body) {
+async function getEvenementCreation(id) {
     let lastEvent;
     try {
         lastEvent = DB.query('SELECT MAX(evenement.id_evenement) FROM evenement')
+        lastEvent = lastEvent[0]
+        console.log("0")
     }catch (err){
         console.log(err)
     }
-    return {
-        "bleg": id
+    if (lastEvent == undefined) return { //Si c'est le premier événement à être créé
+        id: 0,
+        titre: null,
+        description: null,
+        departement: null,
+        debut: null,
+        fin: null,
+        archivage: null,
+        etat: null,
+        img_banniere: null,
+        id_proprietaire: null,
+        id_participants: null,
+        id_besoins: null
     }
+    else return {
+        id: lastEvent+1,
+        titre: null,
+        description: null,
+        departement: null,
+        debut: null,
+        fin: null,
+        archivage: null,
+        etat: null,
+        img_banniere: null,
+        id_proprietaire: null,
+        id_participants: null,
+        id_besoins: null
+    }
+}
+
+async function putEvenementCreation(body, id){
+    let result = 0
+    try{
+        result = await DB.query('INSERT INTO evenement SET ?', [{
+            id: body.id,
+            titre: body.titre, 
+            description: body.description, 
+            departement: body.departement,
+            debut: body.debut, 
+            fin: body.fin, 
+            archivage: body.archivage, 
+            etat: body.etat, 
+            img_banniere: body.img_banniere,
+            id_proprietaire: body.id_proprietaire,
+            id_participants: body.id_participants,
+            id_besoins: body.id_besoin
+        }])
+    } catch (err){
+        console.log(err)
+        return -1
+    }
+    return result.changedRows
+}
+
+async function getEvenementConsultation(id){
+    let evenements = []
+    try{
+        let rows = []
+            // recupere les participants de l evenement
+            rows = await DB.query('SELECT id_evenement FROM participant WHERE id_compte = ?', [id])
+            rows.forEach(e => {
+                evenements.push(e.id_evenement)
+            })
+    } catch (err){
+        console.log(err)
+        return -1
+    }
+    if (evenements.length == 0) return -2
+    else return evenements
 }
 
 module.exports.getEvenement = getEvenement
 module.exports.putEvenementModification = putEvenementModification
 module.exports.getEvenementCreation = getEvenementCreation
+module.exports.putEvenementCreation = putEvenementCreation
+module.exports.getEvenementConsultation = getEvenementConsultation

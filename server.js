@@ -12,7 +12,6 @@ const port = 5000;
 
 //***************modifier evenement**************************
 app.get('/api/evenement/modifier/:id', async (req, res) => {
-    console.log("yop")
     //parametre id
     let data = await cbEvenement.getEvenement(req.params.id)
     if (data == -1) res.sendStatus(500)
@@ -29,19 +28,46 @@ app.put('/api/evenement/modifier/:id', async (req, res) => {
 //*************************************************************
 
 //créer evenement
+//Je n'ai aucune idée de si ça marche 
 app.get('/api/evenement/creer/:id', async (req, res) => {
     //parametre id
     console.log("bleg")
-    data = cbEvenement.getEvenementCreation(req.body)
+    let data = await cbEvenement.getEvenementCreation(req.params.body)
+
+    if (data == -1) res.sendStatus(500)
+    else res.json(data)
+})
+
+app.put('/api/evenement/creer/:id', async (req, res) => {
+    let result = await cbCompte.putEvenementCreation(req.body, req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/compte/creer/' + req.params.id)
+})
+
+
+// ***********Consulter ses événements******
+app.get('api/evenement/consult/:id', async (req, res) => {
+    let data = await cbEvenement.getEvenementConsultation(req.params.body)
+
+    //Retourne les id de tout les événements où il participe
+    //J'sais pas si il faut retourner juste les id ou le contenu de tout les événements
+    if (data == -1) res.sendStatus(500)
+    else if (data == -2) res.sendStatus(404)
+    else res.json(data)
+})
+
+//se connecter
+app.get('/api/compte/connexion/:id', (req, res) => {
+    //parametre id
+    data = cbCompte.getCompteConnexion(req.params.id)
     //envoie les donnees
     console.log(data)
     res.json(data)
 })
 
-//se connecter
-app.get('api/compte/connexion/:id', (req, res) => {
+app.post('/api/compte/connexion/:id', (req, res) => {
     //parametre id
-    data = cbCompte.getCompteConnexion(req.params.id)
+    data = cbCompte.getCompteConnexion(req.body, req.params.id)
     //envoie les donnees
     console.log(data)
     res.json(data)
