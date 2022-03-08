@@ -18,6 +18,7 @@ module.exports = {
         'blue': '#50c1e9',
         'purple' : '#aa55ff',
         'gray': '#f5f7fa',
+        'selected-gray': '#e1e1e1', 
         'darkgray': '#172342',
         'transparentgray': 'rgba(0, 0, 0, 0.2)',
         'darkergray': '#6b6b6b',
