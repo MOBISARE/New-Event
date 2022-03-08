@@ -10,7 +10,7 @@ import About from './pages/About'
 import MyEvents from './pages/MyEvents'
 import Event from './pages/Event'
 import CreateEvent from './pages/CreateEvent'
-import Navbar from './components/Navbar';
+import Navbar from './components/Header/Navbar';
 
 class App extends React.Component {
     render() {
