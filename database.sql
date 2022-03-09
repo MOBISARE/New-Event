@@ -7,7 +7,7 @@ CREATE TABLE `compte` (
   `mot_de_passe` varchar(255) NOT NULL,
   `prenom` varchar(255) DEFAULT NULL,
   `nom` varchar(255) DEFAULT NULL,
-  `naissance` varchar(255) DEFAULT NULL,
+  `naissance` datetime NOT NULL,
   `ville` varchar(255) DEFAULT NULL,
   `departement` varchar(255) DEFAULT NULL,
   `no_telephone` varchar(255) DEFAULT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE `compte` (
   `notif_email` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_compte`),
   UNIQUE KEY `unique_email` (`email`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE `evenement` (
   `id_evenement` int(10) unsigned NOT NULL AUTO_INCREMENT,
