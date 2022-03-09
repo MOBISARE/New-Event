@@ -2,6 +2,7 @@ const DB = require("./db").DB
 var async = require('async')
 
 async function getEvenement(id) {
+    console.log(id)
     let evenement;
     let participants = []
     let besoins = []
@@ -114,7 +115,7 @@ async function putEvenementCreation(body, id){
     let result = 0
     try{
         result = await DB.query('INSERT INTO evenement SET ?', [{
-            id: body.id,
+            id_evenement: id,
             titre: body.titre, 
             description: body.description, 
             departement: body.departement,
@@ -124,8 +125,6 @@ async function putEvenementCreation(body, id){
             etat: body.etat, 
             img_banniere: body.img_banniere,
             id_proprietaire: body.id_proprietaire,
-            id_participants: body.id_participants,
-            id_besoins: body.id_besoin
         }])
     } catch (err){
         console.log(err)
@@ -136,6 +135,7 @@ async function putEvenementCreation(body, id){
 
 async function getEvenementConsultation(id){
     let evenements = []
+    //titre image description 
     try{
         let rows = []
             // recupere les participants de l evenement

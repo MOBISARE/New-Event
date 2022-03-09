@@ -52,6 +52,39 @@ async function getStartRecuperation(id) {
     }
 }
 
+async function putResetMdp(id, token, newMdp) {
+    let compteUpdated;
+
+    try {
+        verifToken = await DB.query('SELECT token_id FROM recuperation WHERE id_compte = ?', [id])
+        console.log(verifToken)
+
+        let tokenIsCorrect = false;
+        verifToken.forEach(element => {
+            if (element.token_id == token) {
+                tokenIsCorrect = true;
+            }
+        });
+
+        if (!tokenIsCorrect || token == undefined) {
+            return -1
+        }
+
+        compteUpdated = await DB.query('UPDATE compte SET mot_de_passe = ? WHERE id_compte = ?', [newMdp, id])
+        console.log(compteUpdated)
+
+        if (compteUpdated == undefined) {
+            return -2
+        }
+
+    } catch (err) {
+        console.log(err)
+        return -1
+    }
+
+    return compteUpdated.changedRows;
+}
+
 function generate_token(length) {
     //edit the token allowed characters
     var a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".split("");
@@ -65,3 +98,4 @@ function generate_token(length) {
 
 module.exports.getStartRecuperation = getStartRecuperation
 module.exports.putStartRecuperation = putStartRecuperation
+module.exports.putResetMdp = putResetMdp
