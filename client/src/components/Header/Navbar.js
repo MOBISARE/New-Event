@@ -10,6 +10,9 @@ class Navbar extends React.Component {
         super(props);
         this.profilDropDown = React.createRef();
         this.notificationDropDown = React.createRef();
+
+        this.profilButton = React.createRef();
+        this.notificationButton = React.createRef();
     }
 
 
@@ -32,21 +35,21 @@ class Navbar extends React.Component {
                     </NavLink>
 
                     <div className='relative'>
-                        <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.profilDropDown.current.toggleActive();}}>
+                        <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.profilDropDown.current.toggleActive();}} ref={this.profilButton}>
                         <span className="material-icons text-4xl text-white">
                             person
                         </span>
                         </button>
-                        <ProfilDropDown ref={this.profilDropDown}/>
+                        <ProfilDropDown ref={this.profilDropDown} button={this.profilButton}/>
                     </div>
                     
                     <div className='relative'>
-                        <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.notificationDropDown.current.toggleActive();}}>
+                        <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.notificationDropDown.current.toggleActive();}} ref={this.notificationButton}>
                         <span className="material-icons text-4xl text-white">
                             notifications
                         </span>
                         </button>
-                        <NotificationDropDown ref={this.notificationDropDown} />
+                        <NotificationDropDown ref={this.notificationDropDown} button={this.notificationButton}/>
                     </div>
                 </div>
             </nav>
