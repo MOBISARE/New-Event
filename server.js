@@ -12,7 +12,7 @@ const port = 5000;
 //routage
 
 //***************modifier evenement**************************
-app.get('/api/evenement/modifier/:id', async(req, res) => {
+app.get('/api/evenement/modifier/:id', async (req, res) => {
     //parametre id
     let data = await cbEvenement.getEvenement(req.params.id)
     if (data == -1) res.sendStatus(500)
@@ -20,17 +20,16 @@ app.get('/api/evenement/modifier/:id', async(req, res) => {
     else res.json(data)
 })
 
-app.put('/api/evenement/modifier/:id', async(req, res) => {
+app.put('/api/evenement/modifier/:id', async (req, res) => {
     let result = await cbEvenement.putEvenementModification(req.body, req.params.id)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/evenement/modifier/' + req.params.id)
+    else res.sendStatus(200)
 })
-
 //*************************************************************
 
 //créer evenement
 //Je n'ai aucune idée de si ça marche 
-app.get('/api/evenement/creer/:id', async(req, res) => {
+app.get('/api/evenement/creer/:id', async (req, res) => {
     //parametre id
     console.log("bleg")
     let data = await cbEvenement.getEvenementCreation(req.params.body)
@@ -39,7 +38,7 @@ app.get('/api/evenement/creer/:id', async(req, res) => {
     else res.json(data)
 })
 
-app.put('/api/evenement/creer/:id', async(req, res) => {
+app.put('/api/evenement/creer/:id', async (req, res) => {
     let result = await cbCompte.putEvenementCreation(req.body, req.params.id)
     if (result == -1) res.sendStatus(500)
     else res.redirect('/api/compte/creer/' + req.params.id)
@@ -48,7 +47,7 @@ app.put('/api/evenement/creer/:id', async(req, res) => {
 
 // ***********Consulter ses événements******
 //Retourne les id des événements auquel participe un compte
-app.get('/api/evenement/consulter/:id', async(req, res) => {
+app.get('/api/evenement/consulter/:id', async (req, res) => {
     let data = await cbEvenement.getEvenementConsultation(req.params.id)
     if (data == -1) res.sendStatus(500)
     else if (data == -2) res.sendStatus(404)
@@ -59,7 +58,7 @@ app.get('/api/evenement/consulter/:id', async(req, res) => {
 app.get('/api/compte/connexion/:id', (req, res) => {
     //parametre id
     data = cbCompte.getCompteConnexion(req.params.id)
-        //envoie les donnees
+    //envoie les donnees
     console.log(data)
     res.json(data)
 })
@@ -67,57 +66,57 @@ app.get('/api/compte/connexion/:id', (req, res) => {
 app.post('/api/compte/connexion/:id', (req, res) => {
     //parametre id
     data = cbCompte.getCompteConnexion(req.body, req.params.id)
-        //envoie les donnees
+    //envoie les donnees
     console.log(data)
     res.json(data)
 })
 
 //********************modifier compte*************
-app.get('/api/compte/modifier/:id', async(req, res) => {
+app.get('/api/compte/modifier/:id', async (req, res) => {
     console.log("yop")
-        //parametre id
+    //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
 })
 
-app.put('/api/compte/modifier/:id', async(req, res) => {
-        let result = await cbCompte.putCompteModification(req.body, req.params.id)
-        if (result == -1) res.sendStatus(500)
-        else res.redirect('/api/compte/modifier/' + req.params.id)
-    })
-    //************************************************
+app.put('/api/compte/modifier/:id', async (req, res) => {
+    let result = await cbCompte.putCompteModification(req.body, req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/compte/modifier/' + req.params.id)
+})
+//************************************************
 
 
 //********************supprimer compte*************
-app.get('/api/compte/supprimer/:id', async(req, res) => {
+app.get('/api/compte/supprimer/:id', async (req, res) => {
     console.log("yop")
-        //parametre id
+    //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
 })
 
-app.put('/api/compte/supprimer/:id', async(req, res) => {
-        let result = await cbCompte.supprCompte(req.params.id)
-        if (result == -1) res.sendStatus(500)
-        else res.redirect('/api/compte/supprimer/' + req.params.id)
-    })
-    //************************************************
+app.put('/api/compte/supprimer/:id', async (req, res) => {
+    let result = await cbCompte.supprCompte(req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/compte/supprimer/' + req.params.id)
+})
+//************************************************
 
 //****************recup mot de passe**************
-app.get('/api/compte/recup/:id', async(req, res) => {
+app.get('/api/compte/recup/:id', async (req, res) => {
     //parametre id
     let data = await cbRecup.getStartRecuperation(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
 })
 
-app.put('/api/compte/recup/:id', async(req, res) => {
-        let result = await cbRecup.putStartRecuperation(req.params.id, "bleg") //A changer en fonction de la gestion front
-        if (result == -1) res.sendStatus(500)
-    })
-    //************************************************
+app.put('/api/compte/recup/:id', async (req, res) => {
+    let result = await cbRecup.putStartRecuperation(req.params.id, "bleg") //A changer en fonction de la gestion front
+    if (result == -1) res.sendStatus(500)
+})
+//************************************************
 
 //****************changement mot de passe**************
 /*app.get('/api/compte/recup/:id/:token', async(req, res) => {
@@ -127,15 +126,15 @@ app.put('/api/compte/recup/:id', async(req, res) => {
     else res.json(data)
 })*/
 
-app.put('/api/compte/recup/:id/:token', async(req, res) => {
-        let result = await cbRecup.putResetMdp(req.params.id, req.params.token, req.body)
-        if (result == -1) res.sendStatus(500)
-        else res.redirect('/api/compte/recup/' + req.params.id)
-    })
-    //************************************************
+app.put('/api/compte/recup/:id/:token', async (req, res) => {
+    let result = await cbRecup.putResetMdp(req.params.id, req.params.token, req.body)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/compte/recup/' + req.params.id)
+})
+//************************************************
 
 
-
+//********************* inscription ***************************
 app.post('/api/compte/inscription', async (req, res) => {
 
     let data = await cbCompte.postInscription(
@@ -152,5 +151,6 @@ app.post('/api/compte/inscription', async (req, res) => {
     else if (data == -2) res.sendStatus(500)
     else res.sendStatus(200)
 })
+//**************************************************************** */
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
