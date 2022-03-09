@@ -1,8 +1,9 @@
 const { DB } = require("./db")
+const crypto = require("./cryptographie")
 
 function getCompteConnexion(id) { //Recupere les donnees de l'utilisateur
     var res = []
-    DB.query('SELECT * FROM `compte`', function(error, results, fields) {
+    DB.query('SELECT * FROM `compte`', function (error, results, fields) {
         if (error) throw error
         res = results[0]
     })
@@ -10,21 +11,34 @@ function getCompteConnexion(id) { //Recupere les donnees de l'utilisateur
     return res
 }
 
-function inscription(nom, prenom, email, motDePasse, dateDeNaissance, ville, telephone = null, photoProfil = null) {
-    DB.query('SELECT count(*) FROM `compte` WHERE email = ?', function(error, results, fields) {
-        if (results >= 1) throw error
-        else DB.query('INSERT INTO compte SET ?', {
-            nom: nom,
-            prenom: prenom,
-            email: email,
-            mot_de_passe: motDePasse,
-            naissance: dateDeNaissance,
-            ville: ville,
-            no_telephone: telephone,
-            img_profile: photoProfil
-        })
-    })
+async function postInscription(nom, prenom, email, motDePasse, dateDeNaissance, ville, departement, telephone = null, photoProfil = null) {
+
+    let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', email)
+    if (result[0].nb != 0) return -1
+    else {
+        try {
+            let mdp = await crypto.hasherMotDePasse(motDePasse)
+            result = await DB.query('INSERT INTO compte SET ?', {
+                nom: nom,
+                prenom: prenom,
+                email: email,
+                mot_de_passe: mdp,
+                naissance: dateDeNaissance,
+                ville: ville,
+                departement: departement,
+                no_telephone: telephone,
+                img_profil: photoProfil,
+                role: "ROLE_USER"
+            })
+        } catch (err) {
+            console.log(err)
+            return -2
+        }
+
+        return result.changedRows
+    }
 }
 
-module.exports.inscription = inscription;
+
+module.exports.postInscription = postInscription;
 module.exports.getCompteConnexion = getCompteConnexion;
