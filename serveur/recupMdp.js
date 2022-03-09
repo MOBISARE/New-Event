@@ -17,9 +17,9 @@ async function putStartRecuperation(id, lien) {
         //token de la 
         let tokenStr = generate_token(20);
 
-        token = DB.query('INSERT INTO recuperation(token_id, id_compte) VALUES (?, ?)', [tokenStr, id]);
+        token = await DB.query('INSERT INTO recuperation(token_id, id_compte) VALUES (?, ?)', [tokenStr, id]);
 
-        email = DB.query('SELECT email FROM compte WHERE id_compte = ?', [id]);
+        email = await DB.query('SELECT email FROM compte WHERE id_compte = ?', [id]);
         email = email[0];
         sendEmail(email.email, "recup mdp", "lien et tout tmtc: " + lien); //A completer avec la forme voulue
 
