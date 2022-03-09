@@ -2,6 +2,7 @@ import React from 'react'
 
 import UserMini from '../components/UserMini'
 import NeedList from '../components/NeedList'
+import ParticipantViewer from '../components/Event/ParticipantViewer'
 
 let evt = {
     id:1,
@@ -18,6 +19,8 @@ class Event extends React.Component {
     constructor(props) {
         super(props);
         this.state = evt
+        this.participantBtn = React.createRef();
+        this.participantViewer = React.createRef();
     }
 
     render(){
@@ -60,13 +63,14 @@ class Event extends React.Component {
                             </div>
                             <div className='my-2'>
                                 Participants
-                                <div className='ml-10'>
-                                    <span className='flex items-center'>
+                                <div className='ml-10 relative'>
+                                    <span className='flex items-center' ref={this.participantBtn} onClick={() => {this.participantViewer.current.toggleActive()}}>
                                         <span className="material-icons md-18 mr-1">
                                             people
                                         </span>
                                         { this.state.membersNumber }
                                     </span>
+                                    <ParticipantViewer ref={this.participantViewer} button={this.participantBtn}/>
                                 </div>
                             </div>
                         </div>
