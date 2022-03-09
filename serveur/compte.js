@@ -3,23 +3,15 @@ const { DB } = require("./db")
 const crypto = require("./cryptographie")
 const fs = require("fs")
 
-async function getCompteConnexion(req, id) { //Recupere les donnees de l'utilisateur
-    var res = []
+async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'utilisateur
+
     let result
     try {
-        //Récupérer résultat du formulaire
-        console.log(req.body)
-
-
-        //Comparer aux données de la base
-        result = await DB.query('SELECT email, mot_de_passe FROM compte WHERE id_compte = ?', [req.body.id_compte])
-        res = result[0]
-        if ((req.body.email == result.email) && (req.body.mot_de_passe == result.mot_de_passe)) {
-            console.log(res)
-            return res
-        } else {
-            res = NULL;
-            return res;
+        result = await DB.query('SELECT email, mot_de_passe FROM compte WHERE email = ?', email)
+        
+        if ((email == result.email) && verifierMotDePasse(mdp, result.mot_de_passe)) {
+            console.log(result)
+            return result
         }
     } catch (err) {
         console.log(err)
