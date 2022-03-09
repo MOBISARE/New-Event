@@ -5,6 +5,13 @@ USER = "new.event.mail@gmail.com";
 PASS = "BlegusMogus";
 SERVICE = "google.com";
 
+
+/**
+ * Envoie un email à partir de USER
+ * @param {*} email email du receveur
+ * @param {*} subject sujet du mail
+ * @param {*} text corps du mail
+ */
 const sendEmail = async(email, subject, text) => {
 
     let testAccount = await nodemailer.createTestAccount();
