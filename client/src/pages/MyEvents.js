@@ -14,7 +14,7 @@ let fakeEvents = [
         endDate:"31/08/2020"
     },
     {
-        id:1,
+        id:2,
         title:"Titre d'événement",
         description:"Description de cet événement",
         imgUrl:"/images/icon.png",
@@ -36,9 +36,10 @@ let fakeEvents = [
 ]
 class MyEvents extends React.Component {
     render(){
-        const myevents = [fakeEvents[0]].map(value =>
+        const myevents = [fakeEvents[0], fakeEvents[1]].map(value =>
             <EventCard
                 key={value.id}
+                id={value.id}
                 title={value.title}
                 description={value.description}
                 imgUrl={value.imgUrl}
@@ -48,9 +49,10 @@ class MyEvents extends React.Component {
                 endDate={value.endDate}
             />
         )
-        const mycontributing = [fakeEvents[1], fakeEvents[2]].map(value =>
+        const mycontributing = [fakeEvents[2]].map(value =>
             <EventCard
                 key={value.id}
+                id={value.id}
                 title={value.title}
                 description={value.description}
                 imgUrl={value.imgUrl}
@@ -63,7 +65,7 @@ class MyEvents extends React.Component {
 
         return(
             <div>
-                <div className='pt-6'>
+                <div>
                     <span className='text-3xl mr-2'>Mes événements</span>
                     <Link to='/creer-evenement'>
                         <span className="material-icons">
@@ -71,7 +73,7 @@ class MyEvents extends React.Component {
                     </span>
                     </Link>
                     <hr/>
-                    <div>
+                    <div className='flex flex-wrap flex-row'>
                         { myevents }
                     </div>
                 </div>

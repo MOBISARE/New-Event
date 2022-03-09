@@ -33,6 +33,6 @@ const sendEmail = async(email, subject, text) => {
     }
 };
 
-sendEmail("lespagnolcesttropbien@gmail.com", "TestJs", "Pitié que ça fonctionne");
+//sendEmail("lespagnolcesttropbien@gmail.com", "TestJs", "Pitié que ça fonctionne");
 
 module.exports = sendEmail;

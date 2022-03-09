@@ -1,8 +1,19 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import NotificationDropDown from './NotificationDropDown';
+import ProfilDropDown from './ProfilDropDown';
 
 
 class Navbar extends React.Component {
+
+    constructor(props){
+        super(props);
+        this.profilDropDown = React.createRef();
+        this.notificationDropDown = React.createRef();
+
+        this.profilButton = React.createRef();
+        this.notificationButton = React.createRef();
+    }
 
 
     render(){
@@ -24,38 +35,21 @@ class Navbar extends React.Component {
                     </NavLink>
 
                     <div className='relative'>
-                        <button className='bg-darkgray rounded-lg w-10 h-10'
-                                onClick={ () => {
-                                    document.getElementById('dropdown-account').toggleAttribute("hidden")
-                                    document.getElementById('dropdown-notifications').hidden = true
-                                }}>
+                        <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.profilDropDown.current.toggleActive();}} ref={this.profilButton}>
                         <span className="material-icons text-4xl text-white">
                             person
                         </span>
                         </button>
-                        <div id='dropdown-account' className='text-left bg-white absolute right-0 drop-shadow-2xl border' hidden>
-                            <h6 className='px-3 mt-2 hover:bg-gray'>Mon profil</h6>
-                            <Link to='/mes-evenements' className='inline-block h-6 px-3 mb-1 whitespace-nowrap hover:bg-gray'>Mes événements</Link>
-                            <hr className='m-1'/>
-                            <h6 className='px-3 mt-1 mb-2 hover:bg-gray'>Déconnexion</h6>
-                        </div>
+                        <ProfilDropDown ref={this.profilDropDown} button={this.profilButton}/>
                     </div>
                     
                     <div className='relative'>
-                        <button className='bg-darkgray rounded-lg w-10 h-10'
-                                onClick={ () => {
-                                    document.getElementById('dropdown-notifications').toggleAttribute("hidden")
-                                    document.getElementById('dropdown-account').hidden = true
-                                }}
-
-                        >
+                        <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.notificationDropDown.current.toggleActive();}} ref={this.notificationButton}>
                         <span className="material-icons text-4xl text-white">
                             notifications
                         </span>
                         </button>
-                        <div id='dropdown-notifications' className='text-left bg-white absolute right-0 drop-shadow-2xl border' hidden>
-                            test
-                        </div>
+                        <NotificationDropDown ref={this.notificationDropDown} button={this.notificationButton}/>
                     </div>
                 </div>
             </nav>

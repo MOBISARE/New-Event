@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios'
 
 import FormButton from '../../components/FormButton';
 import InputField from '../../components/InputField'
@@ -9,6 +10,24 @@ class Login extends React.Component {
     handleLogin = (e) => {
         e.preventDefault();
         console.log(e);
+
+
+
+        axios({
+            method:"post",
+            url:"/user/login",
+            withCredentials: true,
+            data: {
+                email: document.getElementById('email').value,
+                password: document.getElementById('mdp').value
+            }
+        })
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
     
     render(){

@@ -75,6 +75,7 @@ async function getEvenementCreation(id) {
     let lastEvent;
     try {
         lastEvent = DB.query('SELECT MAX(evenement.id_evenement) FROM evenement')
+        lastEvent = lastEvent[0]
         console.log("0")
     } catch (err) {
         console.log(err)
@@ -133,7 +134,25 @@ async function putEvenementCreation(body, id) {
     return result.changedRows
 }
 
+async function getEvenementConsultation(id){
+    let evenements = []
+    try{
+        let rows = []
+            // recupere les participants de l evenement
+            rows = await DB.query('SELECT id_evenement FROM participant WHERE id_compte = ?', [id])
+            rows.forEach(e => {
+                evenements.push(e.id_evenement)
+            })
+    } catch (err){
+        console.log(err)
+        return -1
+    }
+    if (evenements.length == 0) return -2
+    else return evenements
+}
+
 module.exports.getEvenement = getEvenement
 module.exports.putEvenementModification = putEvenementModification
 module.exports.getEvenementCreation = getEvenementCreation
 module.exports.putEvenementCreation = putEvenementCreation
+module.exports.getEvenementConsultation = getEvenementConsultation
