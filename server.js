@@ -1,4 +1,4 @@
-const cbEvenement = require("./serveur/evenement")  //callback evenement
+const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
 
 const express = require('express')
@@ -107,5 +107,22 @@ app.put('/api/compte/supprimer/:id', async (req, res) => {
 //************************************************
 
 
+
+app.post('/api/compte/inscription', async (req, res) => {
+
+    let data = await cbCompte.postInscription(
+        req.body.nom,
+        req.body.prenom,
+        req.body.email,
+        req.body.mot_de_passe,
+        req.body.naissance,
+        req.body.ville,
+        req.body.departement,
+        req.body.no_telephone,
+        req.body.img_profil)
+    if (data == -1) res.status(500).send("email already exists")
+    else if (data == -2) res.sendStatus(500)
+    else res.sendStatus(200)
+})
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
