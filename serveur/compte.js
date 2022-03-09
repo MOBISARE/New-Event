@@ -1,8 +1,9 @@
 const { NULL } = require("mysql/lib/protocol/constants/types")
 const { DB } = require("./db")
 const crypto = require("./cryptographie")
+const fs = require("fs")
 
-function getCompteConnexion(id) { //Recupere les donnees de l'utilisateur
+async function getCompteConnexion(req, id) { //Recupere les donnees de l'utilisateur
     var res = []
     let result
     try {
@@ -16,13 +17,11 @@ function getCompteConnexion(id) { //Recupere les donnees de l'utilisateur
         if ((req.body.email == result.email) && (req.body.mot_de_passe == result.mot_de_passe)) {
             console.log(res)
             return res
-        }
-        else {
+        } else {
             res = NULL;
             return res;
         }
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err)
         return -1
     }
@@ -36,10 +35,10 @@ async function getCompte(id) {
         compte = compte[0]
     } catch (err) {
         console.log(err)
-        return -1           // erreur lors de l execution de la requete (500)
+        return -1 // erreur lors de l execution de la requete (500)
     }
 
-    if (compte == undefined) return -2       // evenement inconnu (404)
+    if (compte == undefined) return -2 // evenement inconnu (404)
     else return {
         id_compte: compte.id_compte,
         email: compte.email,
@@ -60,14 +59,15 @@ async function getCompte(id) {
 //modifier le compte
 async function putCompteModification(body, id) {
     let result = 0
+    var stringBody = JSON.stringify(body)
+    var objectValue = JSON.parse(stringBody)
     try {
-        result = DB.query('UPDATE compte SET ? WHERE id_compte = ?', [{
-            email: body.email, mot_de_passe: body.mot_de_passe, prenom: body.prenom, nom: body.nom, naissance: body.naissance, ville: body.ville, departement: body.departement,
-            no_telephone: body.no_telephone, role: body.role, etat: body.etat, img_profil: body.img_profil, notif_email: body.notif_email
-        }, id])
+        Object.keys(body).forEach(function (key) {
+            result = DB.query('UPDATE compte SET ' + key + ' = ? WHERE id_compte = ?', [objectValue[key], id])
+        })
     } catch (err) {
         console.log(err)
-        return -1           // erreur lors de l execution de la requete (500)
+        return -1 // erreur lors de l execution de la requete (500)
     }
     return result.changedRows
 }
@@ -82,7 +82,6 @@ async function supprCompte(id) {
         return -1 //erreur lors de l execution de la requete (500)
     }
 }
-
 
 async function postInscription(nom, prenom, email, motDePasse, dateDeNaissance, ville, departement, telephone = null, photoProfil = null) {
 
