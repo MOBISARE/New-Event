@@ -34,9 +34,10 @@ async function getStartRecuperation(id) {
     let token = 0;
 
     try {
-        token = DB.query('SELECT * FROM recuperation WHERE id_compte = ?', [id])
+        token = await DB.query('SELECT * FROM recuperation WHERE id_compte = ?', [id])
 
-        token = token[0]
+        token = token[token.length - 1]
+        console.log(token)
     } catch (err) {
         console.log(err)
         return -1
