@@ -55,18 +55,16 @@ app.get('/api/evenement/consulter/:id', async (req, res) => {
 })
 
 //se connecter
-app.get('/api/compte/connexion/:id', (req, res) => {
-    //parametre id
-    data = cbCompte.getCompteConnexion(req.params.id)
-    //envoie les donnees
+app.get('/api/compte/connexion', async (req, res) => {
+    let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
+
     console.log(data)
     res.json(data)
 })
 
-app.post('/api/compte/connexion/:id', (req, res) => {
-    //parametre id
-    data = cbCompte.getCompteConnexion(req.body, req.params.id)
-    //envoie les donnees
+app.post('/api/compte/connexion', async (req, res) => {
+    let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
+
     console.log(data)
     res.json(data)
 })
