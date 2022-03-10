@@ -14,7 +14,6 @@ class Register extends React.Component {
         console.log(e);
 
         try {
-            
             let res = await axios({
                 method: "get",
                 url:"https://geo.api.gouv.fr/communes",
