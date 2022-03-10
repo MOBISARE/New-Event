@@ -55,6 +55,20 @@ app.get('/api/evenement/consulter/:id', async (req, res) => {
     else res.json(data)
 })
 
+//***************Supprimer événements ***********/
+app.get('/api/evenement/supprimer/:id', async (req, res) => {
+    //parametre id
+    let data = await cbEvenement.getEvenement(req.params.id)
+    if (data == -1) res.sendStatus(500)
+    else res.json(data)
+})
+
+app.put('/api/evenement/supprimer/:id', async (req, res) => {
+    let result = await cbEvenement.supprEvenement(req.params.id)
+    if (result == -1) res.sendStatus(500)
+    else res.redirect('/api/evenement/supprimer/' + req.params.id)
+})
+
 //se connecter
 app.get('/api/compte/connexion', async (req, res) => {
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)

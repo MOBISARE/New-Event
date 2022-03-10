@@ -89,7 +89,7 @@ async function getEvenementCreation(id) {
         debut: null,
         fin: null,
         archivage: null,
-        etat: null,
+        etat: 0,
         img_banniere: null,
         id_proprietaire: null,
         id_participants: null,
@@ -103,7 +103,7 @@ async function getEvenementCreation(id) {
         debut: null,
         fin: null,
         archivage: null,
-        etat: null,
+        etat: 0,
         img_banniere: null,
         id_proprietaire: null,
         id_participants: null,
@@ -122,7 +122,7 @@ async function putEvenementCreation(body, id) {
             debut: body.debut,
             fin: body.fin,
             archivage: body.archivage,
-            etat: body.etat,
+            etat: 0,
             img_banniere: body.img_banniere,
             id_proprietaire: body.id_proprietaire,
         }])
@@ -151,14 +151,15 @@ async function getIdEvenementConsultation(id){
     else return evenements
 }
 
-async function getInfoEvenementConsultation(id){
-    let infos;
-    try{
-        infos = await DB.query("SELECT * FROM evenement WHERE id_evenement=?", id)
-    } catch(err){
-        return -1
+
+async function supprEvenement(id){
+    let result = 0
+    try {
+        result = DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id])
+    } catch (err) {
+        console.log(err)
+        return -1 //erreur lors de l execution de la requete (500)
     }
-    return infos
 }
 
 module.exports.getEvenement = getEvenement
@@ -166,4 +167,4 @@ module.exports.putEvenementModification = putEvenementModification
 module.exports.getEvenementCreation = getEvenementCreation
 module.exports.putEvenementCreation = putEvenementCreation
 module.exports.getEvenementConsultation = getIdEvenementConsultation
-module.exports.getInfoEvenementConsultation = getInfoEvenementConsultation
+module.exports.supprEvenement = supprEvenement
