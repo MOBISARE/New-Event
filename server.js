@@ -141,20 +141,20 @@ app.put('/api/compte/recup/:id/:token', async (req, res) => {
 //********************* inscription ***************************
 app.post('/api/compte/inscription', async (req, res) => {
 
-    let data = await cbCompte.postInscription(
-        req.body.nom,
-        req.body.prenom,
-        req.body.email,
-        req.body.mot_de_passe,
-        req.body.naissance,
-        req.body.ville,
-        req.body.departement,
-        req.body.no_telephone,
-        req.body.img_profil)
-    if (data == -1) res.status(500).send("email already exists")
-    else if (data == -2) res.sendStatus(500)
-    else res.sendStatus(200)
-})
-//**************************************************************** */
+        let data = await cbCompte.postInscription(
+            req.body.nom,
+            req.body.prenom,
+            req.body.email,
+            req.body.mot_de_passe,
+            req.body.naissance,
+            req.body.ville,
+            req.body.departement,
+            req.body.no_telephone,
+            req.body.img_profil)
+        if (data == -1) res.status(400).send("email already exists")
+        else if (data == -2) res.sendStatus(500)
+        else res.sendStatus(200)
+    })
+    //**************************************************************** */
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
