@@ -1,20 +1,47 @@
 const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
 const cbRecup = require("./serveur/recupMdp")
+
+require('dotenv').config({path: './config/.env'});
+const cors = require('cors');
+
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
 const session = require('express-session')
 const express = require('express')
 const { NULL } = require("mysql/lib/protocol/constants/types")
 
+const {checkUser, requireAuth} = require('./middleware/auth.middleware');
+
 const app = express()
+
+const corsOptions = {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    'allowedHeaders': ['sessionId', 'Content-Type'],
+    'exposedHeaders': ['sessionId'],
+    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'preflightContinue': false
+}
+app.use(cors(corsOptions));
+
+
 app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true,
     cookie: {}
 }));
+app.use(cookieParser());
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 const port = 5000;
+
+app.get('*', checkUser);
+app.get('/api/jwtid', requireAuth, (req, res) => {
+  res.sendStatus(200);
+});
 
 //routage
 
@@ -65,19 +92,24 @@ app.put('/api/evenement/supprimer/:id', async (req, res) => {
     else res.redirect('/api/evenement/supprimer/' + req.params.id)
 })
 
+const maxAge = 3 * 24 * 60 * 60 * 1000;
+const createToken = (id) => {
+    return jwt.sign({id}, process.env.TOKEN_SECRET, {
+      expiresIn: maxAge
+    })
+};
+
+
 //se connecter
 app.post('/api/compte/connexion', async (req, res) => {
-    console.log(req.body);
+
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
     if (data == -1) res.status(404).send("Adresse mail/mot de passe incorrect")
     else if (data == -2) res.sendStatus(500)
     else {
-        console.log(data)
-        req.session.loggedin = true;
-        req.session.email = data.email;
-        req.session.uid = data.id_compte;
-        console.log(req.session);
-        res.sendStatus(200)
+        const token = createToken(data.id_compte);
+        res.cookie('jwt', token, { httpOnly: true, maxAge});
+        res.sendStatus(200);
     }
 })
 

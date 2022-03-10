@@ -3,6 +3,7 @@ const DB = require("./db").DB
 const crypto = require("./cryptographie")
 const fs = require("fs")
 
+
 async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'utilisateur
 
     let result
@@ -25,7 +26,7 @@ async function getCompte(id) {
     let compte;
     try {
         // recupere les informations du compte
-        compte = DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
+        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
         compte = compte[0]
     } catch (err) {
         console.log(err)

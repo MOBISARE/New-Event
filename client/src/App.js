@@ -22,7 +22,7 @@ class App extends React.Component {
     constructor(props){
         super(props);
 
-        this.uid = {};
+        this.state = {uid:''};
     }
 
     async componentDidMount() {
@@ -32,8 +32,8 @@ class App extends React.Component {
                 url: `/api/jwtid`,
                 withCredentials: true,
             })
-            
-            this.setUid(res.data);
+            console.log(res.data);
+            this.setState({uid : res.data});
         }
         catch(err){
             console.log(err);
@@ -45,7 +45,7 @@ class App extends React.Component {
     }
 
     render() {
-        if (!this.uid) {
+        if (this.state.uid === '') {
             return (
                 <UidContext.Provider value={this.uid}>
                 <Routes>
