@@ -28,20 +28,10 @@ app.put('/api/evenement/modifier/:id', async (req, res) => {
 //*************************************************************
 
 //créer evenement
-//Je n'ai aucune idée de si ça marche 
-app.get('/api/evenement/creer/:id', async (req, res) => {
-    //parametre id
-    console.log("bleg")
-    let data = await cbEvenement.getEvenementCreation(req.params.body)
-
-    if (data == -1) res.sendStatus(500)
-    else res.json(data)
-})
-
 app.put('/api/evenement/creer/:id', async (req, res) => {
-    let result = await cbCompte.putEvenementCreation(req.body, req.params.id)
+    let result = await cbCompte.putEvenementCreation(req.body)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/compte/creer/' + req.params.id)
+    else res.json(result)
 })
 
 // *********** Afficher un événement ***********************

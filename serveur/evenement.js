@@ -72,50 +72,11 @@ async function putEvenementModification(body, id) {
     return result.changedRows
 }
 
-async function getEvenementCreation(id) {
-    let lastEvent;
-    try {
-        lastEvent = DB.query('SELECT MAX(evenement.id_evenement) FROM evenement')
-        lastEvent = lastEvent[0]
-        console.log("0")
-    } catch (err) {
-        console.log(err)
-    }
-    if (lastEvent == undefined) return { //Si c'est le premier événement à être créé
-        id: 0,
-        titre: null,
-        description: null,
-        departement: null,
-        debut: null,
-        fin: null,
-        archivage: null,
-        etat: 0,
-        img_banniere: null,
-        id_proprietaire: null,
-        id_participants: null,
-        id_besoins: null
-    }
-    else return {
-        id: lastEvent + 1,
-        titre: null,
-        description: null,
-        departement: null,
-        debut: null,
-        fin: null,
-        archivage: null,
-        etat: 0,
-        img_banniere: null,
-        id_proprietaire: null,
-        id_participants: null,
-        id_besoins: null
-    }
-}
 
-async function putEvenementCreation(body, id) {
+async function putEvenementCreation(body) {
     let result = 0
     try {
         result = await DB.query('INSERT INTO evenement SET ?', [{
-            id_evenement: id,
             titre: body.titre,
             description: body.description,
             departement: body.departement,
@@ -164,7 +125,6 @@ async function supprEvenement(id){
 
 module.exports.getEvenement = getEvenement
 module.exports.putEvenementModification = putEvenementModification
-module.exports.getEvenementCreation = getEvenementCreation
 module.exports.putEvenementCreation = putEvenementCreation
 module.exports.getEvenementConsultation = getIdEvenementConsultation
 module.exports.supprEvenement = supprEvenement
