@@ -1,5 +1,5 @@
 const { NULL } = require("mysql/lib/protocol/constants/types")
-const { DB } = require("./db")
+const DB = require("./db").DB
 const crypto = require("./cryptographie")
 const fs = require("fs")
 
@@ -7,9 +7,9 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
 
     let result
     try {
-        result = await DB.query('SELECT email, mot_de_passe FROM compte WHERE email = ?', email)
-        
-        if ((email == result.email) && verifierMotDePasse(mdp, result.mot_de_passe)) {
+        result = await DB.query('SELECT email, mot_de_passe FROM compte WHERE email = ?', [email])
+        result = result[0]
+        if ((email == result.email) && crypto.verifierMotDePasse(mdp, result.mot_de_passe)) {
             console.log(result)
             return result
         }
@@ -18,6 +18,8 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
         return -1
     }
 }
+
+getCompteConnexion("test@test.fr", "FUCKINGPASSWORD");
 
 async function getCompte(id) {
     let compte;
