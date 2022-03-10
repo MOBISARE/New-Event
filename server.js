@@ -157,7 +157,7 @@ app.put('/api/compte/recup/:id', async(req, res) => {
 
 //****************changement mot de passe**************
 app.put('/api/compte/recup/:id/:token', async(req, res) => {
-        let result = await cbRecup.putResetMdp(req.params.id, req.params.token, req.body.newMdp)
+        let result = await cbRecup.putResetMdp(req.params.id, req.params.token, req.body)
         if (result == -1) res.sendStatus(500)
         else res.sendStatus(200)
     })
