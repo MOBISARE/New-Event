@@ -1,5 +1,6 @@
 const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
+const cbBesoin = require("./serveur/besoin");
 const cbRecup = require("./serveur/recupMdp")
 const session = require('express-session')
 const express = require('express')
@@ -39,7 +40,7 @@ app.put('/api/evenement/modifier/:id', async(req, res) => {
     //*************************************************************
 
 //créer evenement
-app.post('/api/evenement/creer', async (req, res) => {
+app.post('/api/evenement/creer', async(req, res) => {
     let result = await cbEvenement.putEvenementCreation(
         req.body.titre,
         req.body.description,
@@ -49,9 +50,9 @@ app.post('/api/evenement/creer', async (req, res) => {
         req.body.archivage,
         req.body.etat,
         req.body.img_banniere,
-        req.body.id_proprietaire)
+        req.session.uid)
     if (result == -1) res.sendStatus(500)
-    else res.json(result)
+    else res.sendStatus(200)
 })
 
 // *********** Afficher un événement ***********************
@@ -72,10 +73,11 @@ app.get('/api/evenement/consulter/:id', async(req, res) => {
         else res.json(data)
     })
     // **********Supprimer événement **************
-app.put('/api/evenement/supprimer/:id', async(req, res) => {
-    let result = await cbEvenement.supprEvenement(req.params.id)
+app.put('/api/evenement/supprimer', async(req, res) => {
+    let result = await cbEvenement.supprEvenement(req.body.id_evenement, req.session.uid)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/evenement/supprimer/' + req.params.id)
+    else if (result == -2) res.status(404).send("Le compte n'est pas propriétaire")
+    else res.sendStatus(200)
 })
 
 //se connecter
@@ -181,5 +183,30 @@ app.post('/api/compte/inscription', async(req, res) => {
         else res.sendStatus(200)
     })
     //**************************************************************** */
+
+//********************* besoins ***************************
+app.post('/api/evenement/:id/besoin/creer', async(req, res) => {
+
+    let data = await cbBesoin.postAjouterBesoin(req.params.id, req.body)
+    if (data == -1) res.status(400)
+    else res.sendStatus(200)
+})
+
+app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async(req, res) => {
+
+    let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
+    if (data == -1) res.status(400)
+    else res.sendStatus(200)
+})
+
+app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async(req, res) => {
+
+        let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
+        if (data == -1) res.status(400)
+        else if (data == -2) res.status(401)
+        else res.sendStatus(200)
+    })
+    //**************************************************************** */
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

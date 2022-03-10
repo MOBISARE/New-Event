@@ -2,7 +2,6 @@ const DB = require("./db").DB
 var async = require('async')
 
 async function getEvenement(id) {
-    console.log(id)
     let evenement;
     let participants = []
     let besoins = []
@@ -22,9 +21,18 @@ async function getEvenement(id) {
         })
 
         // recupere les besoins de l evenement
-        rows = await DB.query('SELECT id_besoin FROM besoin WHERE id_evenement = ?', [id])
+        // nom prenom id participant
+        rows = await DB.query('SELECT id_besoin, description, id_participant, nom, prenom' +
+            ' FROM besoin INNER JOIN compte ON besoin.id_participant=compte.id_compte WHERE id_evenement = ?', [id])
+
         rows.forEach(e => {
-            besoins.push(e.id_besoin)
+            besoins.push({
+                id_besoin: e.id_besoin,
+                description: e.description,
+                id_participant: e.id_participant,
+                nom_participant: e.nom,
+                prenom_participant: e.prenom
+            })
         })
     } catch (err) {
         console.log(err)
@@ -44,7 +52,7 @@ async function getEvenement(id) {
         img_banniere: evenement.img_banniere,
         id_proprietaire: evenement.id_proprietaire,
         id_participants: participants,
-        id_besoins: besoins
+        besoins: besoins
     }
 }
 
@@ -73,7 +81,7 @@ async function putEvenementModification(body, id) {
 }
 
 
-async function putEvenementCreation(titre, description, departement, debut, fin, archivage, etat, img_banniere, id_proprietaire) {
+async function putEvenementCreation(titre, description, departement, debut, fin, archivage, etat = 0, img_banniere, id_proprietaire) {
     let result = 0
     try {
         result = await DB.query('INSERT INTO evenement SET ?', {
@@ -83,7 +91,7 @@ async function putEvenementCreation(titre, description, departement, debut, fin,
             debut: debut,
             fin: fin,
             archivage: archivage,
-            etat: 0,
+            etat: etat,
             img_banniere: img_banniere,
             id_proprietaire: id_proprietaire,
         })
@@ -94,17 +102,17 @@ async function putEvenementCreation(titre, description, departement, debut, fin,
     return result.changedRows
 }
 
-async function getIdEvenementConsultation(id){
+async function getIdEvenementConsultation(id) {
     let evenements = []
     //titre image description 
     try {
         let rows = []
-            // recupere les participants de l evenement
-            rows = await DB.query('SELECT e.id_evenement, e.titre, e.description, e.departement, e.debut, e.fin, e.img_banniere FROM evenement e, participant p WHERE e.id_evenement=p.id_evenement AND p.id_compte=?', [id])
-            rows.forEach(e => {
-                evenements.push(e)
-            })
-    } catch (err){
+        // recupere les participants de l evenement
+        rows = await DB.query('SELECT e.id_evenement, e.titre, e.description, e.departement, e.debut, e.fin, e.img_banniere FROM evenement e, participant p WHERE e.id_evenement=p.id_evenement AND p.id_compte=?', [id])
+        rows.forEach(e => {
+            evenements.push(e)
+        })
+    } catch (err) {
         console.log(err)
         return -1
     }
@@ -113,14 +121,18 @@ async function getIdEvenementConsultation(id){
 }
 
 
-async function supprEvenement(id){
+async function supprEvenement(id_evenement, id_compte){
     let result = 0
-    try {
-        result = DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id])
-    } catch (err) {
-        console.log(err)
-        return -1 //erreur lors de l execution de la requete (500)
-    }
+    let id_proprietaire = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
+    id_proprietaire = id_proprietaire[0].id_proprietaire
+    if (id_proprietaire == id_compte){
+        try {
+            result = await DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id_evenement])
+        } catch (err) {
+            console.log(err)
+            return -1 //erreur lors de l execution de la requete (500)
+        }
+    } else return -2
 }
 
 module.exports.getEvenement = getEvenement
