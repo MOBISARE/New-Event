@@ -157,7 +157,7 @@ app.put('/api/compte/recup/:id', async(req, res) => {
 
 //****************changement mot de passe**************
 app.put('/api/compte/recup/:id/:token', async(req, res) => {
-        let result = await cbRecup.putResetMdp(req.params.id, req.params.token, req.body)
+        let result = await cbRecup.putResetMdp(req.params.id, req.params.token, req.body.newMdp)
         if (result == -1) res.sendStatus(500)
         else res.sendStatus(200)
     })
@@ -193,8 +193,16 @@ app.post('/api/evenement/:id/besoin/creer', async(req, res) => {
 
 app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async(req, res) => {
 
-        let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
+    let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
+    if (data == -1) res.status(400)
+    else res.sendStatus(200)
+})
+
+app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async(req, res) => {
+
+        let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
         if (data == -1) res.status(400)
+        else if (data == -2) res.status(401)
         else res.sendStatus(200)
     })
     //**************************************************************** */
