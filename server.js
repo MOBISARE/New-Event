@@ -1,5 +1,6 @@
 const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
+const cbBesoin = require("./serveur/besoin");
 const cbRecup = require("./serveur/recupMdp")
 
 require('dotenv').config({path: './config/.env'});
@@ -11,6 +12,11 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session')
 const express = require('express')
 const { NULL } = require("mysql/lib/protocol/constants/types")
+const { sendStatus } = require("express/lib/response")
+const path = require("path")
+const multer = require('multer')
+const upload = multer({ dest: './images' })
+const fs = require("fs")
 
 const {checkUser, requireAuth} = require('./middleware/auth.middleware');
 
@@ -31,7 +37,10 @@ app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true,
-    cookie: {}
+    cookie: {},
+    loggedin: false,
+    email: undefined,
+    uid: undefined
 }));
 app.use(cookieParser());
 app.use(express.json()) // for parsing application/json
@@ -62,10 +71,19 @@ app.put('/api/evenement/modifier/:id', async (req, res) => {
 //*************************************************************
 
 //créer evenement
-app.put('/api/evenement/creer/:id', async (req, res) => {
-    let result = await cbEvenement.putEvenementCreation(req.body)
+app.post('/api/evenement/creer', async (req, res) => {
+    let result = await cbEvenement.putEvenementCreation(
+        req.body.titre,
+        req.body.description,
+        req.body.departement,
+        req.body.debut,
+        req.body.fin,
+        req.body.archivage,
+        req.body.etat,
+        req.body.img_banniere,
+        req.session.uid)
     if (result == -1) res.sendStatus(500)
-    else res.json(result)
+    else res.sendStatus(200)
 })
 
 // *********** Afficher un événement ***********************
@@ -86,10 +104,11 @@ app.get('/api/evenement/consulter/:id', async (req, res) => {
     else res.json(data)
 })
 // **********Supprimer événement **************
-app.put('/api/evenement/supprimer/:id', async (req, res) => {
-    let result = await cbEvenement.supprEvenement(req.params.id)
+app.put('/api/evenement/supprimer', async (req, res) => {
+    let result = await cbEvenement.supprEvenement(req.body.id_evenement, req.session.uid)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/evenement/supprimer/' + req.params.id)
+    else if (result == -2) res.status(404).send("Le compte n'est pas propriétaire")
+    else res.sendStatus(200)
 })
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
@@ -113,9 +132,21 @@ app.post('/api/compte/connexion', async (req, res) => {
     }
 })
 
+app.post('/api/compte/deconnexion', async (req, res) => {
+
+    if (req.session == false) return res.sendStatus(500)
+
+
+    req.session.loggedin = false
+    req.session.uid = undefined
+    req.session.email = undefined
+
+    return res.sendStatus(200)
+})
+
 //********************modifier compte*************
 app.get('/api/compte/modifier/:id', async (req, res) => {
-    console.log("yop")
+    //console.log("yop")
     //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
@@ -125,7 +156,7 @@ app.get('/api/compte/modifier/:id', async (req, res) => {
 app.put('/api/compte/modifier/:id', async (req, res) => {
     let result = await cbCompte.putCompteModification(req.body, req.params.id)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/compte/modifier/' + req.params.id)
+    else res.sendStatus(200)
 })
 //************************************************
 
@@ -136,13 +167,13 @@ app.get('/api/compte/supprimer/:id', async (req, res) => {
     //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
-    else res.json(data)
+    else res.sendStatus(200)
 })
 
 app.put('/api/compte/supprimer/:id', async (req, res) => {
     let result = await cbCompte.supprCompte(req.params.id)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/compte/supprimer/' + req.params.id)
+    res.sendStatus(200)
 })
 //************************************************
 
@@ -172,21 +203,50 @@ app.put('/api/compte/recup/:id/:token', async (req, res) => {
 
 //********************* inscription ***************************
 app.post('/api/compte/inscription', async (req, res) => {
+    let data = await cbCompte.postInscription(
+        req.body.nom,
+        req.body.prenom,
+        req.body.email,
+        req.body.mot_de_passe,
+        req.body.naissance,
+        req.body.ville,
+        req.body.departement,
+        req.body.no_telephone,
+        req.body.img_profil)
+    if (data == -1) res.status(400).send("email already exists")
+    else if (data == -2) res.sendStatus(500)
+    else {
+        /*console.log(req.file)
+        const tempPath = req.file.path
+        const targetPath = path.join(__dirname, "./images/" + req.body.img_profil);
+        fs.rename(tempPath, targetPath)*/
+        res.sendStatus(200)
+    }
+})
+//**************************************************************** */
 
-        let data = await cbCompte.postInscription(
-            req.body.nom,
-            req.body.prenom,
-            req.body.email,
-            req.body.mot_de_passe,
-            req.body.naissance,
-            req.body.ville,
-            req.body.departement,
-            req.body.no_telephone,
-            req.body.img_profil)
-        if (data == -1) res.status(400).send("email already exists")
-        else if (data == -2) res.sendStatus(500)
-        else res.sendStatus(200)
-    })
-    //**************************************************************** */
+//********************* besoins ***************************
+app.post('/api/evenement/:id/besoin/creer', async (req, res) => {
+
+    let data = await cbBesoin.postAjouterBesoin(req.params.id, req.body)
+    if (data == -1) return res.status(400)
+    else return res.sendStatus(200)
+})
+
+app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async (req, res) => {
+
+    let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
+    if (data == -1) return res.status(400)
+    else return res.sendStatus(200)
+})
+
+app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async (req, res) => {
+
+    let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
+
+    if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(401) } else res.sendStatus(200)
+})
+//**************************************************************** */
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

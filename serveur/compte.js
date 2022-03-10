@@ -12,8 +12,7 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
         result = result[0]
         if ((email == result.email) && await crypto.verifierMotDePasse(mdp, result.mot_de_passe)) {
             return result
-        }
-        else {
+        } else {
             return -1
         }
     } catch (err) {
@@ -54,12 +53,11 @@ async function getCompte(id) {
 //modifier le compte
 async function putCompteModification(body, id) {
     let result = 0
-    var stringBody = JSON.stringify(body)
-    var objectValue = JSON.parse(stringBody)
+
     try {
-        Object.keys(body).forEach(function (key) {
-            result = DB.query('UPDATE compte SET ' + key + ' = ? WHERE id_compte = ?', [objectValue[key], id])
-        })
+        result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [body, id])
+        console.log(result)
+
     } catch (err) {
         console.log(err)
         return -1 // erreur lors de l execution de la requete (500)

@@ -9,6 +9,9 @@ import Login from './pages/guest/Login';
 import Register from './pages/guest/Register';
 import LostPassword from './pages/guest/LostPassword'
 
+import UserProfile from './pages/profile/UserProfile';
+import ModifyProfile from './pages/profile/ModifyProfile';
+
 import Main from './pages/Main'
 import About from './pages/About'
 import MyEvents from './pages/MyEvents'
@@ -19,28 +22,28 @@ import Error from './pages/Error'
 
 class App extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.state = {uid:''};
     }
 
     async componentDidMount() {
-        try{
+        try {
             let res = await axios({
                 method: "get",
                 url: `/api/jwtid`,
                 withCredentials: true,
             })
-            console.log(res.data);
             this.setState({uid : res.data});
+            console.log(res.data);
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
         console.log("update")
     }
 
@@ -48,12 +51,12 @@ class App extends React.Component {
         if (this.state.uid === '') {
             return (
                 <UidContext.Provider value={this.uid}>
-                <Routes>
-                    <Route path='/' element={<Home/>} />
-                    <Route path='/connexion' element={<Login/>} />
-                    <Route path='/inscription' element={<Register/>} />
-                    <Route path='/reinitialisation-mot-de-passe' element={<LostPassword/>} />
-                </Routes>
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/connexion' element={<Login />} />
+                        <Route path='/inscription' element={<Register />} />
+                        <Route path='/reinitialisation-mot-de-passe' element={<LostPassword />} />
+                    </Routes>
                 </UidContext.Provider>
             )
         } else {
@@ -69,10 +72,12 @@ class App extends React.Component {
                             <Route path='evenement/:id' element={<Event/>}/>
                             <Route path='creer-evenement' element={<CreateEvent/>} />
                             <Route path='*' element={<Error/>}/>
+                            <Route path='mon-profil' element={<UserProfile/>} />
+                            <Route path='modifier-profil' element={<ModifyProfile/>}/>
                         </Routes>
                     </div>
 
-                </div>
+                    </div>
                 </UidContext.Provider>
             );
         }
