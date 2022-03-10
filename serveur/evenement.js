@@ -133,30 +133,17 @@ async function putEvenementCreation(body, id) {
     return result.changedRows
 }
 
-<<<<<<< HEAD
 async function getIdEvenementConsultation(id){
-=======
-async function getEvenementConsultation(id) {
->>>>>>> b3db64ccf0b32c4d1cb1aaafd59de4600001acc0
     let evenements = []
     //titre image description 
     try {
         let rows = []
-<<<<<<< HEAD
             // recupere les participants de l evenement
             rows = await DB.query('SELECT e.id_evenement, e.titre, e.description, e.departement, e.debut, e.fin, e.img_banniere FROM evenement e, participant p WHERE e.id_evenement=p.id_evenement AND p.id_compte=?', [id])
             rows.forEach(e => {
                 evenements.push(e)
             })
     } catch (err){
-=======
-        // recupere les participants de l evenement
-        rows = await DB.query('SELECT id_evenement FROM participant WHERE id_compte = ?', [id])
-        rows.forEach(e => {
-            evenements.push(e.id_evenement)
-        })
-    } catch (err) {
->>>>>>> b3db64ccf0b32c4d1cb1aaafd59de4600001acc0
         console.log(err)
         return -1
     }
