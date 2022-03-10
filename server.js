@@ -39,8 +39,17 @@ app.put('/api/evenement/modifier/:id', async(req, res) => {
     //*************************************************************
 
 //créer evenement
-app.put('/api/evenement/creer/:id', async(req, res) => {
-    let result = await cbEvenement.putEvenementCreation(req.body)
+app.post('/api/evenement/creer', async (req, res) => {
+    let result = await cbEvenement.putEvenementCreation(
+        req.body.titre,
+        req.body.description,
+        req.body.departement,
+        req.body.debut,
+        req.body.fin,
+        req.body.archivage,
+        req.body.etat,
+        req.body.img_banniere,
+        req.body.id_proprietaire)
     if (result == -1) res.sendStatus(500)
     else res.json(result)
 })
