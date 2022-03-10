@@ -132,16 +132,9 @@ app.post('/api/compte/connexion', async (req, res) => {
     }
 })
 
-app.post('/api/compte/deconnexion', async (req, res) => {
-
-    if (req.session == false) return res.sendStatus(500)
-
-
-    req.session.loggedin = false
-    req.session.uid = undefined
-    req.session.email = undefined
-
-    return res.sendStatus(200)
+app.post('/api/compte/deconnexion', (req, res) => {
+    res.cookie('jwt', '', { maxAge: 1 });
+    res.sendStatus(200);
 })
 
 //********************modifier compte*************
