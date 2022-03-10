@@ -6,7 +6,7 @@ class NeedLine extends React.Component {
     render(){
         return(
             <div className='border-b border-b-transparentgray p-2 pl-6 flex items-center'>
-                <p className='title flex-grow'>{ this.props.title }</p>
+                <p className='title flex-grow'>{ this.props.need.description }</p>
                 <UserMini firstname='Prénom' lastname='Nom' />
                 <span className="material-icons pl-2 text-darkergray">
                     edit_note
@@ -33,6 +33,12 @@ function handlerInputNeedList(evt) {
 
 class NeedList extends React.Component {
     render(){
+        let needElements = ""
+        if (this.props.needs)
+            this.props.needs.map(value => {
+                return <NeedLine need={value} />
+            })
+
         return(
             <div className='flex flex-col w-full min-h-[450px] bg-white rounded-3xl shadow mt-8 p-4'>
                 <h5 className='text-xl ml-4 mb-2'>Besoins</h5>
@@ -45,8 +51,7 @@ class NeedList extends React.Component {
                                placeholder='Besoin de patates...' onInput={handlerInputNeedList} />
                     </div>
                     <div id='need-list' className='flex-grow overflow-y-scroll border-t border-t-transparentgray'>
-                        <NeedLine title='Intitulé du besoin' />
-                        <NeedLine title='Intitulé du besoin' />
+                        {needElements}
                     </div>
                 </div>
             </div>

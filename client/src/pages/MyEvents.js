@@ -1,6 +1,7 @@
 import React from 'react'
 import EventCard from '../components/Event/EventCard'
 import {Link} from 'react-router-dom'
+import axios from "axios";
 
 let fakeEvents = [
     {
@@ -35,6 +36,13 @@ let fakeEvents = [
     },
 ]
 class MyEvents extends React.Component {
+
+    async componentDidMount() {
+        this.setState(await axios.get('/api/evenement/consulter/1').then(value => {
+            console.log(value)
+        }));
+    }
+
     render(){
         const myevents = [fakeEvents[0], fakeEvents[1]].map(value =>
             <EventCard
