@@ -1,10 +1,16 @@
 const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
 const cbRecup = require("./serveur/recupMdp")
-
+const session = require('express-session')
 const express = require('express')
+const { NULL } = require("mysql/lib/protocol/constants/types")
 
 const app = express()
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true
+}));
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 const port = 5000;
@@ -86,8 +92,15 @@ app.get('/api/compte/connexion', async (req, res) => {
 
 app.post('/api/compte/connexion', async (req, res) => {
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
-
-    console.log(data)
+    if(data.email!=NULL && data.mot_de_passe!=NULL){
+        req.session.loggedin = true;
+        req.session.email = data.email;
+        //res.redirect();
+    }
+    else{
+        res.send('Adresse mail/mot de passe incorrect');
+    }
+    
     res.json(data)
 })
 
