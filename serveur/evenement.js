@@ -73,7 +73,7 @@ async function putEvenementModification(body, id) {
 }
 
 
-async function putEvenementCreation(titre, description, departement, debut, fin, archivage, etat, img_banniere, id_proprietaire) {
+async function putEvenementCreation(titre, description, departement, debut, fin, archivage, etat = 0, img_banniere, id_proprietaire) {
     let result = 0
     try {
         result = await DB.query('INSERT INTO evenement SET ?', {
@@ -83,7 +83,7 @@ async function putEvenementCreation(titre, description, departement, debut, fin,
             debut: debut,
             fin: fin,
             archivage: archivage,
-            etat: 0,
+            etat: etat,
             img_banniere: img_banniere,
             id_proprietaire: id_proprietaire,
         })

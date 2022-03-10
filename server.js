@@ -51,7 +51,7 @@ app.post('/api/evenement/creer', async(req, res) => {
         req.body.img_banniere,
         req.session.uid)
     if (result == -1) res.sendStatus(500)
-    else res.json(result)
+    else res.sendStatus(200)
 })
 
 // *********** Afficher un événement ***********************
