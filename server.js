@@ -69,12 +69,16 @@ app.put('/api/evenement/supprimer/:id', async (req, res) => {
 app.post('/api/compte/connexion', async (req, res) => {
     console.log(req.body);
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
-
-    req.session.loggedin = true;
-    req.session.email = data.email;
-    req.session.id = data.id;
-    console.log(req.session);
-        
+    if (data == -1) res.status(404).send("Adresse mail/mot de passe incorrect")
+    else if (data == -2) res.sendStatus(500)
+    else {
+        console.log(data)
+        req.session.loggedin = true;
+        req.session.email = data.email;
+        req.session.uid = data.id_compte;
+        console.log(req.session);
+        res.sendStatus(200)
+    }
 })
 
 //********************modifier compte*************
@@ -119,8 +123,9 @@ app.get('/api/compte/recup/:id', async (req, res) => {
 })
 
 app.put('/api/compte/recup/:id', async (req, res) => {
-    let result = await cbRecup.putStartRecuperation(req.params.id, "bleg") //A changer en fonction de la gestion front
+    let result = await cbRecup.putStartRecuperation(req.params.id, req.body.lien)
     if (result == -1) res.sendStatus(500)
+    else res.sendStatus(200)
 })
 //************************************************
 
@@ -128,7 +133,7 @@ app.put('/api/compte/recup/:id', async (req, res) => {
 app.put('/api/compte/recup/:id/:token', async (req, res) => {
     let result = await cbRecup.putResetMdp(req.params.id, req.params.token, req.body)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/compte/recup/' + req.params.id)
+    else res.sendStatus(200)
 })
 //************************************************
 
