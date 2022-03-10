@@ -10,7 +10,7 @@ class FormButton extends React.Component {
 
     render(){
         return(
-            <input type='submit' className={'border-solid border rounded-full border-transparentgray px-8 py-2 bg-darkgray text-xl text-gray cursor-pointer transition hover:scale-105 ' + this.props.className} value={this.props.value} />
+            <input type='submit' className={'border-solid border rounded-full border-transparentgray px-8 py-2 bg-darkgray text-xl text-gray cursor-pointer transition hover:scale-105 ' + this.props.className} value={this.props.value} name={this.props.name} />
         );
     }
 }

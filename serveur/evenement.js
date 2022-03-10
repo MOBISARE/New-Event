@@ -78,7 +78,7 @@ async function getEvenementCreation(id) {
         lastEvent = DB.query('SELECT MAX(evenement.id_evenement) FROM evenement')
         lastEvent = lastEvent[0]
         console.log("0")
-    }catch (err){
+    } catch (err) {
         console.log(err)
     }
     if (lastEvent == undefined) return { //Si c'est le premier événement à être créé
@@ -96,7 +96,7 @@ async function getEvenementCreation(id) {
         id_besoins: null
     }
     else return {
-        id: lastEvent+1,
+        id: lastEvent + 1,
         titre: null,
         description: null,
         departement: null,
@@ -111,39 +111,52 @@ async function getEvenementCreation(id) {
     }
 }
 
-async function putEvenementCreation(body, id){
+async function putEvenementCreation(body, id) {
     let result = 0
-    try{
+    try {
         result = await DB.query('INSERT INTO evenement SET ?', [{
             id_evenement: id,
-            titre: body.titre, 
-            description: body.description, 
+            titre: body.titre,
+            description: body.description,
             departement: body.departement,
-            debut: body.debut, 
-            fin: body.fin, 
-            archivage: body.archivage, 
-            etat: body.etat, 
+            debut: body.debut,
+            fin: body.fin,
+            archivage: body.archivage,
+            etat: body.etat,
             img_banniere: body.img_banniere,
             id_proprietaire: body.id_proprietaire,
         }])
-    } catch (err){
+    } catch (err) {
         console.log(err)
         return -1
     }
     return result.changedRows
 }
 
+<<<<<<< HEAD
 async function getIdEvenementConsultation(id){
+=======
+async function getEvenementConsultation(id) {
+>>>>>>> b3db64ccf0b32c4d1cb1aaafd59de4600001acc0
     let evenements = []
     //titre image description 
-    try{
+    try {
         let rows = []
+<<<<<<< HEAD
             // recupere les participants de l evenement
             rows = await DB.query('SELECT e.id_evenement, e.titre, e.description, e.departement, e.debut, e.fin, e.img_banniere FROM evenement e, participant p WHERE e.id_evenement=p.id_evenement AND p.id_compte=?', [id])
             rows.forEach(e => {
                 evenements.push(e)
             })
     } catch (err){
+=======
+        // recupere les participants de l evenement
+        rows = await DB.query('SELECT id_evenement FROM participant WHERE id_compte = ?', [id])
+        rows.forEach(e => {
+            evenements.push(e.id_evenement)
+        })
+    } catch (err) {
+>>>>>>> b3db64ccf0b32c4d1cb1aaafd59de4600001acc0
         console.log(err)
         return -1
     }

@@ -27,7 +27,7 @@ class App extends React.Component {
             )
         } else {
             return (
-                <div className='bg-gray w-screen min-h-screen h-full'>
+                <div className='bg-gray w-full min-h-screen h-full'>
                     <Navbar/>
                     <div className='py-24 px-16 max-w-[1300px] mx-auto'>
                         <Routes>
