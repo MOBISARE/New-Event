@@ -11,4 +11,13 @@ async function putAjouterBesoin(body) {
     return result
 }
 
-//console.log(putAjouterBesoin({ id_participant: 1, id_evenement: 1 }))
+async function putModifierBesoin(id_besoin, id_evenement, body) {
+    try {
+        var result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [body, id_besoin, id_evenement])
+    } catch (err) {
+        console.log(err)
+        return -1
+    }
+
+    return result.changedRows
+}
