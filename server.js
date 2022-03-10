@@ -1,5 +1,6 @@
 const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
+const cbBesoin = require("./serveur/besoin");
 const cbRecup = require("./serveur/recupMdp")
 const session = require('express-session')
 const express = require('express')
@@ -181,5 +182,22 @@ app.post('/api/compte/inscription', async(req, res) => {
         else res.sendStatus(200)
     })
     //**************************************************************** */
+
+//********************* besoins ***************************
+app.post('/api/evenement/:id/besoin/creer', async(req, res) => {
+
+    let data = await cbBesoin.postAjouterBesoin(req.params.id, req.body)
+    if (data == -1) res.status(400)
+    else res.sendStatus(200)
+})
+
+app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async(req, res) => {
+
+        let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
+        if (data == -1) res.status(400)
+        else res.sendStatus(200)
+    })
+    //**************************************************************** */
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
