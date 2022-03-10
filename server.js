@@ -72,10 +72,11 @@ app.get('/api/evenement/consulter/:id', async(req, res) => {
         else res.json(data)
     })
     // **********Supprimer événement **************
-app.put('/api/evenement/supprimer/:id', async(req, res) => {
-    let result = await cbEvenement.supprEvenement(req.params.id)
+app.put('/api/evenement/supprimer', async(req, res) => {
+    let result = await cbEvenement.supprEvenement(req.body.id_evenement, req.session.uid)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/evenement/supprimer/' + req.params.id)
+    else if (result == -2) res.status(404).send("Le compte n'est pas propriétaire")
+    else res.sendStatus(200)
 })
 
 //se connecter
