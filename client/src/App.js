@@ -10,6 +10,7 @@ import Register from './pages/guest/Register';
 import LostPassword from './pages/guest/LostPassword'
 
 import UserProfile from './pages/profile/UserProfile';
+import ModifyProfile from './pages/profile/ModifyProfile';
 
 import Main from './pages/Main'
 import About from './pages/About'
@@ -61,6 +62,7 @@ class App extends React.Component {
         } else {
             return (
                 <UidContext.Provider value={this.uid}>
+<<<<<<< HEAD
                     <div className='bg-gray w-full min-h-screen h-full'>
                         <Navbar />
                         <div className='py-24 px-16 max-w-[1300px] mx-auto'>
@@ -74,6 +76,22 @@ class App extends React.Component {
                                 <Route path='mon-profil' element={<UserProfile />} />
                             </Routes>
                         </div>
+=======
+                <div className='bg-gray w-full min-h-screen h-full'>
+                    <Navbar/>
+                    <div className='py-24 px-16 max-w-[1300px] mx-auto'>
+                        <Routes>
+                            <Route path='/' element={<Main/>}/>
+                            <Route path='a-propos' element={<About/>}/>
+                            <Route path='mes-evenements' element={<MyEvents/>}/>
+                            <Route path='evenement/:id' element={<Event/>}/>
+                            <Route path='creer-evenement' element={<CreateEvent/>} />
+                            <Route path='*' element={<Error/>}/>
+                            <Route path='mon-profil' element={<UserProfile/>} />
+                            <Route path='modifier-profil' element={<ModifyProfile/>}/>
+                        </Routes>
+                    </div>
+>>>>>>> 6adfe217ca015a49ca04d391f3b1cf403147d91b
 
                     </div>
                 </UidContext.Provider>
