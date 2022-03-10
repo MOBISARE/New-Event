@@ -15,7 +15,7 @@ import Error from './pages/Error'
 
 class App extends React.Component {
     render() {
-        let connected = true
+        let connected = false
         if (!connected) {
             return (
                 <Routes>

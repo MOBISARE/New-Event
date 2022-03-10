@@ -14,6 +14,7 @@ class Register extends React.Component {
         console.log(e);
 
         try {
+            
             let res = await axios({
                 method: "get",
                 url:"https://geo.api.gouv.fr/communes",
@@ -32,15 +33,36 @@ class Register extends React.Component {
                 document.getElementById("ville").reportValidity();
                 return;
             }
+
+            if(document.getElementById("mdp").value !== document.getElementById("confmdp").value){
+                document.getElementById("confmdp").setCustomValidity("Les mots de passe sont différent");
+                document.getElementById("confmdp").reportValidity();
+                return;
+            }
+
+            let registerRes = await axios({
+                method: "post",
+                url:"/api/compte/inscription",
+                data: {
+                    nom: document.getElementById("nom").value,
+                    prenom: document.getElementById("prenom").value,
+                    email: document.getElementById("mail").value,
+                    mot_de_passe: document.getElementById("mdp").value,
+                    naissance: document.getElementById("naissance").value,
+                    ville: document.getElementById("ville").value,
+                    departement: "00",
+                    no_telephone: document.getElementById("telephone").value,
+                    img_profil: document.getElementById("picture").value
+                }
+            })
+
+            console.log(registerRes);
+            window.location = "/";
+
         }
         catch(err){
-            console.log(err);
-        }
-
-        if(document.getElementById("mdp").value !== document.getElementById("confmdp").value){
-            document.getElementById("confmdp").setCustomValidity("Les mots de passe sont différent");
-            document.getElementById("confmdp").reportValidity();
-            return;
+            document.getElementById("mail").setCustomValidity("L'email est déjà lié à un compte");
+            document.getElementById("mail").reportValidity();
         }
     }
     
