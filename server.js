@@ -9,7 +9,8 @@ const app = express()
 app.use(session({
     secret: 'secret',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {}
 }));
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -72,7 +73,8 @@ app.post('/api/compte/connexion', async (req, res) => {
     if (data == 0) {
         req.session.loggedin = true;
         req.session.email = data.email;
-        console.log(req.session.email);
+        req.session.id = data.id;
+        console.log(req.session);
         res.sendStatus(200)
     } else {
         res.status(404).send('Adresse mail/mot de passe incorrect');

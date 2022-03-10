@@ -7,7 +7,7 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
 
     let result
     try {
-        result = await DB.query('SELECT email, mot_de_passe FROM compte WHERE email = ?', [email])
+        result = await DB.query('SELECT email, mot_de_passe, id_compte FROM compte WHERE email = ?', [email])
         result = result[0]
         if ((email == result.email) && await crypto.verifierMotDePasse(mdp, result.mot_de_passe)) {
             return 0
