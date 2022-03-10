@@ -187,23 +187,24 @@ app.post('/api/compte/inscription', async(req, res) => {
 app.post('/api/evenement/:id/besoin/creer', async(req, res) => {
 
     let data = await cbBesoin.postAjouterBesoin(req.params.id, req.body)
-    if (data == -1) res.status(400)
-    else res.sendStatus(200)
+    if (data == -1) return res.status(400)
+    else return res.sendStatus(200)
 })
 
 app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async(req, res) => {
 
     let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
-    if (data == -1) res.status(400)
-    else res.sendStatus(200)
+    if (data == -1) return res.status(400)
+    else return res.sendStatus(200)
 })
 
 app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async(req, res) => {
 
         let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
-        if (data == -1) res.status(400)
-        else if (data == -2) res.status(401)
-        else res.sendStatus(200)
+
+        if (data == -1) { return res.status(400) }
+        if (data == -2) { return res.status(401) }
+        return res.sendStatus(200)
     })
     //**************************************************************** */
 

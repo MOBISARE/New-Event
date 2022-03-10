@@ -23,12 +23,11 @@ async function putModifierBesoin(id_besoin, id_evenement, body) {
 }
 
 async function postSupprBesoin(id_besoin, id_evenement, id_proprietaire) {
+    var proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
+    if (proprio[0].id_proprietaire != id_proprietaire) {
+        return -2
+    }
     try {
-        var proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
-        if (proprio[0].id_proprietaire != id_proprietaire) {
-            return -2
-        }
-
         var result = await DB.query('DELETE FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [id_besoin, id_evenement])
     } catch (err) {
         console.log(err)
