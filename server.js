@@ -151,7 +151,7 @@ app.post('/api/compte/inscription', async (req, res) => {
         req.body.departement,
         req.body.no_telephone,
         req.body.img_profil)
-    if (data == -1) res.status(500).send("email already exists")
+    if (data == -1) res.status(400).send("email already exists")
     else if (data == -2) res.sendStatus(500)
     else res.sendStatus(200)
 })
