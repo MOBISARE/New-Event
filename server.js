@@ -137,7 +137,7 @@ app.get('/api/compte/supprimer/:id', async(req, res) => {
 app.put('/api/compte/supprimer/:id', async(req, res) => {
         let result = await cbCompte.supprCompte(req.params.id)
         if (result == -1) res.sendStatus(500)
-        else res.redirect('/api/compte/supprimer/' + req.params.id)
+        else res.sendStatus(200)
     })
     //************************************************
 
