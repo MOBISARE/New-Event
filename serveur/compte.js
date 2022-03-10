@@ -19,8 +19,6 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
     }
 }
 
-getCompteConnexion("test@test.fr", "FUCKINGPASSWORD");
-
 async function getCompte(id) {
     let compte;
     try {

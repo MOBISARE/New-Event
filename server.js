@@ -73,18 +73,14 @@ app.put('/api/evenement/supprimer/:id', async(req, res) => {
 })
 
 //se connecter
-app.get('/api/compte/connexion', async(req, res) => {
+app.post('/api/compte/connexion', async (req, res) => {
+    console.log(req.body);
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
-
-    console.log(data)
-    res.json(data)
-})
-
-app.post('/api/compte/connexion', async(req, res) => {
-    let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
-    if (data.email != NULL && data.mot_de_passe != NULL) {
+    
+    if(data.email!=NULL && data.mot_de_passe!=NULL){
         req.session.loggedin = true;
         req.session.email = data.email;
+        console.log(req.session.email);
         //res.redirect();
     } else {
         res.send('Adresse mail/mot de passe incorrect');
