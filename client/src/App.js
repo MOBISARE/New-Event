@@ -10,6 +10,7 @@ import Register from './pages/guest/Register';
 import LostPassword from './pages/guest/LostPassword'
 
 import UserProfile from './pages/profile/UserProfile';
+import ModifyProfile from './pages/profile/ModifyProfile';
 
 import Main from './pages/Main'
 import About from './pages/About'
@@ -72,6 +73,7 @@ class App extends React.Component {
                             <Route path='creer-evenement' element={<CreateEvent/>} />
                             <Route path='*' element={<Error/>}/>
                             <Route path='mon-profil' element={<UserProfile/>} />
+                            <Route path='modifier-profil' element={<ModifyProfile/>}/>
                         </Routes>
                     </div>
 

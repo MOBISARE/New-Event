@@ -121,14 +121,18 @@ async function getIdEvenementConsultation(id) {
 }
 
 
-async function supprEvenement(id) {
+async function supprEvenement(id_evenement, id_compte){
     let result = 0
-    try {
-        result = DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id])
-    } catch (err) {
-        console.log(err)
-        return -1 //erreur lors de l execution de la requete (500)
-    }
+    let id_proprietaire = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
+    id_proprietaire = id_proprietaire[0].id_proprietaire
+    if (id_proprietaire == id_compte){
+        try {
+            result = await DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id_evenement])
+        } catch (err) {
+            console.log(err)
+            return -1 //erreur lors de l execution de la requete (500)
+        }
+    } else return -2
 }
 
 module.exports.getEvenement = getEvenement
