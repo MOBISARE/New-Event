@@ -1,7 +1,8 @@
 import React from 'react'
 
 import UserMini from '../components/UserMini'
-import NeedList from '../components/NeedList'
+import NeedList from '../components/Event/NeedList'
+import Button from "../components/Button";
 import ParticipantViewer from '../components/Event/ParticipantViewer'
 
 let evt = {
@@ -51,8 +52,7 @@ class Event extends React.Component {
                                     {this.state.location}
                                 </div>
                             </div>
-                            <button className='bg-green-valid h-8 text-white rounded-full'>
-                                Rejoindre</button>
+                            <Button bg_class='bg-green-valid'>Rejoindre</Button>
                         </div>
                         <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                             <div>
