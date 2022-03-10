@@ -21,28 +21,28 @@ import Error from './pages/Error'
 
 class App extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.uid = {};
     }
 
     async componentDidMount() {
-        try{
+        try {
             let res = await axios({
                 method: "get",
                 url: `/api/jwtid`,
                 withCredentials: true,
             })
-            
+
             this.setUid(res.data);
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
         console.log("update")
     }
 
@@ -50,32 +50,32 @@ class App extends React.Component {
         if (!this.uid) {
             return (
                 <UidContext.Provider value={this.uid}>
-                <Routes>
-                    <Route path='/' element={<Home/>} />
-                    <Route path='/connexion' element={<Login/>} />
-                    <Route path='/inscription' element={<Register/>} />
-                    <Route path='/reinitialisation-mot-de-passe' element={<LostPassword/>} />
-                </Routes>
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/connexion' element={<Login />} />
+                        <Route path='/inscription' element={<Register />} />
+                        <Route path='/reinitialisation-mot-de-passe' element={<LostPassword />} />
+                    </Routes>
                 </UidContext.Provider>
             )
         } else {
             return (
                 <UidContext.Provider value={this.uid}>
-                <div className='bg-gray w-full min-h-screen h-full'>
-                    <Navbar/>
-                    <div className='py-24 px-16 max-w-[1300px] mx-auto'>
-                        <Routes>
-                            <Route path='/' element={<Main/>}/>
-                            <Route path='a-propos' element={<About/>}/>
-                            <Route path='mes-evenements' element={<MyEvents/>}/>
-                            <Route path='evenement/:id' element={<Event/>}/>
-                            <Route path='creer-evenement' element={<CreateEvent/>} />
-                            <Route path='*' element={<Error/>}/>
-                            <Route path='mon-profil' element={<UserProfile/>} />
-                        </Routes>
-                    </div>
+                    <div className='bg-gray w-full min-h-screen h-full'>
+                        <Navbar />
+                        <div className='py-24 px-16 max-w-[1300px] mx-auto'>
+                            <Routes>
+                                <Route path='/' element={<Main />} />
+                                <Route path='a-propos' element={<About />} />
+                                <Route path='mes-evenements' element={<MyEvents />} />
+                                <Route path='evenement/:id' element={<Event />} />
+                                <Route path='creer-evenement' element={<CreateEvent />} />
+                                <Route path='*' element={<Error />} />
+                                <Route path='mon-profil' element={<UserProfile />} />
+                            </Routes>
+                        </div>
 
-                </div>
+                    </div>
                 </UidContext.Provider>
             );
         }

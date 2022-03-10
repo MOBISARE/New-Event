@@ -6,6 +6,10 @@ const session = require('express-session')
 const express = require('express')
 const { NULL } = require("mysql/lib/protocol/constants/types")
 const { sendStatus } = require("express/lib/response")
+const path = require("path")
+const multer = require('multer')
+const upload = multer({ dest: './images' })
+const fs = require("fs")
 
 const app = express()
 app.use(session({
@@ -130,13 +134,13 @@ app.get('/api/compte/supprimer/:id', async (req, res) => {
     //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
-    else res.json(data)
+    else res.sendStatus(200)
 })
 
 app.put('/api/compte/supprimer/:id', async (req, res) => {
     let result = await cbCompte.supprCompte(req.params.id)
     if (result == -1) res.sendStatus(500)
-    else res.redirect('/api/compte/supprimer/' + req.params.id)
+    res.sendStatus(200)
 })
 //************************************************
 
@@ -166,7 +170,6 @@ app.put('/api/compte/recup/:id/:token', async (req, res) => {
 
 //********************* inscription ***************************
 app.post('/api/compte/inscription', async (req, res) => {
-
     let data = await cbCompte.postInscription(
         req.body.nom,
         req.body.prenom,
@@ -179,7 +182,13 @@ app.post('/api/compte/inscription', async (req, res) => {
         req.body.img_profil)
     if (data == -1) res.status(400).send("email already exists")
     else if (data == -2) res.sendStatus(500)
-    else res.sendStatus(200)
+    else {
+        /*console.log(req.file)
+        const tempPath = req.file.path
+        const targetPath = path.join(__dirname, "./images/" + req.body.img_profil);
+        fs.rename(tempPath, targetPath)*/
+        res.sendStatus(200)
+    }
 })
 //**************************************************************** */
 

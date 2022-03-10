@@ -55,7 +55,7 @@ async function putCompteModification(body, id) {
     var stringBody = JSON.stringify(body)
     var objectValue = JSON.parse(stringBody)
     try {
-        Object.keys(body).forEach(function(key) {
+        Object.keys(body).forEach(function (key) {
             result = DB.query('UPDATE compte SET ' + key + ' = ? WHERE id_compte = ?', [objectValue[key], id])
         })
     } catch (err) {
@@ -79,7 +79,6 @@ async function supprCompte(id) {
 async function postInscription(nom, prenom, email, motDePasse, dateDeNaissance, ville, departement, telephone = null, photoProfil = null) {
 
     let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', email)
-    console.log(result)
     if (result[0].nb != 0) return -1
     else {
         try {
