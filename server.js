@@ -75,7 +75,7 @@ app.post('/api/compte/connexion', async (req, res) => {
         console.log(data)
         req.session.loggedin = true;
         req.session.email = data.email;
-        req.session.id = data.id_compte;
+        req.session.uid = data.id_compte;
         console.log(req.session);
         res.sendStatus(200)
     }
