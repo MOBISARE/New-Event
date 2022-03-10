@@ -10,14 +10,14 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
         result = await DB.query('SELECT email, mot_de_passe, id_compte FROM compte WHERE email = ?', [email])
         result = result[0]
         if ((email == result.email) && await crypto.verifierMotDePasse(mdp, result.mot_de_passe)) {
-            
-            res.sendStatus(200)
             return result
         }
+        else {
+            return -1
+        }
     } catch (err) {
-        res.status(404).send('Adresse mail/mot de passe incorrect');
         console.log(err)
-        return -1
+        return -2
     }
 }
 
