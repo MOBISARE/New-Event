@@ -5,7 +5,7 @@ class UserProfile extends React.Component {
     render(){
         return(
             <div className='bg-gray'>
-                <div className='bg-white rounded-md drop-shadow-md max-w-lg mx-auto p-8 flex flex'>
+                <div className='bg-white rounded-md drop-shadow-md max-w-lg mx-auto p-8 flex'>
                     <div>
                         <img src='/images/icon.png'></img>
                         <h1 className='font-bold'>Prénom Nom</h1>
