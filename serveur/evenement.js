@@ -133,17 +133,17 @@ async function putEvenementCreation(body, id) {
     return result.changedRows
 }
 
-async function getEvenementConsultation(id) {
+async function getIdEvenementConsultation(id){
     let evenements = []
     //titre image description 
     try {
         let rows = []
-        // recupere les participants de l evenement
-        rows = await DB.query('SELECT id_evenement FROM participant WHERE id_compte = ?', [id])
-        rows.forEach(e => {
-            evenements.push(e.id_evenement)
-        })
-    } catch (err) {
+            // recupere les participants de l evenement
+            rows = await DB.query('SELECT e.id_evenement, e.titre, e.description, e.departement, e.debut, e.fin, e.img_banniere FROM evenement e, participant p WHERE e.id_evenement=p.id_evenement AND p.id_compte=?', [id])
+            rows.forEach(e => {
+                evenements.push(e)
+            })
+    } catch (err){
         console.log(err)
         return -1
     }
@@ -151,8 +151,19 @@ async function getEvenementConsultation(id) {
     else return evenements
 }
 
+async function getInfoEvenementConsultation(id){
+    let infos;
+    try{
+        infos = await DB.query("SELECT * FROM evenement WHERE id_evenement=?", id)
+    } catch(err){
+        return -1
+    }
+    return infos
+}
+
 module.exports.getEvenement = getEvenement
 module.exports.putEvenementModification = putEvenementModification
 module.exports.getEvenementCreation = getEvenementCreation
 module.exports.putEvenementCreation = putEvenementCreation
-module.exports.getEvenementConsultation = getEvenementConsultation
+module.exports.getEvenementConsultation = getIdEvenementConsultation
+module.exports.getInfoEvenementConsultation = getInfoEvenementConsultation

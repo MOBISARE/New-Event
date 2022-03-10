@@ -56,6 +56,7 @@ app.get('/api/evenement/:id', async (req, res) => {
 //Retourne les id des événements auquel participe un compte
 app.get('/api/evenement/consulter/:id', async (req, res) => {
     let data = await cbEvenement.getEvenementConsultation(req.params.id)
+    console.log(data)
     if (data == -1) res.sendStatus(500)
     else if (data == -2) res.sendStatus(404)
     else res.json(data)
