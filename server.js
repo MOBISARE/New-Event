@@ -70,15 +70,11 @@ app.post('/api/compte/connexion', async (req, res) => {
     console.log(req.body);
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
 
-    if (data == 0) {
-        req.session.loggedin = true;
-        req.session.email = data.email;
-        req.session.id = data.id;
-        console.log(req.session);
-        res.sendStatus(200)
-    } else {
-        res.status(404).send('Adresse mail/mot de passe incorrect');
-    }
+    req.session.loggedin = true;
+    req.session.email = data.email;
+    req.session.id = data.id;
+    console.log(req.session);
+        
 })
 
 //********************modifier compte*************
