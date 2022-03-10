@@ -110,8 +110,8 @@ app.post('/api/compte/deconnexion', async(req, res) => {
 
 //********************modifier compte*************
 app.get('/api/compte/modifier/:id', async(req, res) => {
-    console.log("yop")
-        //parametre id
+    //console.log("yop")
+    //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
@@ -120,7 +120,7 @@ app.get('/api/compte/modifier/:id', async(req, res) => {
 app.put('/api/compte/modifier/:id', async(req, res) => {
         let result = await cbCompte.putCompteModification(req.body, req.params.id)
         if (result == -1) res.sendStatus(500)
-        else res.redirect('/api/compte/modifier/' + req.params.id)
+        else res.sendStatus(200)
     })
     //************************************************
 
