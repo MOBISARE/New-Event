@@ -203,9 +203,7 @@ app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async(req, res) => {
 
         let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
 
-        if (data == -1) { return res.status(400) }
-        if (data == -2) { return res.status(401) }
-        return res.sendStatus(200)
+        if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(401) } else res.sendStatus(200)
     })
     //**************************************************************** */
 
