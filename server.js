@@ -119,7 +119,7 @@ app.get('/api/compte/recup/:id', async(req, res) => {
 })
 
 app.put('/api/compte/recup/:id', async(req, res) => {
-        let result = await cbRecup.putStartRecuperation(req.params.id, body.lien)
+        let result = await cbRecup.putStartRecuperation(req.params.id, req.body.lien)
         if (result == -1) res.sendStatus(500)
     })
     //************************************************
