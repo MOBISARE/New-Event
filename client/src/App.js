@@ -9,6 +9,8 @@ import Login from './pages/guest/Login';
 import Register from './pages/guest/Register';
 import LostPassword from './pages/guest/LostPassword'
 
+import UserProfile from './pages/profile/UserProfile';
+
 import Main from './pages/Main'
 import About from './pages/About'
 import MyEvents from './pages/MyEvents'
@@ -69,6 +71,7 @@ class App extends React.Component {
                             <Route path='evenement/:id' element={<Event/>}/>
                             <Route path='creer-evenement' element={<CreateEvent/>} />
                             <Route path='*' element={<Error/>}/>
+                            <Route path='mon-profil' element={<UserProfile/>} />
                         </Routes>
                     </div>
 
