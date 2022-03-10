@@ -11,7 +11,10 @@ app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true,
-    cookie: {}
+    cookie: {},
+    loggedin: false,
+    email: undefined,
+    uid: undefined
 }));
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -68,12 +71,12 @@ app.put('/api/evenement/supprimer/:id', async(req, res) => {
 
 //se connecter
 app.post('/api/compte/connexion', async(req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
     if (data == -1) res.status(404).send("Adresse mail/mot de passe incorrect")
     else if (data == -2) res.sendStatus(500)
     else {
-        console.log(data)
+        //console.log(data)
         req.session.loggedin = true;
         req.session.email = data.email;
         req.session.uid = data.id_compte;
@@ -83,15 +86,15 @@ app.post('/api/compte/connexion', async(req, res) => {
 })
 
 app.post('/api/compte/deconnexion', async(req, res) => {
-    console.log(req.session)
 
     if (req.session == false) return res.sendStatus(500)
+
 
     req.session.loggedin = false
     req.session.uid = undefined
     req.session.email = undefined
 
-    return sendStatus(200)
+    return res.sendStatus(200)
 })
 
 //********************modifier compte*************
