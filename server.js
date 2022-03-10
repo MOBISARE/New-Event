@@ -1,16 +1,21 @@
 const cbEvenement = require("./serveur/evenement") //callback evenement
 const cbCompte = require("./serveur/compte")
+const cbBesoin = require("./serveur/besoin");
 const cbRecup = require("./serveur/recupMdp")
 const session = require('express-session')
 const express = require('express')
 const { NULL } = require("mysql/lib/protocol/constants/types")
+const { sendStatus } = require("express/lib/response")
 
 const app = express()
 app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true,
-    cookie: {}
+    cookie: {},
+    loggedin: false,
+    email: undefined,
+    uid: undefined
 }));
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -35,10 +40,19 @@ app.put('/api/evenement/modifier/:id', async (req, res) => {
 //*************************************************************
 
 //créer evenement
-app.put('/api/evenement/creer/:id', async (req, res) => {
-    let result = await cbCompte.putEvenementCreation(req.body)
+app.post('/api/evenement/creer', async (req, res) => {
+    let result = await cbEvenement.putEvenementCreation(
+        req.body.titre,
+        req.body.description,
+        req.body.departement,
+        req.body.debut,
+        req.body.fin,
+        req.body.archivage,
+        req.body.etat,
+        req.body.img_banniere,
+        req.session.uid)
     if (result == -1) res.sendStatus(500)
-    else res.json(result)
+    else res.sendStatus(200)
 })
 
 // *********** Afficher un événement ***********************
@@ -67,18 +81,30 @@ app.put('/api/evenement/supprimer/:id', async (req, res) => {
 
 //se connecter
 app.post('/api/compte/connexion', async (req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
     if (data == -1) res.status(404).send("Adresse mail/mot de passe incorrect")
     else if (data == -2) res.sendStatus(500)
     else {
-        console.log(data)
+        //console.log(data)
         req.session.loggedin = true;
         req.session.email = data.email;
         req.session.uid = data.id_compte;
         console.log(req.session);
         res.sendStatus(200)
     }
+})
+
+app.post('/api/compte/deconnexion', async (req, res) => {
+
+    if (req.session == false) return res.sendStatus(500)
+
+
+    req.session.loggedin = false
+    req.session.uid = undefined
+    req.session.email = undefined
+
+    return res.sendStatus(200)
 })
 
 //********************modifier compte*************
@@ -156,5 +182,22 @@ app.post('/api/compte/inscription', async (req, res) => {
     else res.sendStatus(200)
 })
 //**************************************************************** */
+
+//********************* besoins ***************************
+app.post('/api/evenement/:id/besoin/creer', async (req, res) => {
+
+    let data = await cbBesoin.postAjouterBesoin(req.params.id, req.body)
+    if (data == -1) res.status(400)
+    else res.sendStatus(200)
+})
+
+app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async (req, res) => {
+
+    let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
+    if (data == -1) res.status(400)
+    else res.sendStatus(200)
+})
+//**************************************************************** */
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
