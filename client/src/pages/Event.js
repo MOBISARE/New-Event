@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from "axios";
 
 import UserMini from '../components/UserMini'
 import NeedList from '../components/Event/NeedList'
@@ -19,22 +20,34 @@ let evt = {
 class Event extends React.Component {
     constructor(props) {
         super(props);
-        this.state = evt
+        this.state = {
+
+        }
+
         this.participantBtn = React.createRef();
         this.participantViewer = React.createRef();
     }
 
-    render(){
+    async componentDidMount() {
+        this.setState(await axios.get('/api/evenement/1').then(value => {
+            value.data.debut = new Date(value.data.debut).toLocaleDateString()
+            value.data.fin = new Date(value.data.fin).toLocaleDateString()
+            return value.data
+        }));
+        console.log(this.state)
+    }
+
+    render() {
         return(
             <div className='max-w-[1000px] mx-auto'>
                 <div className='flex'>
                     <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
                         <div className='flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
                             <img className='object-cover w-full h-auto'
-                                 src={this.state.imgUrl} onError={event => event.target.hidden=true} alt=" "/>
+                                 src={this.state.img_banniere} onError={event => event.target.hidden=true} alt=" "/>
                         </div>
                         <div className='p-6 border-t-8 border-green'>
-                            <h5 className='text-xl font-bold'>{ this.state.title }</h5>
+                            <h5 className='text-xl font-bold'>{ this.state.titre }</h5>
                             <p>{ this.state.description }</p>
                         </div>
                     </div>
@@ -43,13 +56,13 @@ class Event extends React.Component {
                             <div>
                                 Dates :
                                 <div className='ml-10'>
-                                    {this.state.startDate} -- {this.state.endDate}
+                                    {this.state.debut} -- {this.state.fin}
                                 </div>
                             </div>
                             <div className='my-2'>
                                 Localisation :
                                 <div className='ml-10'>
-                                    {this.state.location}
+                                    {this.state.departement}
                                 </div>
                             </div>
                             <Button bg_class='bg-green-valid'>Rejoindre</Button>
@@ -68,7 +81,7 @@ class Event extends React.Component {
                                         <span className="material-icons md-18 mr-1">
                                             people
                                         </span>
-                                        { this.state.membersNumber }
+                                        { (this.state.id_participants)? this.state.id_participants.length:0 }
                                     </span>
                                     <ParticipantViewer ref={this.participantViewer} button={this.participantBtn}/>
                                 </div>
@@ -77,7 +90,7 @@ class Event extends React.Component {
                     </div>
                 </div>
 
-                <NeedList/>
+                <NeedList needs={this.state.besoins}/>
             </div>
         );
     }

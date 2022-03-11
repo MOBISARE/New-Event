@@ -22,41 +22,41 @@ import Error from './pages/Error'
 
 class App extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        this.uid = {};
+        this.state = {uid:''};
     }
 
     async componentDidMount() {
-        try{
+        try {
             let res = await axios({
                 method: "get",
                 url: `/api/jwtid`,
                 withCredentials: true,
             })
-            
-            this.setUid(res.data);
+            this.setState({uid : res.data});
+            console.log(res.data);
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
         console.log("update")
     }
 
     render() {
-        if (!this.uid) {
+        if (this.state.uid === '') {
             return (
                 <UidContext.Provider value={this.uid}>
-                <Routes>
-                    <Route path='/' element={<Home/>} />
-                    <Route path='/connexion' element={<Login/>} />
-                    <Route path='/inscription' element={<Register/>} />
-                    <Route path='/reinitialisation-mot-de-passe' element={<LostPassword/>} />
-                </Routes>
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/connexion' element={<Login />} />
+                        <Route path='/inscription' element={<Register />} />
+                        <Route path='/reinitialisation-mot-de-passe' element={<LostPassword />} />
+                    </Routes>
                 </UidContext.Provider>
             )
         } else {
@@ -77,7 +77,7 @@ class App extends React.Component {
                         </Routes>
                     </div>
 
-                </div>
+                    </div>
                 </UidContext.Provider>
             );
         }

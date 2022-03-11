@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,6 +16,16 @@ class ProfilDropDown extends React.Component {
 
         if(!this.state.active) window.addEventListener('click', this.checkClickOutside);
         else window.removeEventListener('click', this.checkClickOutside);
+    }
+
+    logout = () => {
+        axios({
+            method: "post",
+            url: "/api/compte/deconnexion"
+        })
+        .then((res) => {
+            window.location = "/";
+        })
     }
 
     checkClickOutside = (e) => {
@@ -35,14 +46,14 @@ class ProfilDropDown extends React.Component {
             { key:2, name: 'Mes événements', link: '/mes-evenements' },
             { key:3, name: 'Créer un événement', link: '/creer-evenement' },
             { key:4, name: 'hr' },
-            { key:5, name: 'Déconnexion', link: '/deconnexion' },
+            { key:5, name: 'Déconnexion', link: '', fonc: this.logout },
         ]
 
         return(
             <div id='dropdown-account' className={'text-left bg-white absolute right-0 drop-shadow-sm border rounded-md border-transparentgray flex flex-col gap-1 py-1 ' + (this.state.active? '': 'hidden')} ref={this.DOM_element}>
                 {dropDownElems.map(elem => {
                     if(elem.name === 'hr') return(<hr className='text-transparentgray mx-2' key={elem.key}/>)
-                    else return(<Link key={elem.key} to={elem.link} onClick={this.toggleActive} className='inline-block px-4 whitespace-nowrap hover:bg-selected-gray py-1 text-sm'>{elem.name}</Link>)
+                    else return(<Link key={elem.key} to={elem.link} onClick={elem.fonc ? elem.fonc : this.toggleActive } className='inline-block px-4 whitespace-nowrap hover:bg-selected-gray py-1 text-sm'>{elem.name}</Link>)
                 })}
             </div>
         );
