@@ -37,6 +37,24 @@ async function postSupprBesoin(id_besoin, id_evenement, id_proprietaire) {
     return result.changedRows
 }
 
+async function getBesoin(id_besoin, id_evenement) {
+    var result;
+    try {
+        var result = await DB.query('SELECT * FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [id_besoin, id_evenement])
+
+        if (result == undefined) return -2
+    } catch (err) {
+        console.log(err)
+        return -1
+    }
+
+    return {
+        "description": result[0].description,
+        "id_participant": result[0].id_participant
+    }
+}
+
 module.exports.postAjouterBesoin = postAjouterBesoin
 module.exports.putModifierBesoin = putModifierBesoin
 module.exports.postSupprBesoin = postSupprBesoin
+module.exports.getBesoin = getBesoin

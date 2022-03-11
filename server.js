@@ -110,8 +110,6 @@ app.post('/api/compte/deconnexion', async(req, res) => {
 
 //********************modifier compte*************
 app.get('/api/compte/modifier/:id', async(req, res) => {
-    //console.log("yop")
-    //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
@@ -127,8 +125,6 @@ app.put('/api/compte/modifier/:id', async(req, res) => {
 
 //********************supprimer compte*************
 app.get('/api/compte/supprimer/:id', async(req, res) => {
-    console.log("yop")
-        //parametre id
     let data = await cbCompte.getCompte(req.params.id)
     if (data == -1) res.sendStatus(500)
     else res.json(data)
@@ -201,11 +197,18 @@ app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async(req, res) => {
 
 app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async(req, res) => {
 
-        let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
+    let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
 
-        if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(401) } else res.sendStatus(200)
-    })
-    //**************************************************************** */
+    if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(401) } else res.sendStatus(200)
+})
+
+app.get('/api/evenement/:id/besoin/:idbesoin', async(req, res) => {
+
+    let data = await cbBesoin.getBesoin(req.params.idbesoin, req.params.id)
+
+    if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(404) } else res.json(data)
+});
+//**************************************************************** */
 
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
