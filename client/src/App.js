@@ -15,10 +15,9 @@ import ModifyProfile from './pages/profile/ModifyProfile';
 import Main from './pages/Main'
 import About from './pages/About'
 import MyEvents from './pages/MyEvents'
-import Event from './pages/Event'
-import CreateEvent from './pages/CreateEvent'
 import Navbar from './components/Header/Navbar';
 import Error from './pages/Error'
+import EventContainer from './pages/event/EventContainer';
 
 class App extends React.Component {
 
@@ -40,10 +39,6 @@ class App extends React.Component {
         catch (err) {
             console.log(err);
         }
-    }
-
-    componentDidUpdate() {
-        console.log("update")
     }
 
     render() {
@@ -68,8 +63,7 @@ class App extends React.Component {
                             <Route path='/' element={<Main/>}/>
                             <Route path='a-propos' element={<About/>}/>
                             <Route path='mes-evenements' element={<MyEvents/>}/>
-                            <Route path='evenement/:id' element={<Event/>}/>
-                            <Route path='creer-evenement' element={<CreateEvent/>} />
+                            <Route path='evenement/:id' element={<EventContainer/>}/>
                             <Route path='*' element={<Error/>}/>
                             <Route path='mon-profil' element={<UserProfile/>} />
                             <Route path='modifier-profil' element={<ModifyProfile/>}/>

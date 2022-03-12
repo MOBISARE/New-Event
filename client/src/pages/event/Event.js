@@ -1,10 +1,10 @@
 import React from 'react'
 import axios from "axios";
 
-import UserMini from '../components/UserMini'
-import NeedList from '../components/Event/NeedList'
-import Button from "../components/Button";
-import ParticipantViewer from '../components/Event/ParticipantViewer'
+import UserMini from '../../components/UserMini'
+import NeedList from '../../components/Event/NeedList'
+import Button from "../../components/Button";
+import ParticipantViewer from '../../components/Event/ParticipantViewer'
 
 let evt = {
     id:1,

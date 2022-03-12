@@ -1,7 +1,7 @@
 import React from 'react'
-import NeedList from "../components/Event/NeedList";
-import InputField from "../components/InputField";
-import FormButton from "../components/FormButton";
+import NeedList from "../../components/Event/NeedList";
+import InputField from "../../components/InputField";
+import FormButton from "../../components/FormButton";
 import axios from "axios";
 
 let today = new Date()
