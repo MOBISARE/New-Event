@@ -2,7 +2,6 @@ import React from 'react'
 import EventCard from '../components/Event/EventCard'
 import axios from "axios";
 import withRouter from '../withRouter'
-import res from 'express/lib/response';
 
 let fakeEvents = [
     {
@@ -51,7 +50,7 @@ class MyEvents extends React.Component {
         }));*/
 
         try {
-            res = await axios.get('/api/mes-evenements');
+            let res = await axios.get('/api/mes-evenements');
             this.setState({events: res.data})
         }
         catch (err) {
