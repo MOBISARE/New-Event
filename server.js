@@ -49,7 +49,7 @@ const port = 5000;
 
 app.get('*', checkUser);
 app.get('/api/jwtid', requireAuth, (req, res) => {
-    res.sendStatus(200);
+    res.status(200).json(req.cookies.jwt)
 });
 
 //routage
@@ -93,6 +93,8 @@ app.get('/api/evenement/:id', async(req, res) => {
     else if (data == -2) res.sendStatus(404)
     else res.json(data)
 })
+
+app.get('/api/mes-evenements', requireAuth,  cbEvenement.getMesEvenements);
 
 // ***********Consulter ses événements******
 //Retourne les id des événements auquel participe un compte

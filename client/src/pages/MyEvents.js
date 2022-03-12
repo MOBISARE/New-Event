@@ -38,9 +38,16 @@ let fakeEvents = [
 class MyEvents extends React.Component {
 
     async componentDidMount() {
+        /*
         this.setState(await axios.get('/api/evenement/consulter/1').then(value => {
             console.log(value)
+        }));*/
+
+        this.setState(await axios.get('/api/mes-evenements').then(value => {
+            console.log(value)
         }));
+
+        
     }
 
     render(){
