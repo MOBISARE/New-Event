@@ -39,23 +39,25 @@ class MyEvents extends React.Component {
 
     constructor(props){
         super(props);
-        console.log(this.props.router);
-        this.state = {events: []}
+        this.state = {myevents: [], mycontributing: []};
     }
 
-    componentDidMount = async () => {
-        /*
-        this.setState(await axios.get('/api/evenement/consulter/1').then(value => {
-            console.log(value)
-        }));*/
-
-        try {
-            let res = await axios.get('/api/mes-evenements');
-            this.setState({events: res.data})
-        }
-        catch (err) {
+    componentDidMount = () => {
+        axios.get('/api/mes-evenements')
+        .then((res) => {
+            this.setState({myevents: res.data});
+        })
+        .catch((err) => {
             console.log(err);
-        }
+        });
+
+        axios.get('/api/mes-participations')
+        .then((res) => {
+            this.setState({mycontributing: res.data});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     }
 
     createEvent = () => {
@@ -107,14 +109,44 @@ class MyEvents extends React.Component {
                     <hr/>
 
                     <div className='flex flex-wrap flex-row'>
-                        { myevents }
+                        { 
+                        this.state.myevents.map((elem) => {
+                            return(
+                            <EventCard
+                                key={elem.id_evenement}
+                                id={elem.id_evenement}
+                                title={elem.titre}
+                                description={elem.description}
+                                imgUrl={elem.img_banniere}
+                                membersNumber={'?'}
+                                location={elem.departement}
+                                startDate={elem.debut}
+                                endDate={elem.fin}
+                            />)
+                        }) 
+                        }
                     </div>
                 </div>
                 <div className='mt-6'>
                     <span className='text-3xl'>Mes participations</span>
                     <hr/>
                     <div className='flex flex-wrap flex-row'>
-                        { mycontributing }
+                    { 
+                        this.state.mycontributing.map((elem) => {
+                            return(
+                            <EventCard
+                                key={elem.id_evenement}
+                                id={elem.id_evenement}
+                                title={elem.titre}
+                                description={elem.description}
+                                imgUrl={elem.img_banniere}
+                                membersNumber={'?'}
+                                location={elem.departement}
+                                startDate={elem.debut}
+                                endDate={elem.fin}
+                            />)
+                        }) 
+                        }
                     </div>
                 </div>
             </div>

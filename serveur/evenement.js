@@ -58,7 +58,20 @@ async function getEvenement(id) {
 
 module.exports.getMesEvenements = async(req, res) => {
     try {
-        events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?)', [res.locals.user.id_compte]);
+        events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
+
+        if (events === undefined) res.sendStatus(400);
+        else res.status(200).json(events);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.getMesParticipations = async(req, res) => {
+    try {
+        events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
 
         if (events === undefined) res.sendStatus(400);
         else res.status(200).json(events);

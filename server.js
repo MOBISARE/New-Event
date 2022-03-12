@@ -98,6 +98,7 @@ app.get('/api/evenement/:id', async(req, res) => {
 })
 
 app.get('/api/mes-evenements', requireAuth,  cbEvenement.getMesEvenements);
+app.get('/api/mes-participations', requireAuth,  cbEvenement.getMesParticipations);
 
 // ***********Consulter ses événements******
 //Retourne les id des événements auquel participe un compte
