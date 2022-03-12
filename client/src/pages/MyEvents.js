@@ -1,7 +1,8 @@
 import React from 'react'
 import EventCard from '../components/Event/EventCard'
-import {Link} from 'react-router-dom'
 import axios from "axios";
+import withRouter from '../withRouter'
+import res from 'express/lib/response';
 
 let fakeEvents = [
     {
@@ -37,17 +38,35 @@ let fakeEvents = [
 ]
 class MyEvents extends React.Component {
 
-    async componentDidMount() {
+    constructor(props){
+        super(props);
+        console.log(this.props.router);
+        this.state = {events: []}
+    }
+
+    componentDidMount = async () => {
         /*
         this.setState(await axios.get('/api/evenement/consulter/1').then(value => {
             console.log(value)
         }));*/
 
-        this.setState(await axios.get('/api/mes-evenements').then(value => {
-            console.log(value)
-        }));
+        try {
+            res = await axios.get('/api/mes-evenements');
+            this.setState({events: res.data})
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
 
-        
+    createEvent = () => {
+        axios.put('/api/evenement/creer')
+        .then(res => {
+            this.props.router.navigate("/evenement/" + res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     render(){
@@ -82,12 +101,12 @@ class MyEvents extends React.Component {
             <div>
                 <div>
                     <span className='text-3xl mr-2'>Mes événements</span>
-                    <Link to='/creer-evenement'>
-                        <span className="material-icons">
+                    <span className="material-icons cursor-pointer" onClick={this.createEvent}>
                         add_circle_outline
                     </span>
-                    </Link>
+
                     <hr/>
+
                     <div className='flex flex-wrap flex-row'>
                         { myevents }
                     </div>
@@ -104,4 +123,4 @@ class MyEvents extends React.Component {
     }
 }
 
-export default MyEvents;
+export default withRouter(MyEvents);

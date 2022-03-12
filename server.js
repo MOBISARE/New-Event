@@ -48,6 +48,7 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 const port = 5000;
 
 app.get('*', checkUser);
+app.put('*', checkUser);
 app.get('/api/jwtid', requireAuth, (req, res) => {
     res.status(200).json(req.cookies.jwt)
 });
@@ -71,6 +72,8 @@ app.put('/api/evenement/modifier/:id', async(req, res) => {
     //*************************************************************
 
 //créer evenement
+app.put('/api/evenement/creer', requireAuth, cbEvenement.createEvent);
+
 app.post('/api/evenement/creer', async(req, res) => {
     let result = await cbEvenement.putEvenementCreation(
         req.body.titre,

@@ -32,7 +32,7 @@ class App extends React.Component {
         try {
             let res = await axios({
                 method: "get",
-                url: `/api/jwtid`,
+                url: '/api/jwtid',
                 withCredentials: true,
             })
             this.setState({uid : res.data});
