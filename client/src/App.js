@@ -36,7 +36,6 @@ class App extends React.Component {
                 withCredentials: true,
             })
             this.setState({uid : res.data});
-            console.log(res.data);
         }
         catch (err) {
             console.log(err);
