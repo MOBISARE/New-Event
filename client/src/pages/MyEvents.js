@@ -3,38 +3,6 @@ import EventCard from '../components/Event/EventCard'
 import axios from "axios";
 import withRouter from '../withRouter'
 
-let fakeEvents = [
-    {
-        id:1,
-        title:"Titre d'événement",
-        description:"Description de cet événement",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    },
-    {
-        id:2,
-        title:"Titre d'événement",
-        description:"Description de cet événement",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    },
-    {
-        id:3,
-        title:"Titre d'événement",
-        description:"Description de cet événement",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    },
-]
 class MyEvents extends React.Component {
 
     constructor(props){
@@ -71,7 +39,7 @@ class MyEvents extends React.Component {
     }
 
     render(){
-        const myevents = [fakeEvents[0], fakeEvents[1]].map(value =>
+        const myevents = [].map(value =>
             <EventCard
                 key={value.id}
                 id={value.id}
@@ -84,7 +52,7 @@ class MyEvents extends React.Component {
                 endDate={value.endDate}
             />
         )
-        const mycontributing = [fakeEvents[2]].map(value =>
+        const mycontributing = [].map(value =>
             <EventCard
                 key={value.id}
                 id={value.id}
