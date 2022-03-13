@@ -11,7 +11,7 @@ function withRouter(Component) {
         let navigate = useNavigate();
         let params = useParams();
         return (
-        <Component
+        <Component ref={props.compRef}
             {...props}
             router={{ location, navigate, params }}
         />

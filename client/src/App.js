@@ -44,7 +44,7 @@ class App extends React.Component {
     render() {
         if (this.state.uid === '') {
             return (
-                <UidContext.Provider value={this.uid}>
+                <UidContext.Provider value={this.state.uid}>
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/connexion' element={<Login />} />
@@ -55,7 +55,7 @@ class App extends React.Component {
             )
         } else {
             return (
-                <UidContext.Provider value={this.uid}>
+                <UidContext.Provider value={this.state.uid}>
                 <div className='bg-gray w-full min-h-screen h-full'>
                     <Navbar/>
                     <div className='py-24 px-16 max-w-[1300px] mx-auto'>

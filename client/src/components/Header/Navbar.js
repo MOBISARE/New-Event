@@ -59,7 +59,7 @@ class Navbar extends React.Component {
                                 person
                             </span>
                             </button>
-                            <ProfilDropDown ref={this.profilDropDown} button={this.profilButton}/>
+                            <ProfilDropDown compRef={this.profilDropDown} button={this.profilButton}/>
                         </div>
                         
                         <div className='relative'>
