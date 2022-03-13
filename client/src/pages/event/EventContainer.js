@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from "axios";
 
+import LoadingEvent from './LoadingEvent'
 import Event from './Event';
 import CreateEvent from './CreateEvent';
 
@@ -38,7 +39,7 @@ class EventContainer extends React.Component {
             <div>
                 {
                     this.state.event === undefined
-                    ? <></>
+                    ? <LoadingEvent></LoadingEvent>
                     : this.state.event.etat === 0
                     ? <CreateEvent></CreateEvent>
                     : <Event></Event>

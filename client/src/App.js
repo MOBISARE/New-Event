@@ -24,7 +24,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {uid:''};
+        this.state = {uid:'', isLoaded: false};
     }
 
     async componentDidMount() {
@@ -34,14 +34,17 @@ class App extends React.Component {
                 url: '/api/jwtid',
                 withCredentials: true,
             })
-            this.setState({uid : res.data});
+            this.setState({uid : res.data, isLoaded: true});
         }
         catch (err) {
             console.log(err);
+            this.setState({isLoaded: true});
         }
     }
 
     render() {
+        if(!this.state.isLoaded) return ( <></> );
+
         if (this.state.uid === '') {
             return (
                 <UidContext.Provider value={this.state.uid}>
