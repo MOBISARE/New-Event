@@ -56,6 +56,32 @@ async function getEvenement(id) {
     }
 }
 
+module.exports.getMesEvenements = async(req, res) => {
+    try {
+        events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
+
+        if (events === undefined) res.sendStatus(400);
+        else res.status(200).json(events);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.getMesParticipations = async(req, res) => {
+    try {
+        events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
+
+        if (events === undefined) res.sendStatus(400);
+        else res.status(200).json(events);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
 async function putEvenementModification(body, id) {
     // comparer ancien et nouveau champs avant update ?
     let result = 0
@@ -80,6 +106,17 @@ async function putEvenementModification(body, id) {
     return result.changedRows
 }
 
+module.exports.createEvent = async(req, res) => {
+    try {
+        let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire) VALUES (?, ?, ?, ?)', ["Titre", new Date(), new Date(), res.locals.user.id_compte]);
+        await DB.query('INSERT INTO participant VALUES(?, ?)', [res.locals.user.id_compte, insert.insertId])
+        res.status(200).json(insert.insertId);
+    }
+    catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
 
 async function putEvenementCreation(titre, description, departement, debut, fin, archivage, etat = 0, img_banniere, id_proprietaire) {
     let result = 0

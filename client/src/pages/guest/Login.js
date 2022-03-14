@@ -15,15 +15,16 @@ class Login extends React.Component {
 
         axios({
             method:"post",
-            url:"/user/login",
+            url:"/api/compte/connexion",
             withCredentials: true,
             data: {
                 email: document.getElementById('email').value,
-                password: document.getElementById('mdp').value
+                mot_de_passe: document.getElementById('mdp').value
             }
         })
         .then((res) => {
             console.log(res);
+            window.location = "/";
         })
         .catch((err) => {
             console.log(err);
