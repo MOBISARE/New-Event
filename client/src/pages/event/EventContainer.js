@@ -6,17 +6,6 @@ import LoadingEvent from './LoadingEvent'
 import Event from './Event';
 import CreateEvent from './CreateEvent';
 
-let evt = {
-    id:1,
-    title:"Titre d'événement",
-    description:"Description de cet événement",
-    imgUrl:"/images/icon.png",
-    membersNumber:"5",
-    location:"Nancy",
-    startDate:"26/02/2020",
-    endDate:"31/08/2020"
-}
-
 class EventContainer extends React.Component {
     constructor(props) {
         super(props);
