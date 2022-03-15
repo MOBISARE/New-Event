@@ -129,8 +129,8 @@ const createToken = (id) => {
 app.post('/api/compte/connexion', async(req, res) => {
 
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
-    if (data == -1) res.status(404).send("Adresse mail/mot de passe incorrect")
-    else if (data == -2) res.sendStatus(500)
+    if (data == -1) res.status(400).send("Adresse mail/mot de passe incorrect")
+    else if (data == -2) res.sendStatus(400)
     else {
         const token = createToken(data.id_compte);
         res.cookie('jwt', token, { httpOnly: true, maxAge });
