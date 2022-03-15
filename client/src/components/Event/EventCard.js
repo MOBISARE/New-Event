@@ -10,7 +10,7 @@ class EventCard extends React.Component {
     render() {
         return(
             <Link to={'/evenement/'+this.props.id} className='w-72 h-64 rounded-lg bg-white m-3 flex flex-col justify-center shadow
-                        transition-transform ease-in-out hover:delay-75 hover:duration-300 hover:scale-105 group'
+                        transition-transform ease-in-out delay-75 duration-300 hover:scale-105'
                         onMouseEnter={() => {
                             this.setState({ descriptionVisible: true })
                         }}
@@ -22,10 +22,11 @@ class EventCard extends React.Component {
                     <img className='object-cover w-full h-auto'
                          src={this.props.imgUrl} onError={event => event.target.hidden=true} alt=" "/>
                 </div>
-                <div className='p-2 border-t-8 border-green transition-[height] group-hover:ease-in-out group-hover:duration-700 group-hover:delay-75 group-hover:h-4/5'>
+                <div className={'flex flex-col p-2 border-t-8 border-green transition-[max-height] ease-in-out duration-1000 ' +
+                    (this.state.descriptionVisible? "max-h-[80%]":"max-h-[6.8rem]")}>
                     <h5 className='text-xl font-bold'>{ this.props.title }</h5>
-                    <p className={'description-event max-h-[54%] overflow-hidden '
-                     + (this.state.descriptionVisible? "":" hidden")}
+                    <p className={'description-event overflow-hidden '
+                     + (this.state.descriptionVisible? "h-max":" ")}
                        style={{hyphens:'auto'}}>
                         { this.props.description }
                     </p>
