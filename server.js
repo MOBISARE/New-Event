@@ -56,19 +56,9 @@ app.get('/api/jwtid', requireAuth, (req, res) => {
 //routage
 
 //***************modifier evenement**************************
-app.get('/api/evenement/modifier/:id', async (req, res) => {
-    //parametre id
-    let data = await cbEvenement.getEvenement(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else if (data == -2) res.sendStatus(404)
-    else res.json(data)
-})
+app.get('/api/evenement/modifier/:id', requireAuth, cbEvenement.getEvenement)
 
-app.put('/api/evenement/modifier/:id', async (req, res) => {
-    let result = await cbEvenement.putEvenementModification(req.body, req.params.id)
-    if (result == -1) res.sendStatus(500)
-    else res.sendStatus(200)
-})
+app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.putEvenementModification)
 //*************************************************************
 
 //créer evenement
@@ -199,27 +189,7 @@ app.put('/api/compte/recup/:id/:token', async (req, res) => {
 
 
 //********************* inscription ***************************
-app.post('/api/compte/inscription', async (req, res) => {
-    let data = await cbCompte.postInscription(
-        req.body.nom,
-        req.body.prenom,
-        req.body.email,
-        req.body.mot_de_passe,
-        req.body.naissance,
-        req.body.ville,
-        req.body.departement,
-        req.body.no_telephone,
-        req.body.img_profil)
-    if (data == -1) res.status(400).send("email already exists")
-    else if (data == -2) res.sendStatus(500)
-    else {
-        /*console.log(req.file)
-        const tempPath = req.file.path
-        const targetPath = path.join(__dirname, "./images/" + req.body.img_profil);
-        fs.rename(tempPath, targetPath)*/
-        res.sendStatus(200)
-    }
-})
+app.post('/api/compte/inscription', cbCompte.postInscription)
 //**************************************************************** */
 
 //********************* besoins ***************************

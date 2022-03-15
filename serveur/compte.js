@@ -76,31 +76,34 @@ async function supprCompte(id) {
     }
 }
 
-async function postInscription(nom, prenom, email, motDePasse, dateDeNaissance, ville, departement, telephone = null, photoProfil = null) {
+async function postInscription(req, res) {
 
-    let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', email)
-    if (result[0].nb != 0) return -1
+    let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', req.body.email)
+    if (result[0].nb != 0) res.status(400).send("email already exists")
     else {
         try {
-            let mdp = await crypto.hasherMotDePasse(motDePasse)
+            let mdp = await crypto.hasherMotDePasse(req.body.mot_de_passe)
             result = await DB.query('INSERT INTO compte SET ?', {
-                nom: nom,
-                prenom: prenom,
-                email: email,
+                nom: req.body.nom,
+                prenom: req.body.prenom,
+                email: req.body.email,
                 mot_de_passe: mdp,
-                naissance: dateDeNaissance,
-                ville: ville,
-                departement: departement,
-                no_telephone: telephone,
-                img_profil: photoProfil,
+                naissance: req.body.naissance,
+                ville: req.body.ville,
+                departement: req.body.departement,
+                no_telephone: ((req.body.no_telephone == "") ? null : req.body.no_telephone),
+                img_profil: ((req.body.img_profil == "") ? null : req.body.img_profil),
                 role: "ROLE_USER"
             })
         } catch (err) {
             console.log(err)
-            return -2
+            res.sendStatus(500)
         }
-
-        return result.changedRows
+        /*console.log(req.file)
+        const tempPath = req.file.path
+        const targetPath = path.join(__dirname, "./images/" + req.body.img_profil);
+        fs.rename(tempPath, targetPath)*/
+        res.sendStatus(200)
     }
 }
 
