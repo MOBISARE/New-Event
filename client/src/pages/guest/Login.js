@@ -9,10 +9,7 @@ class Login extends React.Component {
 
     handleLogin = (e) => {
         e.preventDefault();
-        console.log(e);
-
-
-
+        
         axios({
             method:"post",
             url:"/api/compte/connexion",
@@ -23,11 +20,14 @@ class Login extends React.Component {
             }
         })
         .then((res) => {
-            console.log(res);
             window.location = "/";
         })
         .catch((err) => {
-            console.log(err);
+            if(err.response.status === 400){
+                document.getElementById('mdp').setCustomValidity("L'email ou le mot de passe est erroné");
+                document.getElementById("mdp").reportValidity();
+            }
+            else console.log(err);
         })
     }
     
