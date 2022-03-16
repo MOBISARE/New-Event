@@ -50,7 +50,7 @@ class NeedList extends React.Component {
                 <div className='text-xl ml-4 mb-2 flex justify-between'>
                     Besoins
                     <button type='button' className='w-max rounded-full px-4 py-1 bg-darkgray text-lg text-gray transition hover:scale-105 '
-                            onClick={() => this.componentAddNeed.current.hidden=false}>Ajouter un besoin</button>
+                            onClick={() => this.componentAddNeed.current.showComponent() }>Ajouter un besoin</button>
                 </div>
                 <div className='flex flex-col flex-grow border border-transparentgray rounded-lg'>
                     <div className='m-1 flex items-center'>
@@ -65,7 +65,7 @@ class NeedList extends React.Component {
                     </div>
                 </div>
 
-                <CreateNeed ref={this.componentAddNeed} hidden />
+                <CreateNeed ref={this.componentAddNeed}/>
             </div>
         );
     }

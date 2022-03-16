@@ -29,8 +29,8 @@ class CreateEvent extends React.Component {
         const reader = new FileReader();
 
         reader.onloadend = () => {
-            console.log(this.previewImage.current.style)
-            this.previewImage.current.style.backgroundImage = "url('"+reader.result+"')";
+            this.previewImage.current.style.backgroundImage = "url('"+reader.result+"')"
+            document.getElementById('delete-imginput').hidden = false
         }
 
         if(this.hiddenInput.current.files[0]){
@@ -107,8 +107,8 @@ class CreateEvent extends React.Component {
             <form className='max-w-[1000px] mx-auto' onSubmit={this.publishEvent} >
                 <div className='flex'>
                     <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
-                        <div className='flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
-                            <label htmlFor='image' className='hover:cursor-pointer w-full h-full relative flex items-center justify-center bg-cover'
+                        <div className='relative flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
+                            <label htmlFor='image' className='hover:cursor-pointer w-full h-full inline-block relative flex items-center justify-center bg-cover'
                                    onInput={this.processImg} ref={this.previewImage}>
                                 <input type='file' accept='image/*' id='image' ref={this.hiddenInput}
                                        className='absolute top-[-1000px]' name='img-banniere' />
@@ -116,6 +116,14 @@ class CreateEvent extends React.Component {
                                     upload_file
                                 </span>
                             </label>
+                            <span className="material-icons absolute top-0 right-0 m-4 text-red-600 transition hover:scale-110 hover:cursor-pointer"
+                                onClick={(evt) => {
+                                    this.previewImage.current.style.backgroundImage = ''
+                                    this.hiddenInput.current.value = ''
+                                    evt.target.hidden = true
+                                }} id='delete-imginput' hidden>
+                                cancel
+                            </span>
                         </div>
                         <div className='p-6 border-t-8 border-green'>
                             <InputField type='text' children='Titre' id='title' required name='titre' className='font-bold' defaultValue={this.props.eventModel.titre} />
