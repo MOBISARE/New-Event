@@ -138,6 +138,36 @@ module.exports.saveEvent = async (req, res) => {
     }
 }
 
+module.exports.publishEvent = async (req, res) => {
+    try {
+        // --- CHECK
+
+        let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        if(!checkPrivileges.length) {
+            res.sendStatus(404) // Not found
+            return;
+        }
+
+        if(checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte){
+            res.sendStatus(403) // Forbidden
+            return;
+        }
+
+        // --- REQUEST
+
+        await DB.query('UPDATE evenement SET etat = 1 WHERE id_evenement = ?', [req.params.id]);
+
+        let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        res.status(200).json(modelToJSON(newEvent[0]));
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal Server Error
+    }
+}
+
 module.exports.putEvenementModification = async (req, res) => {
     // comparer ancien et nouveau champs avant update ?
     let result = 0

@@ -48,6 +48,7 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 const port = 5000;
 
 app.get('*', checkUser);
+app.post('*', checkUser);
 app.put('*', checkUser);
 app.get('/api/jwtid', requireAuth, (req, res) => {
     res.status(200).json(req.cookies.jwt)
@@ -60,7 +61,8 @@ app.get('/api/evenement/modifier/:id', requireAuth, cbEvenement.getEvenement)
 
 //app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.putEvenementModification)
 
-app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.saveEvent)
+app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.saveEvent);
+app.post('/api/evenement/publier/:id', requireAuth, cbEvenement.publishEvent);
 //*************************************************************
 
 //créer evenement

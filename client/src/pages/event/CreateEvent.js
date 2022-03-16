@@ -58,11 +58,29 @@ class CreateEvent extends React.Component {
         evt.preventDefault()
     }
 
-    publishEvent = () => {
-        
+    publishEvent = async(e) => {
+        e.preventDefault();
+
+        try {
+            let save = await axios.put('/api/evenement/modifier/' + this.props.eventModel.id, {
+                titre: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                departement: document.getElementById('location').value,
+                debut: document.getElementById('start-date').value,
+                fin: document.getElementById('end-date').value,
+                img_banniere: document.getElementById('image').value,
+            });
+
+            let res = await axios.post('/api/evenement/publier/' + this.props.eventModel.id);
+
+            this.props.container.setEvent(res.data);
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
-    saveEvent = () => {
+    saveEvent = async() => {
         axios.put('/api/evenement/modifier/' + this.props.eventModel.id, {
             titre: document.getElementById('title').value,
             description: document.getElementById('description').value,
@@ -72,7 +90,6 @@ class CreateEvent extends React.Component {
             img_banniere: document.getElementById('image').value,
         })
         .then((res) => {
-            
             this.props.container.setEvent(res.data);
             console.log(res);
         })
@@ -87,7 +104,7 @@ class CreateEvent extends React.Component {
 
     render(){
         return(
-            <form className='max-w-[1000px] mx-auto' onSubmit={this.submitForm} >
+            <form className='max-w-[1000px] mx-auto' onSubmit={this.publishEvent} >
                 <div className='flex'>
                     <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
                         <div className='flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
@@ -112,7 +129,7 @@ class CreateEvent extends React.Component {
                         <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
                             <FormButton value='Publier' name='submit-action' className='bg-blue' />
                             <Button className='bg-green-valid' onClick={this.saveEvent}>Sauvegarder</Button>
-                            <FormButton value='Annuler' name='submit-action' className='bg-neutral-500' />
+                            <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.props.router.navigate(-1)}>Annuler</Button>
                             <Button className='bg-red-600'>Supprimer</Button>
                         </div>
                         <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
