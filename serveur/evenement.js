@@ -283,6 +283,18 @@ module.exports.seRetirer = async(req, res) => {
     res.sendStatus(200)
 }
 
+//le participant veut rejoindre un evenement
+
+module.exports.rejoindreEve=async(req,res)=>{
+    try {
+
+    }catch (err){
+        console.log(err)
+        res.sendStatus(500)
+    }
+    res.sendStatus(200)
+}
+
 module.exports.putEvenementCreation = putEvenementCreation
 module.exports.getEvenementConsultation = getIdEvenementConsultation
 module.exports.supprEvenement = supprEvenement
