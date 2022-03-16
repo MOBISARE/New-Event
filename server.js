@@ -152,9 +152,14 @@ app.put('/api/compte/supprimer/:id', requireAuth, cbCompte.supprCompte)
     //************************************************
 
 //**********se retirer d'un evenement*************
-app.post('/api/evenement/seretirer/:id', requireAuth, cbEvenement.seRetirer)
+app.post('/api/evenement/rejoindreEve/:id', requireAuth, cbEvenement.rejoindreEve)
 
 //************************************************
+
+//**********se proposer de rejoindre un evenement*************
+app.post('/api/evenement/seretirer/:id', requireAuth, cbEvenement.seRetirer)
+
+//************************************************************
 
 
 //****************recup mot de passe**************
