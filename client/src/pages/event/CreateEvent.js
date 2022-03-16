@@ -2,7 +2,7 @@ import React from 'react'
 import NeedList from "../../components/Event/NeedList";
 import InputField from "../../components/InputField";
 import FormButton from "../../components/FormButton";
-import Button from "../../components/LinkButton";
+import Button from "../../components/Button";
 import axios from "axios";
 
 let today = new Date()
@@ -62,7 +62,21 @@ class CreateEvent extends React.Component {
     }
 
     saveEvent = () => {
-
+        axios.put('/api/evenement/modifier/' + this.props.eventModel.id, {
+            titre: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            departement: document.getElementById('location').value,
+            debut: document.getElementById('start-date').value,
+            fin: document.getElementById('end-date').value,
+            img_banniere: document.getElementById('image').value,
+        })
+        .then((res) => {
+            this.props.container.setEvent(res.data);
+            console.log(res);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     deleteEvent = () => {
@@ -75,7 +89,7 @@ class CreateEvent extends React.Component {
                 <div className='flex'>
                     <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
                         <div className='flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
-                            <label htmlFor='image' className='hover:cursor-pointer w-full h-full inline-block relative flex items-center justify-center bg-cover'
+                            <label htmlFor='image' className='hover:cursor-pointer w-full h-full relative flex items-center justify-center bg-cover'
                                    onInput={this.processImg} ref={this.previewImage}>
                                 <input type='file' accept='image/*' id='image' ref={this.hiddenInput}
                                        className='absolute top-[-1000px]' name='img-banniere' />
@@ -96,12 +110,9 @@ class CreateEvent extends React.Component {
                     <div className='w-2/5'>
                         <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
                             <FormButton value='Publier' name='submit-action' className='bg-blue' />
-                            <Button bg_class='bg-green-valid'>Sauvegarder</Button>
+                            <Button className='bg-green-valid' onClick={this.saveEvent}>Sauvegarder</Button>
                             <FormButton value='Annuler' name='submit-action' className='bg-neutral-500' />
-                            <button name='submit-action' value='Supprimer'
-                                className='border-solid border rounded-full border-transparentgray px-8 py-2 bg-red-600 text-xl text-gray cursor-pointer transition hover:scale-105'>
-                                Supprimer</button>
-
+                            <Button className='bg-red-600'>Supprimer</Button>
                         </div>
                         <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                             <InputField type='date' id='start-date' children='Date de début' required min={today}

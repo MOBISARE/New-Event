@@ -58,7 +58,9 @@ app.get('/api/jwtid', requireAuth, (req, res) => {
 //***************modifier evenement**************************
 app.get('/api/evenement/modifier/:id', requireAuth, cbEvenement.getEvenement)
 
-app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.putEvenementModification)
+//app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.putEvenementModification)
+
+app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.saveEvent)
 //*************************************************************
 
 //créer evenement

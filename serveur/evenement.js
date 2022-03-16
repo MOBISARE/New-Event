@@ -1,6 +1,21 @@
 const DB = require("./db").DB
 var async = require('async')
 
+modelToJSON = (event) => {
+    return {
+        id: event.id_evenement,
+        titre: event.titre,
+        description: event.description,
+        departement: event.departement,
+        debut: event.debut,
+        fin: event.fin,
+        archivage: event.archivage,
+        etat: event.etat,
+        img_banniere: event.img_banniere,
+        id_proprietaire: event.id_proprietaire,
+    }
+}
+
 module.exports.getEvenement = async (req, res) => {
     let evenement;
     let participants = []
@@ -79,6 +94,47 @@ module.exports.getMesParticipations = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.sendStatus(500);
+    }
+}
+
+module.exports.saveEvent = async (req, res) => {
+    try {
+        // --- CHECK
+
+        let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        if(!checkPrivileges.length) {
+            res.sendStatus(404) // Not found
+            return;
+        }
+
+        if(checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte){
+            res.sendStatus(403) // Forbidden
+            return;
+        }
+
+        // --- REQUEST
+
+        await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [{
+            titre: req.body.titre,
+            description: req.body.description,
+            departement: req.body.departement,
+            debut: req.body.debut,
+            fin: req.body.fin,
+            archivage: req.body.archivage,
+            etat: req.body.etat,
+            img_banniere: req.body.img_banniere
+            }, 
+            req.params.id]
+        );
+
+        let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        res.status(200).json(modelToJSON(newEvent[0]));
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal Server Error
     }
 }
 

@@ -14,6 +14,10 @@ class EventContainer extends React.Component {
         }
     }
 
+    setEvent = (e) => {
+        this.setState({event: e});
+    }
+
     componentDidMount = () => {
         axios.get('/api/evenement/' + this.props.router.params.id)
         .then(res => {
@@ -31,7 +35,7 @@ class EventContainer extends React.Component {
                     this.state.event === undefined
                     ? <LoadingEvent></LoadingEvent>
                     : this.state.event.etat === 0
-                    ? <CreateEvent></CreateEvent>
+                    ? <CreateEvent eventModel={this.state.event} container={this}></CreateEvent>
                     : <Event></Event>
                 }
             </div>
