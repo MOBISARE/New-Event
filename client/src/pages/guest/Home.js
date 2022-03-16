@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import Button from '../../components/Button'
+import LinkButton from '../../components/LinkButton'
 
 class Home extends React.Component {
 
@@ -45,8 +45,8 @@ class Home extends React.Component {
                     <Link to='/'><img className='object-cover h-full' src='/images/Logo.png'></img></Link>
 
                     <div className='flex gap-5 items-center'>
-                        <Button bg_class='bg-blue' text_class='text-gray' to='/inscription'>Inscription</Button>
-                        <Button bg_class='bg-darkgray' text_class='text-gray' to='/connexion'>Connexion</Button>
+                        <LinkButton bg_class='bg-blue' text_class='text-gray' to='/inscription'>Inscription</LinkButton>
+                        <LinkButton bg_class='bg-darkgray' text_class='text-gray' to='/connexion'>Connexion</LinkButton>
                     </div>
                 
                 </div>
@@ -102,7 +102,7 @@ class Home extends React.Component {
                     <h1 className='text-6xl font-bold text-gray text-center'>Rejoins nous !</h1>
 
                     <div className='flex justify-center mt-48'>
-                        <Button bg_class='bg-gradient-to-r from-purple to-blue h-16 w-60' text_class='text-gray text-2xl' to='/inscription'>S'inscrire</Button>
+                        <LinkButton bg_class='bg-gradient-to-r from-purple to-blue h-16 w-60' text_class='text-gray text-2xl' to='/inscription'>S'inscrire</LinkButton>
                     </div>
                 </div>
                 

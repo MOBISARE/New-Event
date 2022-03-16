@@ -2,7 +2,7 @@ import React from 'react'
 import InputField from '../../components/InputField'
 import PictureField from '../../components/PictureField'
 import Checkbox from '../../components/Checkbox'
-import Button from '../../components/Button';
+import LinkButton from '../../components/LinkButton';
 
 class ModifyProfile extends React.Component {
     render(){
@@ -41,15 +41,15 @@ class ModifyProfile extends React.Component {
                         <InputField id='mot_de_passe' type='password' className='w-full' required></InputField>
                         <h2>Confirmation du mot de passe</h2>
                         <InputField id='mot_de_passe' type='password' className='w-full' required></InputField>
-                        <Button bg_class='bg-white' text_class='text-black' to='/' width='0'>Modifier mot de passe</Button>
+                        <LinkButton bg_class='bg-white' text_class='text-black' to='/' width='0'>Modifier mot de passe</LinkButton>
                     </div>
                     <div>
                         <h1 className='text-2xl text-red-500'>Suppression du compte :</h1>
                         <p>Attention la suppression du compte est définitive</p>
-                        <Button bg_class='bg-red-500' text_class='text-white' to='/' width='0'>Supprimer</Button>
+                        <LinkButton bg_class='bg-red-500' text_class='text-white' to='/' width='0'>Supprimer</LinkButton>
                     </div>
                 </div>
-                <Button bg_class='bg-green' text_class='text-white' to='/' width='0'>Valider</Button>
+                <LinkButton bg_class='bg-green' text_class='text-white' to='/' width='0'>Valider</LinkButton>
             </div>
         );
     }

@@ -1,7 +1,24 @@
 const DB = require("./db").DB
 var async = require('async')
 
-async function getEvenement(id) {
+
+
+modelToJSON = (event) => {
+    return {
+        id: event.id_evenement,
+        titre: event.titre,
+        description: event.description,
+        departement: event.departement,
+        debut: event.debut,
+        fin: event.fin,
+        archivage: event.archivage,
+        etat: event.etat,
+        img_banniere: event.img_banniere,
+        id_proprietaire: event.id_proprietaire,
+    }
+}
+
+module.exports.getEvenement = async (req, res) => {
     let evenement;
     let participants = []
     let besoins = []
@@ -9,13 +26,13 @@ async function getEvenement(id) {
         // recupere les informations de l evenement
         evenement = await DB.query('SELECT evenement.id_evenement, titre, description, departement, debut, fin, archivage, etat, img_banniere, id_proprietaire '
             + 'FROM evenement '
-            + 'WHERE id_evenement = ?', [id])
+            + 'WHERE id_evenement = ?', [req.params.id])
 
         evenement = evenement[0]
 
         let rows = []
         // recupere les participants de l evenement
-        rows = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ?', [id])
+        rows = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ?', [req.params.id])
         rows.forEach(e => {
             participants.push(e.id_compte)
         })
@@ -23,7 +40,7 @@ async function getEvenement(id) {
         // recupere les besoins de l evenement
         // nom prenom id participant
         rows = await DB.query('SELECT id_besoin, description, id_participant, nom, prenom' +
-            ' FROM besoin INNER JOIN compte ON besoin.id_participant=compte.id_compte WHERE id_evenement = ?', [id])
+            ' FROM besoin INNER JOIN compte ON besoin.id_participant=compte.id_compte WHERE id_evenement = ?', [req.params.id])
 
         rows.forEach(e => {
             besoins.push({
@@ -36,11 +53,11 @@ async function getEvenement(id) {
         })
     } catch (err) {
         console.log(err)
-        return -1           // erreur lors de l execution de la requete (500)
+        res.sendStatus(500)     //erreur lors de l execution de la requete
     }
 
-    if (evenement == undefined) return -2       // evenement inconnu (404)
-    else return {
+    if (evenement == undefined) res.sendStatus(404)       // evenement inconnu (404)
+    else res.json({
         id: evenement.id_evenement,
         titre: evenement.titre,
         description: evenement.description,
@@ -53,10 +70,10 @@ async function getEvenement(id) {
         id_proprietaire: evenement.id_proprietaire,
         id_participants: participants,
         besoins: besoins
-    }
+    })
 }
 
-module.exports.getMesEvenements = async(req, res) => {
+module.exports.getMesEvenements = async (req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
 
@@ -69,7 +86,7 @@ module.exports.getMesEvenements = async(req, res) => {
     }
 }
 
-module.exports.getMesParticipations = async(req, res) => {
+module.exports.getMesParticipations = async (req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
 
@@ -82,31 +99,103 @@ module.exports.getMesParticipations = async(req, res) => {
     }
 }
 
-async function putEvenementModification(body, id) {
+module.exports.saveEvent = async (req, res) => {
+    try {
+        // --- CHECK
+
+        let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        if(!checkPrivileges.length) {
+            res.sendStatus(404) // Not found
+            return;
+        }
+
+        if(checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte){
+            res.sendStatus(403) // Forbidden
+            return;
+        }
+
+        // --- REQUEST
+
+        await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [{
+            titre: req.body.titre,
+            description: req.body.description,
+            departement: req.body.departement,
+            debut: req.body.debut,
+            fin: req.body.fin,
+            archivage: req.body.archivage,
+            etat: req.body.etat,
+            img_banniere: req.file ? 'http://localhost:5000/api/images/' + req.file.filename : ''
+            },
+            req.params.id]
+        );
+
+        let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        res.status(200).json(modelToJSON(newEvent[0]));
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal Server Error
+    }
+}
+
+module.exports.publishEvent = async (req, res) => {
+    try {
+        // --- CHECK
+
+        let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        if(!checkPrivileges.length) {
+            res.sendStatus(404) // Not found
+            return;
+        }
+
+        if(checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte){
+            res.sendStatus(403) // Forbidden
+            return;
+        }
+
+        // --- REQUEST
+
+        await DB.query('UPDATE evenement SET etat = 1 WHERE id_evenement = ?', [req.params.id]);
+
+        let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        res.status(200).json(modelToJSON(newEvent[0]));
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal Server Error
+    }
+}
+
+module.exports.putEvenementModification = async (req, res) => {
     // comparer ancien et nouveau champs avant update ?
     let result = 0
     try {
         result = await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [{
-            titre: body.titre, description: body.description, departement: body.departement,
-            debut: body.debut, fin: body.fin, archivage: body.archivage, etat: body.etat, img_banniere: body.img_banniere
-        }, id])
+            titre: req.body.titre, description: req.body.description, departement: req.body.departement,
+            debut: req.body.debut, fin: req.body.fin, archivage: req.body.archivage, etat: req.body.etat,
+            img_banniere: req.body.img_banniere
+        }, req.params.id])
 
         //la notification est envoyee a tous les particiapnts
         //si il y a une modification
         if (result.changedRows != 0) {
-            let rows = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ?', [id])
+            let rows = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ?', [req.params.id])
             rows.forEach(e => {
-                DB.query('INSERT INTO notification SET ?', { type: 4, id_type: id, etat: 1, id_compte: e.id_compte })
+                DB.query('INSERT INTO notification SET ?', { type: 4, id_type: req.params.id, etat: 1, id_compte: e.id_compte })
             })
         }
     } catch (err) {
         console.log(err)
-        return -1           // erreur lors de l execution de la requete (500)
+        res.sendStatus(500)           // erreur lors de l execution de la requete (500)
     }
-    return result.changedRows
+    res.sendStatus(200)
 }
 
-module.exports.createEvent = async(req, res) => {
+module.exports.createEvent = async (req, res) => {
     try {
         let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire) VALUES (?, ?, ?, ?)', ["Titre", new Date(), new Date(), res.locals.user.id_compte]);
         await DB.query('INSERT INTO participant VALUES(?, ?)', [res.locals.user.id_compte, insert.insertId])
@@ -158,11 +247,11 @@ async function getIdEvenementConsultation(id) {
 }
 
 
-async function supprEvenement(id_evenement, id_compte){
+async function supprEvenement(id_evenement, id_compte) {
     let result = 0
     let id_proprietaire = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
     id_proprietaire = id_proprietaire[0].id_proprietaire
-    if (id_proprietaire == id_compte){
+    if (id_proprietaire == id_compte) {
         try {
             result = await DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id_evenement])
         } catch (err) {
@@ -172,8 +261,19 @@ async function supprEvenement(id_evenement, id_compte){
     } else return -2
 }
 
-module.exports.getEvenement = getEvenement
-module.exports.putEvenementModification = putEvenementModification
+//le participant veut se retirer d'un évenment
+async function seRetirer(idEve,idPar){
+
+    try {
+        result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?',[idEve,idPar])
+        //let idR=await DB.query('SELECT id_compte FROM evenement WHERE id_eve=idEve')
+        //sendNotif(idR,idPar)
+    } catch (err) {
+        console.log(err)
+        return -1
+    }
+}
+
 module.exports.putEvenementCreation = putEvenementCreation
 module.exports.getEvenementConsultation = getIdEvenementConsultation
 module.exports.supprEvenement = supprEvenement
