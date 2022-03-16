@@ -64,7 +64,7 @@ class Event extends React.Component {
                                     {this.state.departement}
                                 </div>
                             </div>
-                            <Button bg_class='bg-green-valid'>Rejoindre</Button>
+                            <Button className='bg-green-valid'>Rejoindre</Button>
                         </div>
                         <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                             <div>

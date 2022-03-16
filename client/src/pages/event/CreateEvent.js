@@ -2,6 +2,7 @@ import React from 'react'
 import NeedList from "../../components/Event/NeedList";
 import InputField from "../../components/InputField";
 import FormButton from "../../components/FormButton";
+import Button from "../../components/LinkButton";
 import axios from "axios";
 
 let today = new Date()
@@ -42,6 +43,7 @@ class CreateEvent extends React.Component {
         let submitActionCode = [
             'Annuler', 'Publier', 'Supprimer'
         ].indexOf(form.elements['submit-action'].value)
+
         axios.post('/api/evenement/creer', {
             titre: form.elements['title'].value,
             description: form.elements['description'].value,
@@ -53,6 +55,18 @@ class CreateEvent extends React.Component {
             id_proprietaire: 1,
         }).then(r => console.log(r)).catch(reason => console.log(reason))
         evt.preventDefault()
+    }
+
+    publishEvent = () => {
+        
+    }
+
+    saveEvent = () => {
+
+    }
+
+    deleteEvent = () => {
+
     }
 
     render(){
@@ -80,9 +94,10 @@ class CreateEvent extends React.Component {
                         </div>
                     </div>
                     <div className='w-2/5'>
-                        <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6'>
+                        <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
                             <FormButton value='Publier' name='submit-action' className='bg-blue' />
-                            <FormButton value='Annuler' name='submit-action' className='my-3 bg-neutral-500' />
+                            <Button bg_class='bg-green-valid'>Sauvegarder</Button>
+                            <FormButton value='Annuler' name='submit-action' className='bg-neutral-500' />
                             <button name='submit-action' value='Supprimer'
                                 className='border-solid border rounded-full border-transparentgray px-8 py-2 bg-red-600 text-xl text-gray cursor-pointer transition hover:scale-105'>
                                 Supprimer</button>
