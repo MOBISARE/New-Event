@@ -190,12 +190,7 @@ app.post('/api/evenement/:id/besoin/creer', requireAuth, cbBesoin.postAjouterBes
 
 app.put('/api/evenement/:id/besoin/:idbesoin/modifier', requireAuth, cbBesoin.putModifierBesoin)
 
-app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async(req, res) => {
-
-    let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
-
-    if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(401) } else res.sendStatus(200)
-})
+app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', requireAuth, cbBesoin.postSupprBesoin)
 
 app.get('/api/evenement/:id/besoin/:idbesoin', async(req, res) => {
 

@@ -33,19 +33,23 @@ module.exports.putModifierBesoin = async(req, res) => {
 
 }
 
-async function postSupprBesoin(id_besoin, id_evenement, id_proprietaire) {
-    var proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
-    if (proprio[0].id_proprietaire != id_proprietaire) {
-        return -2
-    }
+module.exports.postSupprBesoin = async(req, res) => {
+
+    /*var proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id])
+    if (proprio[0].id_proprietaire != req.params.id) {
+        res.sendStatus(401)
+    }*/
     try {
-        var result = await DB.query('DELETE FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [id_besoin, id_evenement])
+        var result = await DB.query('DELETE FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [req.params.idbesoin, req.params.id])
+        if (result == undefined || result.changedRows == 0) {
+            res.sendStatus(404)
+        }
     } catch (err) {
         console.log(err)
-        return -1
+        res.sendStatus(500)
     }
 
-    return result.changedRows
+    res.sendStatus(200)
 }
 
 async function getBesoin(id_besoin, id_evenement) {
@@ -65,5 +69,4 @@ async function getBesoin(id_besoin, id_evenement) {
     }
 }
 
-module.exports.postSupprBesoin = postSupprBesoin
 module.exports.getBesoin = getBesoin
