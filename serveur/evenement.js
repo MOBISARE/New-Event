@@ -1,6 +1,8 @@
 const DB = require("./db").DB
 var async = require('async')
 
+
+
 modelToJSON = (event) => {
     return {
         id: event.id_evenement,
@@ -123,8 +125,8 @@ module.exports.saveEvent = async (req, res) => {
             fin: req.body.fin,
             archivage: req.body.archivage,
             etat: req.body.etat,
-            img_banniere: req.body.img_banniere
-            }, 
+            img_banniere: req.file ? 'http://localhost:5000/api/images/' + req.file.filename : ''
+            },
             req.params.id]
         );
 

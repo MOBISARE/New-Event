@@ -56,12 +56,16 @@ app.get('/api/jwtid', requireAuth, (req, res) => {
 
 //routage
 
+app.get('/api/images/:name', async (req, res) => {
+    res.type('image/jpeg').sendFile(path.join(__dirname, "./images/" + req.params.name));
+});
+
 //***************modifier evenement**************************
 app.get('/api/evenement/modifier/:id', requireAuth, cbEvenement.getEvenement)
 
 //app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.putEvenementModification)
 
-app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.saveEvent);
+app.put('/api/evenement/modifier/:id', requireAuth, upload.single('img_banniere'), cbEvenement.saveEvent);
 app.post('/api/evenement/publier/:id', requireAuth, cbEvenement.publishEvent);
 //*************************************************************
 

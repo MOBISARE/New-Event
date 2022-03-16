@@ -25,6 +25,10 @@ class CreateEvent extends React.Component {
         this.previewImage = React.createRef()
     }
 
+    componentDidMount = () => {
+        if(this.props.eventModel.img_banniere) this.previewImage.current.style.backgroundImage = "url('"+this.props.eventModel.img_banniere+"')"
+    }
+
     processImg = () => {
         const reader = new FileReader();
 
@@ -36,26 +40,6 @@ class CreateEvent extends React.Component {
         if(this.hiddenInput.current.files[0]){
             reader.readAsDataURL(this.hiddenInput.current.files[0]);
         }
-    }
-
-    submitForm(evt) {
-        let form = document.forms[0]
-        console.log(form.elements)
-        let submitActionCode = [
-            'Annuler', 'Publier', 'Supprimer'
-        ].indexOf(form.elements['submit-action'].value)
-
-        axios.post('/api/evenement/creer', {
-            titre: form.elements['title'].value,
-            description: form.elements['description'].value,
-            departement: form.elements['location'].value,
-            debut: form.elements['start-date'].value,
-            fin: form.elements['end-date'].value,
-            etat: submitActionCode,
-            img_banniere: form.elements['image'].value,
-            id_proprietaire: 1,
-        }).then(r => console.log(r)).catch(reason => console.log(reason))
-        evt.preventDefault()
     }
 
     publishEvent = async(e) => {
@@ -81,13 +65,19 @@ class CreateEvent extends React.Component {
     }
 
     saveEvent = async() => {
-        axios.put('/api/evenement/modifier/' + this.props.eventModel.id, {
-            titre: document.getElementById('title').value,
-            description: document.getElementById('description').value,
-            departement: document.getElementById('location').value,
-            debut: document.getElementById('start-date').value,
-            fin: document.getElementById('end-date').value,
-            img_banniere: document.getElementById('image').value,
+        let data = new FormData();
+
+        data.append('titre', document.getElementById('title').value);
+        data.append('description', document.getElementById('description').value);
+        data.append('departement', document.getElementById('location').value);
+        data.append('debut', document.getElementById('start-date').value);
+        data.append('fin', document.getElementById('end-date').value);
+        data.append('img_banniere', document.getElementById('image').files[0]);
+
+        axios.put('/api/evenement/modifier/' + this.props.eventModel.id, data, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
         })
         .then((res) => {
             this.props.container.setEvent(res.data);
@@ -108,7 +98,7 @@ class CreateEvent extends React.Component {
                 <div className='flex'>
                     <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
                         <div className='relative flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
-                            <label htmlFor='image' className='hover:cursor-pointer w-full h-full inline-block relative flex items-center justify-center bg-cover'
+                            <label htmlFor='image' className='hover:cursor-pointer w-full h-full relative flex items-center justify-center bg-cover'
                                    onInput={this.processImg} ref={this.previewImage}>
                                 <input type='file' accept='image/*' id='image' ref={this.hiddenInput}
                                        className='absolute top-[-1000px]' name='img-banniere' />
