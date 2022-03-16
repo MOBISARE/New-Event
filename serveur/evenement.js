@@ -262,10 +262,11 @@ async function supprEvenement(id_evenement, id_compte) {
 }
 
 //le participant veut se retirer d'un évenment
-async function seRetirer(idEve,idPar){
+
+module.exports.seRetirer=async(req,res)=>{
 
     try {
-        result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?',[idEve,idPar])
+        result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?',[req.params.id,req.session.uid])
         //let idR=await DB.query('SELECT id_compte FROM evenement WHERE id_eve=idEve')
         //sendNotif(idR,idPar)
     } catch (err) {
