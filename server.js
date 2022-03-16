@@ -82,12 +82,7 @@ app.post('/api/evenement/creer', async (req, res) => {
 })
 
 // *********** Afficher un événement ***********************
-app.get('/api/evenement/:id', async (req, res) => {
-    let data = await cbEvenement.getEvenement(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else if (data == -2) res.sendStatus(404)
-    else res.json(data)
-})
+app.get('/api/evenement/:id', cbEvenement.getEvenement);
 
 app.get('/api/mes-evenements', requireAuth, cbEvenement.getMesEvenements);
 app.get('/api/mes-participations', requireAuth, cbEvenement.getMesParticipations);
