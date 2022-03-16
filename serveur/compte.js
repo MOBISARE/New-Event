@@ -21,7 +21,7 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
     }
 }
 
-module.exports.getCompte = async(req,res)=> {
+module.exports.getCompte = async(req, res) => {
     let compte;
     try {
         // recupere les informations du compte
@@ -51,7 +51,7 @@ module.exports.getCompte = async(req,res)=> {
 }
 
 //modifier le compte
-module.exports.putCompteModification = async(req,res)=>{
+module.exports.putCompteModification = async(req, res) => {
     let result = 0
     try {
         result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [req.body, req.params.id])
@@ -59,20 +59,21 @@ module.exports.putCompteModification = async(req,res)=>{
 
     } catch (err) {
         console.log(err)
-        return -1 // erreur lors de l execution de la requete (500)
+        res.sendStatus(500) // erreur lors de l execution de la requete (500)
     }
-    res.status(200)
+    res.sendStatus(200)
 }
 
 //supprimer le compte
-module.exports.supprCompte = async(req,res)=>{
+module.exports.supprCompte = async(req, res) => {
     let result = 0
     try {
         result = DB.query('UPDATE compte SET etat=1 WHERE id_compte=?', [req.params.id])
     } catch (err) {
         console.log(err)
-        return -1 //erreur lors de l execution de la requete (500)
+        res.sendStatus(500) //erreur lors de l execution de la requete (500)
     }
+    res.sendStatus(200)
 }
 
 async function postInscription(req, res) {
