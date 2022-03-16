@@ -4,6 +4,7 @@ import InputField from "../../components/InputField";
 import FormButton from "../../components/FormButton";
 import Button from "../../components/Button";
 import axios from "axios";
+import dateformat from 'dateformat'
 
 let today = new Date()
 let dd = today.getDate()
@@ -71,6 +72,7 @@ class CreateEvent extends React.Component {
             img_banniere: document.getElementById('image').value,
         })
         .then((res) => {
+            
             this.props.container.setEvent(res.data);
             console.log(res);
         })
@@ -99,11 +101,10 @@ class CreateEvent extends React.Component {
                             </label>
                         </div>
                         <div className='p-6 border-t-8 border-green'>
-                            <InputField type='text' children='Titre' id='title' required name='titre'
-                                        className='font-bold' />
+                            <InputField type='text' children='Titre' id='title' required name='titre' className='font-bold' defaultValue={this.props.eventModel.titre} />
                             <div className='mt-3'>
                                 <label htmlFor='description' className='block leading-3 ml-4 text-lg z-0'>Description</label>
-                                <textarea id='description' className='rounded-xl border-transparentgray w-full bg-transparent' rows='6' name='description' />
+                                <textarea id='description' className='rounded-xl border-transparentgray w-full bg-transparent' rows='6' name='description' defaultValue={this.props.eventModel.description}/>
                             </div>
                         </div>
                     </div>
@@ -116,10 +117,10 @@ class CreateEvent extends React.Component {
                         </div>
                         <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                             <InputField type='date' id='start-date' children='Date de début' required min={today}
-                                        className='max-w-min' name='debut'/>
+                                        className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
                             <InputField type='date' id='end-date' children='Date de fin' required min={today}
-                                        className='my-3 max-w-min' name='fin' />
-                            <InputField type='text' id='location' name='location' children='Localisation' required />
+                                        className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
+                            <InputField type='text' id='location' name='location' children='Localisation' required defaultValue={this.props.eventModel.departement}/>
                         </div>
                     </div>
                 </div>
