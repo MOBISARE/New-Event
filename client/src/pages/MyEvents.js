@@ -71,6 +71,7 @@ class MyEvents extends React.Component {
                                     description={elem.description}
                                     imgUrl={elem.img_banniere}
                                     membersNumber={'?'}
+                                    etat={elem.etat}
                                     location={elem.departement}
                                     startDate={elem.debut}
                                     endDate={elem.fin}
@@ -95,6 +96,7 @@ class MyEvents extends React.Component {
                                 description={elem.description}
                                 imgUrl={elem.img_banniere}
                                 membersNumber={'?'}
+                                etat={elem.etat}
                                 location={elem.departement}
                                 startDate={elem.debut}
                                 endDate={elem.fin}
