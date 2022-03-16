@@ -139,14 +139,14 @@ app.post('/api/compte/deconnexion', (req, res) => {
 })
 
 //********************modifier compte*************
-app.get('/api/compte/modifier/:id', requireAuth, cbCompte.getCompte)
+//app.get('/api/compte/modifier/:id', requireAuth, cbCompte.getCompte)
 
 app.put('/api/compte/modifier/:id', requireAuth, cbCompte.putCompteModification)
     //************************************************
 
 
 //********************supprimer compte*************
-app.get('/api/compte/supprimer/:id', requireAuth, cbCompte.getCompte)
+//app.get('/api/compte/supprimer/:id', requireAuth, cbCompte.getCompte)
 
 app.put('/api/compte/supprimer/:id', requireAuth, cbCompte.supprCompte)
     //************************************************
@@ -192,13 +192,8 @@ app.put('/api/evenement/:id/besoin/:idbesoin/modifier', requireAuth, cbBesoin.pu
 
 app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', requireAuth, cbBesoin.postSupprBesoin)
 
-app.get('/api/evenement/:id/besoin/:idbesoin', async(req, res) => {
-
-    let data = await cbBesoin.getBesoin(req.params.idbesoin, req.params.id)
-
-    if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(404) } else res.json(data)
-});
-//**************************************************************** */
+app.get('/api/evenement/:id/besoin/:idbesoin', requireAuth, cbBesoin.getBesoin)
+    //**************************************************************** */
 
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

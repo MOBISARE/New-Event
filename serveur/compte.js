@@ -29,10 +29,10 @@ module.exports.getCompte = async(req, res) => {
         compte = compte[0]
     } catch (err) {
         console.log(err)
-        return -1 // erreur lors de l execution de la requete (500)
+        res.sendStatus(200) // erreur lors de l execution de la requete (500)
     }
 
-    if (compte == undefined) return -2 // evenement inconnu (404)
+    if (compte == undefined) res.sendStatus(404) // evenement inconnu (404)
     else res.json({
         id_compte: compte.id_compte,
         email: compte.email,

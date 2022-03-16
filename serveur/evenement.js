@@ -270,11 +270,12 @@ async function supprEvenement(id_evenement, id_compte) {
 module.exports.seRetirer = async(req, res) => {
 
     try {
-        console.log(req.params.id)
-        console.log(res.locals.user)
-        result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user])
+        result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte])
             //let idR=await DB.query('SELECT id_compte FROM evenement WHERE id_eve=idEve')
             //sendNotif(idR,idPar)
+
+        if (result == undefined || result.changedRows == 0) res.sendStatus(404)
+
     } catch (err) {
         console.log(err)
         res.sendStatus(500)

@@ -52,21 +52,22 @@ module.exports.postSupprBesoin = async(req, res) => {
     res.sendStatus(200)
 }
 
-async function getBesoin(id_besoin, id_evenement) {
+module.exports.getBesoin = async(req, res) => {
+
     var result;
     try {
-        var result = await DB.query('SELECT * FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [id_besoin, id_evenement])
+        var result = await DB.query('SELECT * FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [req.params.idbesoin, req.params.id])
+        console.log(result)
 
-        if (result == undefined) return -2
+        if (result == undefined || result.length == 0) { res.sendStatus(404) } else res.json({
+            "id_besoin": result[0].id_besoin,
+            "description": result[0].description,
+            "id_participant": result[0].id_participant,
+            "id_evenement": result[0].id_evenement
+        })
     } catch (err) {
         console.log(err)
-        return -1
+        res.sendStatus(500)
     }
 
-    return {
-        "description": result[0].description,
-        "id_participant": result[0].id_participant
-    }
 }
-
-module.exports.getBesoin = getBesoin
