@@ -1,25 +1,36 @@
 const DB = require("./db").DB
 
-async function postAjouterBesoin(id, body) {
+module.exports.postAjouterBesoin = async(req, res) => {
     try {
-        var result = await DB.query('INSERT INTO besoin SET ?', { "description": body.description, "id_participant": body.id_participant, "id_evenement": id });
+        var result = await DB.query('INSERT INTO besoin SET ?', { "description": req.body.description, "id_participant": req.body.id_participant, "id_evenement": req.params.id });
+
+        if (result == undefined) {
+            res.sendStatus(404)
+        }
+
     } catch (err) {
         console.log(err)
-        return -1
+        res.sendStatus(500)
     }
 
-    return result
+    res.sendStatus(200)
 }
 
-async function putModifierBesoin(id_besoin, id_evenement, body) {
+module.exports.putModifierBesoin = async(req, res) => {
+
     try {
-        var result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [body, id_besoin, id_evenement])
+        var result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [req.body, req.params.idbesoin, req.params.id])
+
+        if (result == undefined || result.changedRows == 0) {
+            return res.sendStatus(404)
+        }
     } catch (err) {
         console.log(err)
-        return -1
+        return res.sendStatus(500)
     }
 
-    return result.changedRows
+    return res.sendStatus(200)
+
 }
 
 async function postSupprBesoin(id_besoin, id_evenement, id_proprietaire) {
@@ -54,7 +65,5 @@ async function getBesoin(id_besoin, id_evenement) {
     }
 }
 
-module.exports.postAjouterBesoin = postAjouterBesoin
-module.exports.putModifierBesoin = putModifierBesoin
 module.exports.postSupprBesoin = postSupprBesoin
 module.exports.getBesoin = getBesoin
