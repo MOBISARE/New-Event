@@ -13,12 +13,14 @@ module.exports = {
     },
     extend: {
       colors: {
+        'transparent': 'transparent',
         'white': '#ffffff',
         'black': '#000000',
         'blue': '#50c1e9',
         'purple' : '#aa55ff',
         'gray': '#f5f7fa',
         'selected-gray': '#e1e1e1', 
+        'loadinggray': '#e4e7eb',
         'darkgray': '#172342',
         'transparentgray': 'rgba(0, 0, 0, 0.2)',
         'darkergray': '#6b6b6b',

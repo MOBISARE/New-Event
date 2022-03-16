@@ -22,7 +22,7 @@ CREATE TABLE `compte` (
 CREATE TABLE `evenement` (
   `id_evenement` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `titre` varchar(255) NOT NULL,
-  `description` varchar(2048) DEFAULT 'NULL',
+  `description` varchar(2048) DEFAULT NULL,
   `departement` varchar(255) DEFAULT NULL,
   `debut` datetime NOT NULL,
   `fin` datetime NOT NULL,

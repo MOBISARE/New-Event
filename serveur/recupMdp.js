@@ -1,4 +1,5 @@
 const sendEmail = require("./sendEmail");
+const crypto = require("./cryptographie")
 
 const DB = require("./db").DB
 
@@ -70,7 +71,7 @@ async function putResetMdp(id, token, newMdp) {
             return -1
         }
 
-        compteUpdated = await DB.query('UPDATE compte SET mot_de_passe = ? WHERE id_compte = ?', [newMdp, id])
+        compteUpdated = await DB.query('UPDATE compte SET mot_de_passe = ? WHERE id_compte = ?', [await crypto.hasherMotDePasse(newMdp), id])
         console.log(compteUpdated)
 
         if (compteUpdated == undefined) {

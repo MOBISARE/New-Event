@@ -1,21 +1,23 @@
 const { NULL } = require("mysql/lib/protocol/constants/types")
-const { DB } = require("./db")
+const DB = require("./db").DB
 const crypto = require("./cryptographie")
 const fs = require("fs")
+
 
 async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'utilisateur
 
     let result
     try {
-        result = await DB.query('SELECT email, mot_de_passe FROM compte WHERE email = ?', email)
-        
-        if ((email == result.email) && verifierMotDePasse(mdp, result.mot_de_passe)) {
-            console.log(result)
+        result = await DB.query('SELECT email, mot_de_passe, id_compte FROM compte WHERE email = ?', [email])
+        result = result[0]
+        if ((email == result.email) && await crypto.verifierMotDePasse(mdp, result.mot_de_passe)) {
             return result
+        } else {
+            return -1
         }
     } catch (err) {
         console.log(err)
-        return -1
+        return -2
     }
 }
 
@@ -23,7 +25,7 @@ async function getCompte(id) {
     let compte;
     try {
         // recupere les informations du compte
-        compte = DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
+        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
         compte = compte[0]
     } catch (err) {
         console.log(err)
@@ -51,12 +53,11 @@ async function getCompte(id) {
 //modifier le compte
 async function putCompteModification(body, id) {
     let result = 0
-    var stringBody = JSON.stringify(body)
-    var objectValue = JSON.parse(stringBody)
+
     try {
-        Object.keys(body).forEach(function (key) {
-            result = DB.query('UPDATE compte SET ' + key + ' = ? WHERE id_compte = ?', [objectValue[key], id])
-        })
+        result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [body, id])
+        console.log(result)
+
     } catch (err) {
         console.log(err)
         return -1 // erreur lors de l execution de la requete (500)
@@ -75,31 +76,34 @@ async function supprCompte(id) {
     }
 }
 
-async function postInscription(nom, prenom, email, motDePasse, dateDeNaissance, ville, departement, telephone = null, photoProfil = null) {
+async function postInscription(req, res) {
 
-    let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', email)
-    if (result[0].nb != 0) return -1
+    let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', req.body.email)
+    if (result[0].nb != 0) res.status(400).send("email already exists")
     else {
         try {
-            let mdp = await crypto.hasherMotDePasse(motDePasse)
+            let mdp = await crypto.hasherMotDePasse(req.body.mot_de_passe)
             result = await DB.query('INSERT INTO compte SET ?', {
-                nom: nom,
-                prenom: prenom,
-                email: email,
+                nom: req.body.nom,
+                prenom: req.body.prenom,
+                email: req.body.email,
                 mot_de_passe: mdp,
-                naissance: dateDeNaissance,
-                ville: ville,
-                departement: departement,
-                no_telephone: telephone,
-                img_profil: photoProfil,
+                naissance: req.body.naissance,
+                ville: req.body.ville,
+                departement: req.body.departement,
+                no_telephone: ((req.body.no_telephone == "") ? null : req.body.no_telephone),
+                img_profil: ((req.body.img_profil == "") ? null : req.body.img_profil),
                 role: "ROLE_USER"
             })
         } catch (err) {
             console.log(err)
-            return -2
+            res.sendStatus(500)
         }
-
-        return result.changedRows
+        /*console.log(req.file)
+        const tempPath = req.file.path
+        const targetPath = path.join(__dirname, "./images/" + req.body.img_profil);
+        fs.rename(tempPath, targetPath)*/
+        res.sendStatus(200)
     }
 }
 
