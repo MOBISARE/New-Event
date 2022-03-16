@@ -21,11 +21,11 @@ async function getCompteConnexion(email, mdp) { //Recupere les donnees de l'util
     }
 }
 
-async function getCompte(id) {
+module.exports.getCompte = async(req,res)=> {
     let compte;
     try {
         // recupere les informations du compte
-        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [id])
+        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [req.params.id])
         compte = compte[0]
     } catch (err) {
         console.log(err)
@@ -33,7 +33,7 @@ async function getCompte(id) {
     }
 
     if (compte == undefined) return -2 // evenement inconnu (404)
-    else return {
+    else res.json({
         id_compte: compte.id_compte,
         email: compte.email,
         mot_de_passe: compte.mot_de_passe,
@@ -47,29 +47,28 @@ async function getCompte(id) {
         etat: compte.etat,
         img_profil: compte.img_profil,
         notif_email: compte.notif_email
-    }
+    })
 }
 
 //modifier le compte
-async function putCompteModification(body, id) {
+module.exports.putCompteModification = async(req,res)=>{
     let result = 0
-
     try {
-        result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [body, id])
+        result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [req.body, req.params.id])
         console.log(result)
 
     } catch (err) {
         console.log(err)
         return -1 // erreur lors de l execution de la requete (500)
     }
-    return result.changedRows
+    res.status(200)
 }
 
 //supprimer le compte
-async function supprCompte(id) {
+module.exports.supprCompte = async(req,res)=>{
     let result = 0
     try {
-        result = DB.query('UPDATE compte SET etat=1 WHERE id_compte=?', [id])
+        result = DB.query('UPDATE compte SET etat=1 WHERE id_compte=?', [req.params.id])
     } catch (err) {
         console.log(err)
         return -1 //erreur lors de l execution de la requete (500)
@@ -110,6 +109,3 @@ async function postInscription(req, res) {
 
 module.exports.postInscription = postInscription;
 module.exports.getCompteConnexion = getCompteConnexion;
-module.exports.getCompte = getCompte
-module.exports.putCompteModification = putCompteModification
-module.exports.supprCompte = supprCompte

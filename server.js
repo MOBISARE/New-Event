@@ -139,33 +139,23 @@ app.post('/api/compte/deconnexion', (req, res) => {
 })
 
 //********************modifier compte*************
-app.get('/api/compte/modifier/:id', async (req, res) => {
-    let data = await cbCompte.getCompte(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else res.json(data)
-})
+app.get('/api/compte/modifier/:id',requireAuth,cbCompte.getCompte)
 
-app.put('/api/compte/modifier/:id', async (req, res) => {
-    let result = await cbCompte.putCompteModification(req.body, req.params.id)
-    if (result == -1) res.sendStatus(500)
-    else res.sendStatus(200)
-})
+app.put('/api/compte/modifier/:id', requireAuth,cbCompte.putCompteModification)
 //************************************************
 
 
 //********************supprimer compte*************
-app.get('/api/compte/supprimer/:id', async (req, res) => {
-    let data = await cbCompte.getCompte(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else res.sendStatus(200)
-})
+app.get('/api/compte/supprimer/:id',requireAuth,cbCompte.getCompte)
 
-app.put('/api/compte/supprimer/:id', async (req, res) => {
-    let result = await cbCompte.supprCompte(req.params.id)
-    if (result == -1) res.sendStatus(500)
-    res.sendStatus(200)
-})
+app.put('/api/compte/supprimer/:id', requireAuth,cbCompte.supprCompte)
 //************************************************
+
+//**********se retirer d'un evenement*************
+app.post('/api/evenement/seretirer/:id',requireAuth,cbEvenement.seRetirer)
+
+//************************************************
+
 
 //****************recup mot de passe**************
 app.get('/api/compte/recup/:id', async (req, res) => {
