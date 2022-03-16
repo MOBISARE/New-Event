@@ -36,7 +36,7 @@ class EventContainer extends React.Component {
                     ? <LoadingEvent></LoadingEvent>
                     : this.state.event.etat === 0
                     ? <CreateEvent eventModel={this.state.event} container={this}></CreateEvent>
-                    : <Event></Event>
+                    : <Event eventModel={this.state.event} container={this}></Event>
                 }
             </div>
         );
