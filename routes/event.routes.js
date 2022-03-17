@@ -11,6 +11,7 @@ const needController = require('../controllers/need.controller');
 router.get('/:id', eventController.getEvenement);
 
 router.get('/recherche/:search', eventController.search);
+router.get('/:id/participants', eventController.getParticipants);
 
 router.put('/creer', requireAuth, eventController.createEvent);
 router.put('/modifier/:id', requireAuth, upload.single('img_banniere'), eventController.saveEvent);

@@ -76,6 +76,39 @@ module.exports.getEvenement = async(req, res) => {
     })
 }
 
+module.exports.getParticipants = async(req, res) => {
+    try {
+        // --- CHECK
+        let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
+
+        if (!checkPrivileges.length) return res.sendStatus(404); // Not found
+
+        // --- REQUEST
+        let proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
+
+        if (!proprio.length) return res.sendStatus(404); // Not found
+        proprio = proprio[0].id_proprietaire;
+
+        let participants = await DB.query('SELECT id_compte, email, img_profil, nom, prenom FROM compte WHERE id_compte IN (SELECT id_compte FROM participant WHERE id_evenement = ?)', [req.params.id]);
+
+        participants.forEach(element => {
+            if(element['id_compte'] == proprio) element['propietaire'] = true;
+            else element['propietaire'] = false;
+
+            if(element['id_compte'] == res.locals.user.id_compte) element['vous'] = true;
+            else element['vous'] = false;
+
+            delete element['id_compte'];
+        });
+
+        res.status(200).json(participants);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal Server Error
+    }
+}
+
 module.exports.getMesEvenements = async(req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
