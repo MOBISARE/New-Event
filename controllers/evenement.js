@@ -178,37 +178,27 @@ module.exports.createEvent = async(req, res) => {
     }
 }
 
-async function getIdEvenementConsultation(id) {
-    let evenements = []
-        //titre image description 
+module.exports.supprEvenement = async(req, res) => {
     try {
-        let rows = []
-            // recupere les participants de l evenement
-        rows = await DB.query('SELECT e.id_evenement, e.titre, e.description, e.departement, e.debut, e.fin, e.img_banniere FROM evenement e, participant p WHERE e.id_evenement=p.id_evenement AND p.id_compte=?', [id])
-        rows.forEach(e => {
-            evenements.push(e)
-        })
-    } catch (err) {
-        console.log(err)
-        return -1
-    }
-    if (evenements.length == 0) return -2
-    else return evenements
-}
+        let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [id_evenement])
 
+        if (!event) return res.sendStatus(400); // Bad Request
+        event = event[0];
 
-async function supprEvenement(id_evenement, id_compte) {
-    let result = 0
-    let id_proprietaire = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
-    id_proprietaire = id_proprietaire[0].id_proprietaire
-    if (id_proprietaire == id_compte) {
-        try {
-            result = await DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id_evenement])
-        } catch (err) {
-            console.log(err)
-            return -1 //erreur lors de l execution de la requete (500)
+        if (event.id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(400); // Bad Request
+
+        if(event.etat === 0) { // clean delete
+            await DB.query('DELETE FROM evenement WHERE id_evenement=?', [id_evenement]);
+            await DB.query('DELETE FROM participant WHERE id_evenement=?', [id_evenement]);
+            await DB.query('DELETE FROM besoin WHERE id_evenement=?', [id_evenement]);
         }
-    } else return -2
+        else await DB.query('UPDATE evenement SET etat=2 WHERE id_evenement=?', [id_evenement])
+        
+        return res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
 }
 
 //le participant veut se retirer d'un évenment
@@ -241,6 +231,3 @@ module.exports.rejoindreEve=async(req,res)=>{
     }
     res.sendStatus(200)
 }
-
-module.exports.getEvenementConsultation = getIdEvenementConsultation
-module.exports.supprEvenement = supprEvenement

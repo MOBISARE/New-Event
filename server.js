@@ -1,14 +1,12 @@
 const cbEvenement = require("./controllers/evenement") //callback evenement
-const cbCompte = require("./controllers/compte")
-const cbBesoin = require("./controllers/besoin");
 const cbRecup = require("./controllers/recupMdp")
+
 const userRoutes = require("./routes/user.routes");
 const eventRoutes = require("./routes/event.routes");
 
 require('dotenv').config({ path: './config/.env' });
 const cors = require('cors');
 
-const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
 const session = require('express-session')
@@ -62,19 +60,8 @@ app.get('/api/images/:name', async(req, res) => {
     res.type('image/jpeg').sendFile(path.join(__dirname, "./images/" + req.params.name));
 });
 
-app.get('/api/mes-evenements', requireAuth, cbEvenement.getMesEvenements);
-app.get('/api/mes-participations', requireAuth, cbEvenement.getMesParticipations);
 
 
-// ***********Consulter ses événements******
-//Retourne les id des événements auquel participe un compte
-app.get('/api/evenement/consulter/:id', async(req, res) => {
-        let data = await cbEvenement.getEvenementConsultation(req.params.id)
-        console.log(data)
-        if (data == -1) res.sendStatus(500)
-        else if (data == -2) res.sendStatus(404)
-        else res.json(data)
-    })
 
     // **********Supprimer événement **************
 app.put('/api/evenement/supprimer', async(req, res) => {
@@ -83,33 +70,6 @@ app.put('/api/evenement/supprimer', async(req, res) => {
     else if (result == -2) res.status(404).send("Le compte n'est pas propriétaire")
     else res.sendStatus(200)
 })
-
-
-
-
-//se connecter
-
-
-
-
-//********************modifier compte*************
-//app.get('/api/compte/modifier/:id', requireAuth, cbCompte.getCompte)
-
-app.put('/api/compte/modifier/:id', requireAuth, cbCompte.putCompteModification)
-    //************************************************
-
-
-//********************supprimer compte*************
-//app.get('/api/compte/supprimer/:id', requireAuth, cbCompte.getCompte)
-
-app.put('/api/compte/supprimer/:id', requireAuth, cbCompte.supprCompte)
-    //************************************************
-
-//**********se retirer d'un evenement*************
-
-
-//************************************************************
-
 
 //****************recup mot de passe**************
 app.get('/api/compte/recup/:id', async(req, res) => {
@@ -132,16 +92,5 @@ app.put('/api/compte/recup/:id/:token', async(req, res) => {
         if (result == -1) res.sendStatus(500)
         else res.sendStatus(200)
     })
-    //************************************************
-
-
-//********************* inscription ***************************
-
-    //**************************************************************** */
-
-//********************* besoins ***************************
-
-    //**************************************************************** */
-
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
