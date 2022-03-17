@@ -122,7 +122,7 @@ module.exports.saveEvent = async(req, res) => {
                 fin: req.body.fin,
                 archivage: req.body.archivage,
                 etat: req.body.etat,
-                img_banniere: req.file ? 'http://localhost:5000/api/images/' + req.file.filename : ''
+                img_banniere: req.file ? 'http://localhost:5000/api/upload/' + req.file.filename : ''
             },
             req.params.id
         ]);

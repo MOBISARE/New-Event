@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const multer = require("multer");
-const upload = multer({ dest: './images' })
+const upload = multer({ dest: './upload' });
 
 const { checkUser, requireAuth } = require('../middleware/auth.middleware');
 const authController = require('../controllers/auth.controller');
@@ -16,7 +16,7 @@ router.post('/deconnexion', authController.logout);
 router.get('/mes-evenements', requireAuth, eventController.getMesEvenements);
 router.get('/mes-participations', requireAuth, eventController.getMesParticipations);
 
-router.put('/modifier/:id', requireAuth, userController.putCompteModification)
-router.put('/supprimer/:id', requireAuth, userController.supprCompte)
+router.put('/modifier/:id', requireAuth, userController.putCompteModification);
+router.put('/supprimer/:id', requireAuth, userController.supprCompte);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const sendEmail = require("./sendEmail");
-const crypto = require("./cryptographie")
+const crypto = require("./cryptographie");
 
-const DB = require("./db").DB
+const DB = require("./db").DB;
 
 /**
  * 

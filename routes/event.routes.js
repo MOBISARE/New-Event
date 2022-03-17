@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const multer = require("multer");
-const upload = multer({ dest: './images' })
+const upload = multer({ dest: './upload' })
 
 const { checkUser, requireAuth } = require('../middleware/auth.middleware');
 const eventController = require('../controllers/evenement');
