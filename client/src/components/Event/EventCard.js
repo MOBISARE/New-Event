@@ -12,8 +12,7 @@ class EventCard extends React.Component {
 
     render() {
         return(
-            <Link to={'/evenement/'+this.props.id} className='w-72 h-64 rounded-lg bg-white m-3 flex flex-col justify-center shadow
-                        transition-transform ease-in-out delay-75 duration-300 hover:scale-105 relative'
+            <Link to={'/evenement/'+this.props.id} className={'w-72 h-64 rounded-lg bg-white m-3 flex flex-col justify-center shadow transition-transform ease-in-out delay-75 duration-300 hover:scale-105 ' + (this.props.etat === 0 ? 'grayscale' : '')}
                         onMouseEnter={() => {
                             this.setState({ descriptionVisible: true })
                         }}
@@ -21,7 +20,6 @@ class EventCard extends React.Component {
                             this.setState({ descriptionVisible: false })
                         }}
             >
-                {this.props.etat === 0 ? <span className="absolute right-1 top-1 material-icons">visibility_off</span> : <></>}
                 <div className={'w-72 grow rounded-t-lg overflow-hidden ' + this.state.bgColor}>
                     <img className='object-cover w-full h-auto'
                          src={this.props.imgUrl} onError={event => event.target.hidden=true} alt=" "/>
