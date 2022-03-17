@@ -4,8 +4,8 @@ const upload = multer({ dest: './upload' });
 
 const { checkUser, requireAuth } = require('../middleware/auth.middleware');
 const authController = require('../controllers/auth.controller');
-const userController = require('../controllers/compte');
-const eventController = require('../controllers/evenement');
+const userController = require('../controllers/user.controller');
+const eventController = require('../controllers/event.controller');
 
 // authentification
 router.post('/connexion', authController.login)

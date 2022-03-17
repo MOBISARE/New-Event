@@ -3,8 +3,8 @@ const multer = require("multer");
 const upload = multer({ dest: './upload' })
 
 const { checkUser, requireAuth } = require('../middleware/auth.middleware');
-const eventController = require('../controllers/evenement');
-const needController = require('../controllers/besoin');
+const eventController = require('../controllers/event.controller');
+const needController = require('../controllers/need.controller');
 
 
 
