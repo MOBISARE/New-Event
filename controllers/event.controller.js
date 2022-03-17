@@ -114,18 +114,20 @@ module.exports.saveEvent = async(req, res) => {
 
         // --- REQUEST
 
-        await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [{
-                titre: req.body.titre,
-                description: req.body.description,
-                departement: req.body.departement,
-                debut: req.body.debut,
-                fin: req.body.fin,
-                archivage: req.body.archivage,
-                etat: req.body.etat,
-                img_banniere: req.file ? 'http://localhost:5000/api/upload/' + req.file.filename : ''
-            },
-            req.params.id
-        ]);
+        data = {
+            titre: req.body.titre,
+            description: req.body.description,
+            departement: req.body.departement,
+            debut: req.body.debut,
+            fin: req.body.fin,
+            archivage: req.body.archivage,
+            etat: req.body.etat,
+        }
+
+        if(req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename
+        
+
+        await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 
         let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
