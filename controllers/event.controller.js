@@ -79,9 +79,8 @@ module.exports.getEvenement = async(req, res) => {
 module.exports.getMesEvenements = async(req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
-
-        if (events === undefined) res.sendStatus(400);
-        else res.status(200).json(events);
+        
+        return res.status(200).json(events);
 
     } catch (err) {
         console.log(err);
@@ -93,8 +92,7 @@ module.exports.getMesParticipations = async(req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
 
-        if (events === undefined) res.sendStatus(400);
-        else res.status(200).json(events);
+        return res.status(200).json(events);
 
     } catch (err) {
         console.log(err);
@@ -108,15 +106,9 @@ module.exports.saveEvent = async(req, res) => {
 
         let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        if (!checkPrivileges.length) {
-            res.sendStatus(404) // Not found
-            return;
-        }
+        if (!checkPrivileges.length) return res.sendStatus(404); // Not found
 
-        if (checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte) {
-            res.sendStatus(403) // Forbidden
-            return;
-        }
+        if (checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
 
         // --- REQUEST
 
@@ -130,7 +122,7 @@ module.exports.saveEvent = async(req, res) => {
             etat: req.body.etat,
         }
 
-        if(req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename
+        if(req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
         
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
@@ -151,15 +143,9 @@ module.exports.publishEvent = async(req, res) => {
 
         let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        if (!checkPrivileges.length) {
-            res.sendStatus(404) // Not found
-            return;
-        }
+        if (!checkPrivileges.length) return res.sendStatus(404); // Not found
 
-        if (checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte) {
-            res.sendStatus(403) // Forbidden
-            return;
-        }
+        if (checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
 
         // --- REQUEST
 
