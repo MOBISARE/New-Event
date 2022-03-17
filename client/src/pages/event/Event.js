@@ -54,8 +54,8 @@ class Event extends React.Component {
                             <div className='my-2'>
                                 Participants
                                 <div className='ml-10 relative'>
-                                    <span className='flex items-center' ref={this.participantBtn} >
-                                        <div className='flex cursor-pointer' onClick={() => {this.participantViewer.current.toggleActive()}}>
+                                    <span className='flex items-center'>
+                                        <div className='flex cursor-pointer' onClick={() => {this.participantViewer.current.toggleActive()}} ref={this.participantBtn}>
                                             <span className="material-icons md-18 mr-1">
                                                 people
                                             </span>
