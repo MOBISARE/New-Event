@@ -57,7 +57,7 @@ async function SupprimerNotifMess(req){
 }
 
 async function SupprimerNotifAjout(req){
-    if(req.params.type_n_Ajout == 1 || req.params.type_n_Ajout == 2){//Si notification d'invitation/demande d'intégration
+    if(req.params.type_notif == 1 || req.params.type_notif == 2){//Si notification d'invitation/demande d'intégration
         await DB.query("DELETE FROM `modele_invitation` WHERE `modele_invitation`.`id_m_invitation` = (SELECT id_modele FROM `notif_ajouter` JOIN `notification` on `notif_ajouter`.id_n_ajouter = `notification`.id_type WHERE `notification`.id_compte = ? AND `notification`.type = 1 AND `notification`.id_type = ?);", [req.params.id], [req.params.id_type])
         await DB.query("DELETE FROM `notif_ajouter` WHERE `id_n_ajouter` = (SELECT id_type FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 1 AND `notification`.id_type = ?);", [req.params.id], [req.params.id_type])
         await DB.query("DELETE FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 1 AND `notification`.id_type = ?;", [req.params.id], [req.params.id_type])
@@ -76,12 +76,12 @@ async function SupprimerNotifSuppr(req){//Suppression des notifs de suppression 
 }
 
 async function SupprimerNotifModif(req){
-    if(req.params.type_n_Ajout == 1){
+    if(req.params.type_notif == 1){
         await DB.query("DELETE FROM `modele_evenement` WHERE `id_m_evenement` = (SELECT id_modele FROM `notif_modifier` JOIN `notification` on `notif_supprimer`.id = `notification`.id_type WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
         await DB.query("DELETE FROM `notif_modifier` WHERE `id` = (SELECT id_type FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
         await DB.query("DELETE FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?;", [req.params.id], [req.params.Notifid_type])    
     }
-    else if(req.params.type_n_Ajout == 2){//Suppression des notifs de modification d'event
+    else if(req.params.type_notif == 2){//Suppression des notifs de modification d'event
         await DB.query("DELETE FROM `modele_evenement` WHERE `id_m_evenement` = (SELECT id_modele FROM `notif_modifier` JOIN `notification` on `notif_modifier`.id = `notification`.id_type WHERE `notification`.id_compte = ? AND `notification`.type = 3 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
         await DB.query("DELETE FROM `notif_modifier` WHERE `id` = (SELECT id_type FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 3 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
         await DB.query("DELETE FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 3 AND `notification`.id_type = ?;", [req.params.id], [req.params.Notifid_type])
