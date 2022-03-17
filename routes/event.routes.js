@@ -14,7 +14,7 @@ router.put('/creer', requireAuth, eventController.createEvent);
 router.put('/modifier/:id', requireAuth, upload.single('img_banniere'), eventController.saveEvent);
 router.post('/publier/:id', requireAuth, eventController.publishEvent);
 router.post('/supprimer/:id', requireAuth, eventController.supprEvenement);
-router.post('/archive/:id', requireAuth, eventController.archiveEvent);
+router.post('/archiver/:id', requireAuth, eventController.archiveEvent);
 
 
 router.post('/rejoindreEve/:id', requireAuth, eventController.rejoindreEve)
