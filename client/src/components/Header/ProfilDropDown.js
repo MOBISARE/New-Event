@@ -54,7 +54,7 @@ class ProfilDropDown extends React.Component {
     render(){
 
         var dropDownElems = [
-            { key:1, name: 'Mon Profil', link: '/mon-profil' },
+            { key:1, name: 'Mon profil', link: '/mon-profil' },
             { key:2, name: 'Mes événements', link: '/mes-evenements' },
             { key:3, name: 'Créer un événement', fonc: this.createEvent },
             { key:4, name: 'hr' },
