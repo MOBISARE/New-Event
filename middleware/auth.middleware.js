@@ -1,12 +1,11 @@
-const jwt = require("jsonwebtoken");
-const compte = require("../serveur/compte")
-const DB = require("../serveur/db").DB
+const jwt = require("jsonwebtoken")
+const DB = require("../controllers/db").DB
 
 module.exports.checkUser = (req, res, next) => {
   const token = req.cookies.jwt;
   
   if (token) {
-    
+
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
       if (err) {
         res.locals.user = null;

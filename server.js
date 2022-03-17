@@ -1,7 +1,9 @@
-const cbEvenement = require("./serveur/evenement") //callback evenement
-const cbCompte = require("./serveur/compte")
-const cbBesoin = require("./serveur/besoin");
-const cbRecup = require("./serveur/recupMdp")
+const cbEvenement = require("./controllers/evenement") //callback evenement
+const cbCompte = require("./controllers/compte")
+const cbBesoin = require("./controllers/besoin");
+const cbRecup = require("./controllers/recupMdp")
+const userRoutes = require("./routes/user.routes");
+const eventRoutes = require("./routes/event.routes");
 
 require('dotenv').config({ path: './config/.env' });
 const cors = require('cors');
@@ -11,12 +13,7 @@ const cookieParser = require('cookie-parser');
 
 const session = require('express-session')
 const express = require('express')
-const { NULL } = require("mysql/lib/protocol/constants/types")
-const { sendStatus } = require("express/lib/response")
 const path = require("path")
-const multer = require('multer')
-const upload = multer({ dest: './images' })
-const fs = require("fs")
 
 const { checkUser, requireAuth } = require('./middleware/auth.middleware');
 
@@ -32,7 +29,6 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-
 app.use(session({
     secret: 'secret',
     resave: true,
@@ -42,6 +38,7 @@ app.use(session({
     email: undefined,
     uid: undefined
 }));
+
 app.use(cookieParser());
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -54,46 +51,20 @@ app.get('/api/jwtid', requireAuth, (req, res) => {
     res.status(200).json(req.cookies.jwt)
 });
 
+app.use('/api/compte', userRoutes);
+app.use('/api/evenement', eventRoutes);
+
+// V V V V V V V Doit être déplacé vers les routeurs (voir './routes') V V V V V V V V
+
 //routage
 
 app.get('/api/images/:name', async(req, res) => {
     res.type('image/jpeg').sendFile(path.join(__dirname, "./images/" + req.params.name));
 });
 
-//***************modifier evenement**************************
-app.get('/api/evenement/modifier/:id', requireAuth, cbEvenement.getEvenement)
-
-//app.put('/api/evenement/modifier/:id', requireAuth, cbEvenement.putEvenementModification)
-
-app.put('/api/evenement/modifier/:id', requireAuth, upload.single('img_banniere'), cbEvenement.saveEvent);
-app.post('/api/evenement/publier/:id', requireAuth, cbEvenement.publishEvent);
-//*************************************************************
-
-//créer evenement
-//requireAuth verifie token connexion
-//si pas token, requete avortée
-app.put('/api/evenement/creer', requireAuth, cbEvenement.createEvent);
-
-app.post('/api/evenement/creer', async(req, res) => {
-    let result = await cbEvenement.putEvenementCreation(
-        req.body.titre,
-        req.body.description,
-        req.body.departement,
-        req.body.debut,
-        req.body.fin,
-        req.body.archivage,
-        req.body.etat,
-        req.body.img_banniere,
-        req.session.uid)
-    if (result == -1) res.sendStatus(500)
-    else res.sendStatus(200)
-})
-
-// *********** Afficher un événement ***********************
-app.get('/api/evenement/:id', cbEvenement.getEvenement);
-
 app.get('/api/mes-evenements', requireAuth, cbEvenement.getMesEvenements);
 app.get('/api/mes-participations', requireAuth, cbEvenement.getMesParticipations);
+
 
 // ***********Consulter ses événements******
 //Retourne les id des événements auquel participe un compte
@@ -104,6 +75,7 @@ app.get('/api/evenement/consulter/:id', async(req, res) => {
         else if (data == -2) res.sendStatus(404)
         else res.json(data)
     })
+
     // **********Supprimer événement **************
 app.put('/api/evenement/supprimer', async(req, res) => {
     let result = await cbEvenement.supprEvenement(req.body.id_evenement, req.session.uid)
@@ -152,12 +124,7 @@ app.put('/api/compte/supprimer/:id', requireAuth, cbCompte.supprCompte)
     //************************************************
 
 //**********se retirer d'un evenement*************
-app.post('/api/evenement/rejoindreEve/:id', requireAuth, cbEvenement.rejoindreEve)
 
-//************************************************
-
-//**********se proposer de rejoindre un evenement*************
-app.post('/api/evenement/seretirer/:id', requireAuth, cbEvenement.seRetirer)
 
 //************************************************************
 
@@ -187,17 +154,11 @@ app.put('/api/compte/recup/:id/:token', async(req, res) => {
 
 
 //********************* inscription ***************************
-app.post('/api/compte/inscription', cbCompte.postInscription)
+
     //**************************************************************** */
 
 //********************* besoins ***************************
-app.post('/api/evenement/:id/besoin/creer', requireAuth, cbBesoin.postAjouterBesoin)
 
-app.put('/api/evenement/:id/besoin/:idbesoin/modifier', requireAuth, cbBesoin.putModifierBesoin)
-
-app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', requireAuth, cbBesoin.postSupprBesoin)
-
-app.get('/api/evenement/:id/besoin/:idbesoin', requireAuth, cbBesoin.getBesoin)
     //**************************************************************** */
 
 

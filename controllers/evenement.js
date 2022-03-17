@@ -1,7 +1,4 @@
 const DB = require("./db").DB
-var async = require('async')
-
-
 
 modelToJSON = (event) => {
     return {
@@ -170,36 +167,6 @@ module.exports.publishEvent = async(req, res) => {
     }
 }
 
-module.exports.putEvenementModification = async(req, res) => {
-    // comparer ancien et nouveau champs avant update ?
-    let result = 0
-    try {
-        result = await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [{
-            titre: req.body.titre,
-            description: req.body.description,
-            departement: req.body.departement,
-            debut: req.body.debut,
-            fin: req.body.fin,
-            archivage: req.body.archivage,
-            etat: req.body.etat,
-            img_banniere: req.body.img_banniere
-        }, req.params.id])
-
-        //la notification est envoyee a tous les particiapnts
-        //si il y a une modification
-        if (result.changedRows != 0) {
-            let rows = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ?', [req.params.id])
-            rows.forEach(e => {
-                DB.query('INSERT INTO notification SET ?', { type: 4, id_type: req.params.id, etat: 1, id_compte: e.id_compte })
-            })
-        }
-    } catch (err) {
-        console.log(err)
-        res.sendStatus(500) // erreur lors de l execution de la requete (500)
-    }
-    res.sendStatus(200)
-}
-
 module.exports.createEvent = async(req, res) => {
     try {
         let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire) VALUES (?, ?, ?, ?)', ["Titre", new Date(), new Date(), res.locals.user.id_compte]);
@@ -209,27 +176,6 @@ module.exports.createEvent = async(req, res) => {
         console.log(err);
         res.sendStatus(500);
     }
-}
-
-async function putEvenementCreation(titre, description, departement, debut, fin, archivage, etat = 0, img_banniere, id_proprietaire) {
-    let result = 0
-    try {
-        result = await DB.query('INSERT INTO evenement SET ?', {
-            titre: titre,
-            description: description,
-            departement: departement,
-            debut: debut,
-            fin: fin,
-            archivage: archivage,
-            etat: etat,
-            img_banniere: img_banniere,
-            id_proprietaire: id_proprietaire,
-        })
-    } catch (err) {
-        console.log(err)
-        return -1
-    }
-    return result.changedRows
 }
 
 async function getIdEvenementConsultation(id) {
@@ -296,6 +242,5 @@ module.exports.rejoindreEve=async(req,res)=>{
     res.sendStatus(200)
 }
 
-module.exports.putEvenementCreation = putEvenementCreation
 module.exports.getEvenementConsultation = getIdEvenementConsultation
 module.exports.supprEvenement = supprEvenement
