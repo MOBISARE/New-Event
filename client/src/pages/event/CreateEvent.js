@@ -89,7 +89,13 @@ class CreateEvent extends React.Component {
     }
 
     deleteEvent = () => {
-
+        axios.post('/api/evenement/supprimer/' + this.props.eventModel.id)
+        .then((res) => {
+            this.props.container.props.router.navigate('/');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     render(){
@@ -128,7 +134,7 @@ class CreateEvent extends React.Component {
                             <FormButton value='Publier' name='submit-action' className='bg-blue' />
                             <Button className='bg-green-valid' onClick={this.saveEvent}>Sauvegarder</Button>
                             <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.props.router.navigate(-1)}>Annuler</Button>
-                            <Button className='bg-red-600'>Supprimer</Button>
+                            <Button className='bg-red-600' onClick={this.deleteEvent}>Supprimer</Button>
                         </div>
                         <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                             <InputField type='date' id='start-date' children='Date de début' required min={today}

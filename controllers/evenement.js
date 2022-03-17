@@ -178,21 +178,40 @@ module.exports.createEvent = async(req, res) => {
     }
 }
 
-module.exports.supprEvenement = async(req, res) => {
+module.exports.archiveEvent = async(req, res) => {
     try {
-        let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [id_evenement])
-
-        if (!event) return res.sendStatus(400); // Bad Request
+        let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        
+        if (!event.length) return res.sendStatus(404); // 	Not Found
         event = event[0];
 
-        if (event.id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(400); // Bad Request
+        if (event.id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
 
-        if(event.etat === 0) { // clean delete
-            await DB.query('DELETE FROM evenement WHERE id_evenement=?', [id_evenement]);
-            await DB.query('DELETE FROM participant WHERE id_evenement=?', [id_evenement]);
-            await DB.query('DELETE FROM besoin WHERE id_evenement=?', [id_evenement]);
-        }
-        else await DB.query('UPDATE evenement SET etat=2 WHERE id_evenement=?', [id_evenement])
+        if(event.etat !== 1) return res.sendStatus(403); // Forbidden
+
+        await DB.query('UPDATE evenement SET etat = 2 WHERE id_evenement = ?', [req.params.id]);
+        
+        return res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.supprEvenement = async(req, res) => {
+    try {
+        let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        
+        if (!event.length) return res.sendStatus(404); // 	Not Found
+        event = event[0];
+
+        if (event.id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
+
+        if (event.etat === 1) return res.sendStatus(403); // Forbidden
+
+        await DB.query('DELETE FROM participant WHERE id_evenement = ?', [req.params.id]);
+        await DB.query('DELETE FROM besoin WHERE id_evenement = ?', [req.params.id]);
+        await DB.query('DELETE FROM evenement WHERE id_evenement = ?', [req.params.id]);
         
         return res.sendStatus(200);
     } catch (err) {
