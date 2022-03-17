@@ -1,7 +1,9 @@
-const cbEvenement = require("./serveur/evenement") //callback evenement
-const cbCompte = require("./serveur/compte")
-const cbBesoin = require("./serveur/besoin");
-const cbRecup = require("./serveur/recupMdp")
+const cbEvenement = require("./controllers/evenement") //callback evenement
+const cbCompte = require("./controllers/compte")
+const cbBesoin = require("./controllers/besoin");
+const cbRecup = require("./controllers/recupMdp")
+const userRoutes = require("./routes/user.routes");
+const eventRoutes = require("./routes/event.routes");
 
 require('dotenv').config({ path: './config/.env' });
 const cors = require('cors');
@@ -11,12 +13,7 @@ const cookieParser = require('cookie-parser');
 
 const session = require('express-session')
 const express = require('express')
-const { NULL } = require("mysql/lib/protocol/constants/types")
-const { sendStatus } = require("express/lib/response")
 const path = require("path")
-const multer = require('multer')
-const upload = multer({ dest: './images' })
-const fs = require("fs")
 
 const { checkUser, requireAuth } = require('./middleware/auth.middleware');
 
@@ -32,7 +29,6 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-
 app.use(session({
     secret: 'secret',
     resave: true,
@@ -42,63 +38,33 @@ app.use(session({
     email: undefined,
     uid: undefined
 }));
+
 app.use(cookieParser());
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 const port = 5000;
 
 app.get('*', checkUser);
+app.post('*', checkUser);
 app.put('*', checkUser);
 app.get('/api/jwtid', requireAuth, (req, res) => {
     res.status(200).json(req.cookies.jwt)
 });
 
+app.use('/api/compte', userRoutes);
+app.use('/api/evenement', eventRoutes);
+
+// V V V V V V V Doit être déplacé vers les routeurs (voir './routes') V V V V V V V V
+
 //routage
 
-//***************modifier evenement**************************
-app.get('/api/evenement/modifier/:id', async(req, res) => {
-    //parametre id
-    let data = await cbEvenement.getEvenement(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else if (data == -2) res.sendStatus(404)
-    else res.json(data)
-})
+app.get('/api/images/:name', async(req, res) => {
+    res.type('image/jpeg').sendFile(path.join(__dirname, "./images/" + req.params.name));
+});
 
-app.put('/api/evenement/modifier/:id', async(req, res) => {
-        let result = await cbEvenement.putEvenementModification(req.body, req.params.id)
-        if (result == -1) res.sendStatus(500)
-        else res.sendStatus(200)
-    })
-    //*************************************************************
+app.get('/api/mes-evenements', requireAuth, cbEvenement.getMesEvenements);
+app.get('/api/mes-participations', requireAuth, cbEvenement.getMesParticipations);
 
-//créer evenement
-app.put('/api/evenement/creer', requireAuth, cbEvenement.createEvent);
-
-app.post('/api/evenement/creer', async(req, res) => {
-    let result = await cbEvenement.putEvenementCreation(
-        req.body.titre,
-        req.body.description,
-        req.body.departement,
-        req.body.debut,
-        req.body.fin,
-        req.body.archivage,
-        req.body.etat,
-        req.body.img_banniere,
-        req.session.uid)
-    if (result == -1) res.sendStatus(500)
-    else res.sendStatus(200)
-})
-
-// *********** Afficher un événement ***********************
-app.get('/api/evenement/:id', async(req, res) => {
-    let data = await cbEvenement.getEvenement(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else if (data == -2) res.sendStatus(404)
-    else res.json(data)
-})
-
-app.get('/api/mes-evenements', requireAuth,  cbEvenement.getMesEvenements);
-app.get('/api/mes-participations', requireAuth,  cbEvenement.getMesParticipations);
 
 // ***********Consulter ses événements******
 //Retourne les id des événements auquel participe un compte
@@ -109,6 +75,7 @@ app.get('/api/evenement/consulter/:id', async(req, res) => {
         else if (data == -2) res.sendStatus(404)
         else res.json(data)
     })
+
     // **********Supprimer événement **************
 app.put('/api/evenement/supprimer', async(req, res) => {
     let result = await cbEvenement.supprEvenement(req.body.id_evenement, req.session.uid)
@@ -129,8 +96,8 @@ const createToken = (id) => {
 app.post('/api/compte/connexion', async(req, res) => {
 
     let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
-    if (data == -1) res.status(404).send("Adresse mail/mot de passe incorrect")
-    else if (data == -2) res.sendStatus(500)
+    if (data == -1) res.status(400).send("Adresse mail/mot de passe incorrect")
+    else if (data == -2) res.sendStatus(400)
     else {
         const token = createToken(data.id_compte);
         res.cookie('jwt', token, { httpOnly: true, maxAge });
@@ -144,33 +111,23 @@ app.post('/api/compte/deconnexion', (req, res) => {
 })
 
 //********************modifier compte*************
-app.get('/api/compte/modifier/:id', async(req, res) => {
-    let data = await cbCompte.getCompte(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else res.json(data)
-})
+//app.get('/api/compte/modifier/:id', requireAuth, cbCompte.getCompte)
 
-app.put('/api/compte/modifier/:id', async(req, res) => {
-        let result = await cbCompte.putCompteModification(req.body, req.params.id)
-        if (result == -1) res.sendStatus(500)
-        else res.sendStatus(200)
-    })
+app.put('/api/compte/modifier/:id', requireAuth, cbCompte.putCompteModification)
     //************************************************
 
 
 //********************supprimer compte*************
-app.get('/api/compte/supprimer/:id', async(req, res) => {
-    let data = await cbCompte.getCompte(req.params.id)
-    if (data == -1) res.sendStatus(500)
-    else res.sendStatus(200)
-})
+//app.get('/api/compte/supprimer/:id', requireAuth, cbCompte.getCompte)
 
-app.put('/api/compte/supprimer/:id', async(req, res) => {
-        let result = await cbCompte.supprCompte(req.params.id)
-        if (result == -1) res.sendStatus(500)
-        res.sendStatus(200)
-    })
+app.put('/api/compte/supprimer/:id', requireAuth, cbCompte.supprCompte)
     //************************************************
+
+//**********se retirer d'un evenement*************
+
+
+//************************************************************
+
 
 //****************recup mot de passe**************
 app.get('/api/compte/recup/:id', async(req, res) => {
@@ -197,58 +154,12 @@ app.put('/api/compte/recup/:id/:token', async(req, res) => {
 
 
 //********************* inscription ***************************
-app.post('/api/compte/inscription', async(req, res) => {
-        let data = await cbCompte.postInscription(
-            req.body.nom,
-            req.body.prenom,
-            req.body.email,
-            req.body.mot_de_passe,
-            req.body.naissance,
-            req.body.ville,
-            req.body.departement,
-            req.body.no_telephone,
-            req.body.img_profil)
-        if (data == -1) res.status(400).send("email already exists")
-        else if (data == -2) res.sendStatus(500)
-        else {
-            /*console.log(req.file)
-            const tempPath = req.file.path
-            const targetPath = path.join(__dirname, "./images/" + req.body.img_profil);
-            fs.rename(tempPath, targetPath)*/
-            res.sendStatus(200)
-        }
-    })
+
     //**************************************************************** */
 
 //********************* besoins ***************************
-app.post('/api/evenement/:id/besoin/creer', async(req, res) => {
 
-    let data = await cbBesoin.postAjouterBesoin(req.params.id, req.body)
-    if (data == -1) return res.status(400)
-    else return res.sendStatus(200)
-})
-
-app.put('/api/evenement/:id/besoin/:idbesoin/modifier', async(req, res) => {
-
-    let data = await cbBesoin.putModifierBesoin(req.params.idbesoin, req.params.id, req.body)
-    if (data == -1) return res.status(400)
-    else return res.sendStatus(200)
-})
-
-app.post('/api/evenement/:id/besoin/:idbesoin/supprimer', async(req, res) => {
-
-    let data = await cbBesoin.postSupprBesoin(req.params.idbesoin, req.params.id, req.session.uid)
-
-    if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(401) } else res.sendStatus(200)
-})
-
-app.get('/api/evenement/:id/besoin/:idbesoin', async(req, res) => {
-
-    let data = await cbBesoin.getBesoin(req.params.idbesoin, req.params.id)
-
-    if (data == -1) { res.sendStatus(400) } else if (data == -2) { res.sendStatus(404) } else res.json(data)
-});
-//**************************************************************** */
+    //**************************************************************** */
 
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

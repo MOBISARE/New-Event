@@ -1,10 +1,5 @@
 import React from 'react'
 
-import UserMini from '../../components/UserMini'
-import NeedList from '../../components/Event/NeedList'
-import Button from "../../components/Button";
-import ParticipantViewer from '../../components/Event/ParticipantViewer'
-
 class Event extends React.Component {
     render() {
         return(

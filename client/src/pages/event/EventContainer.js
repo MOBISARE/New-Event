@@ -1,20 +1,10 @@
 import React from 'react'
 import axios from "axios";
 
+import withRouter from '../../withRouter'
 import LoadingEvent from './LoadingEvent'
 import Event from './Event';
 import CreateEvent from './CreateEvent';
-
-let evt = {
-    id:1,
-    title:"Titre d'événement",
-    description:"Description de cet événement",
-    imgUrl:"/images/icon.png",
-    membersNumber:"5",
-    location:"Nancy",
-    startDate:"26/02/2020",
-    endDate:"31/08/2020"
-}
 
 class EventContainer extends React.Component {
     constructor(props) {
@@ -24,8 +14,12 @@ class EventContainer extends React.Component {
         }
     }
 
+    setEvent = (e) => {
+        this.setState({event: e});
+    }
+
     componentDidMount = () => {
-        axios.get('/api/evenement/7')
+        axios.get('/api/evenement/' + this.props.router.params.id)
         .then(res => {
             this.setState({event: res.data});
         })
@@ -41,12 +35,12 @@ class EventContainer extends React.Component {
                     this.state.event === undefined
                     ? <LoadingEvent></LoadingEvent>
                     : this.state.event.etat === 0
-                    ? <CreateEvent></CreateEvent>
-                    : <Event></Event>
+                    ? <CreateEvent eventModel={this.state.event} container={this}></CreateEvent>
+                    : <Event eventModel={this.state.event} container={this}></Event>
                 }
             </div>
         );
     }
 }
 
-export default EventContainer;
+export default withRouter(EventContainer);

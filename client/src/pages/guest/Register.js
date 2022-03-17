@@ -11,7 +11,6 @@ class Register extends React.Component {
 
     handleRegister = async (e) => {
         e.preventDefault();
-        console.log(e);
 
         try {
             let res = await axios({
@@ -24,8 +23,6 @@ class Register extends React.Component {
                     limit: 5
                 }
             })
-            
-            console.log(res);
 
             if(res.data[0] === null || res.data[0]._score < 1) {
                 document.getElementById("ville").setCustomValidity("Cette ville n'existe pas");
@@ -55,13 +52,13 @@ class Register extends React.Component {
                 }
             })
 
-            console.log(registerRes);
             window.location = "/";
-
         }
         catch(err){
-            document.getElementById("mail").setCustomValidity("L'email est déjà lié à un compte");
-            document.getElementById("mail").reportValidity();
+            if(err.response.status === 400){
+                document.getElementById("mail").setCustomValidity("L'email est déjà lié à un compte");
+                document.getElementById("mail").reportValidity();
+            }
         }
     }
     

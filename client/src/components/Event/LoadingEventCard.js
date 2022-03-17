@@ -9,10 +9,10 @@ class LoadingEventCard extends React.Component {
                 <div className='p-2'>
                     <div className='bg-loadinggray animate-pulse rounded-md h-7'></div>
                     <div className='grid grid-cols-2 grid-rows-2 text-xs mt-2 gap-2'>
-                        <div className="h-5 w-14 rounded-md bg-loadinggray"/>
-                        <div className="h-5 w-36 rounded-md bg-loadinggray place-self-end"/>
-                        <div className="h-5 w-14 rounded-md bg-loadinggray"/>
-                        <div className="h-5 w-36 rounded-md bg-loadinggray place-self-end"/>
+                        <div className="h-5 w-14 rounded-md bg-loadinggray animate-pulse"/>
+                        <div className="h-5 w-36 rounded-md bg-loadinggray place-self-end animate-pulse"/>
+                        <div className="h-5 w-14 rounded-md bg-loadinggray animate-pulse"/>
+                        <div className="h-5 w-36 rounded-md bg-loadinggray place-self-end animate-pulse"/>
                     </div>
                 </div>
             </div>

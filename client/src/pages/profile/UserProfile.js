@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '../../components/Button';
+import LinkButton from '../../components/LinkButton';
 
 class UserProfile extends React.Component {
     render(){
@@ -9,7 +9,7 @@ class UserProfile extends React.Component {
                     <div>
                         <img src='/images/icon.png'></img>
                         <h1 className='font-bold'>Prénom Nom</h1>
-                        <Button bg_class='bg-white' text_class='text-black' to='/modifier-profil' width='0'>Modifier informations</Button>
+                        <LinkButton bg_class='bg-white' text_class='text-black' to='/modifier-profil' width='0'>Modifier informations</LinkButton>
                    </div>
 
                     <div>

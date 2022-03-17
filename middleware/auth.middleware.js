@@ -1,20 +1,27 @@
-const jwt = require("jsonwebtoken");
-const compte = require("../serveur/compte")
+const jwt = require("jsonwebtoken")
+const DB = require("../controllers/db").DB
 
 module.exports.checkUser = (req, res, next) => {
   const token = req.cookies.jwt;
   
   if (token) {
-    
+
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
       if (err) {
         res.locals.user = null;
         next();
       } else {
-        let user = await compte.getCompte(decodedToken.id);
-        if(user == -1 || user == -2) user = null;
-        res.locals.user = user;
-        next();
+        try {
+          let user = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [decodedToken.id]);
+          user = user[0];
+
+          res.locals.user = user;
+          next();
+        }
+        catch (err) {
+          res.locals.user = null;
+          next();
+        }
       }
     });
   } else {

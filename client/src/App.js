@@ -17,7 +17,8 @@ import About from './pages/About'
 import MyEvents from './pages/MyEvents'
 import Navbar from './components/Header/Navbar';
 import Error from './pages/Error'
-import EventContainer from './pages/event/EventContainer';
+import EventContainer from './pages/event/EventContainer'
+import CreateEvent from "./pages/event/CreateEvent";
 
 class App extends React.Component {
 
@@ -67,12 +68,12 @@ class App extends React.Component {
                             <Route path='a-propos' element={<About/>}/>
                             <Route path='mes-evenements' element={<MyEvents/>}/>
                             <Route path='evenement/:id' element={<EventContainer/>}/>
-                            <Route path='*' element={<Error/>}/>
                             <Route path='mon-profil' element={<UserProfile/>} />
                             <Route path='modifier-profil' element={<ModifyProfile/>}/>
+
+                            <Route path='*' element={<Error/>}/>
                         </Routes>
                     </div>
-
                     </div>
                 </UidContext.Provider>
             );
