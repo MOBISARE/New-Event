@@ -169,7 +169,7 @@ module.exports.publishEvent = async(req, res) => {
 
 module.exports.createEvent = async(req, res) => {
     try {
-        let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire) VALUES (?, ?, ?, ?)', ["Titre", new Date(), new Date(), res.locals.user.id_compte]);
+        let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire, img_banniere) VALUES (?, ?, ?, ?, ?)', ["Nouvel événement", new Date(), new Date(), res.locals.user.id_compte, '']);
         await DB.query('INSERT INTO participant VALUES(?, ?)', [res.locals.user.id_compte, insert.insertId])
         res.status(200).json(insert.insertId);
     } catch (err) {
