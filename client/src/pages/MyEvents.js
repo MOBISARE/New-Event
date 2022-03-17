@@ -12,7 +12,7 @@ class MyEvents extends React.Component {
     }
 
     componentDidMount = () => {
-        axios.get('/api/mes-evenements')
+        axios.get('/api/compte/mes-evenements')
         .then((res) => {
             if(res.data) res.data.forEach(element => {
                 element.debut = new Date(element.debut).toLocaleDateString();
@@ -24,7 +24,7 @@ class MyEvents extends React.Component {
             console.log(err);
         });
 
-        axios.get('/api/mes-participations')
+        axios.get('/api/compte/mes-participations')
         .then((res) => {
             if(res.data) res.data.forEach(element => {
                 element.debut = new Date(element.debut).toLocaleDateString();

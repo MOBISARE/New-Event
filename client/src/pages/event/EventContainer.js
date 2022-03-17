@@ -19,6 +19,7 @@ class EventContainer extends React.Component {
     }
 
     componentDidMount = () => {
+        window.scrollTo(0, 0);
         axios.get('/api/evenement/' + this.props.router.params.id)
         .then(res => {
             this.setState({event: res.data});

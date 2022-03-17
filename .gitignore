@@ -6,4 +6,4 @@ package-lock.json
 
 .idea
 
-images/*
+upload/*

@@ -122,7 +122,7 @@ module.exports.saveEvent = async(req, res) => {
                 fin: req.body.fin,
                 archivage: req.body.archivage,
                 etat: req.body.etat,
-                img_banniere: req.file ? 'http://localhost:5000/api/images/' + req.file.filename : ''
+                img_banniere: req.file ? 'http://localhost:5000/api/upload/' + req.file.filename : ''
             },
             req.params.id
         ]);
@@ -169,7 +169,7 @@ module.exports.publishEvent = async(req, res) => {
 
 module.exports.createEvent = async(req, res) => {
     try {
-        let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire) VALUES (?, ?, ?, ?)', ["Titre", new Date(), new Date(), res.locals.user.id_compte]);
+        let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire, img_banniere) VALUES (?, ?, ?, ?, ?)', ["Nouvel événement", new Date(), new Date(), res.locals.user.id_compte, '']);
         await DB.query('INSERT INTO participant VALUES(?, ?)', [res.locals.user.id_compte, insert.insertId])
         res.status(200).json(insert.insertId);
     } catch (err) {
@@ -178,37 +178,46 @@ module.exports.createEvent = async(req, res) => {
     }
 }
 
-async function getIdEvenementConsultation(id) {
-    let evenements = []
-        //titre image description 
+module.exports.archiveEvent = async(req, res) => {
     try {
-        let rows = []
-            // recupere les participants de l evenement
-        rows = await DB.query('SELECT e.id_evenement, e.titre, e.description, e.departement, e.debut, e.fin, e.img_banniere FROM evenement e, participant p WHERE e.id_evenement=p.id_evenement AND p.id_compte=?', [id])
-        rows.forEach(e => {
-            evenements.push(e)
-        })
+        let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        
+        if (!event.length) return res.sendStatus(404); // 	Not Found
+        event = event[0];
+
+        if (event.id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
+
+        if(event.etat !== 1) return res.sendStatus(403); // Forbidden
+
+        await DB.query('UPDATE evenement SET etat = 2 WHERE id_evenement = ?', [req.params.id]);
+        
+        return res.sendStatus(200);
     } catch (err) {
-        console.log(err)
-        return -1
+        console.log(err);
+        res.sendStatus(500);
     }
-    if (evenements.length == 0) return -2
-    else return evenements
 }
 
+module.exports.supprEvenement = async(req, res) => {
+    try {
+        let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        
+        if (!event.length) return res.sendStatus(404); // 	Not Found
+        event = event[0];
 
-async function supprEvenement(id_evenement, id_compte) {
-    let result = 0
-    let id_proprietaire = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [id_evenement])
-    id_proprietaire = id_proprietaire[0].id_proprietaire
-    if (id_proprietaire == id_compte) {
-        try {
-            result = await DB.query('UPDATE evenement SET etat=1 WHERE id_evenement=?', [id_evenement])
-        } catch (err) {
-            console.log(err)
-            return -1 //erreur lors de l execution de la requete (500)
-        }
-    } else return -2
+        if (event.id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
+
+        if (event.etat === 1) return res.sendStatus(403); // Forbidden
+
+        await DB.query('DELETE FROM participant WHERE id_evenement = ?', [req.params.id]);
+        await DB.query('DELETE FROM besoin WHERE id_evenement = ?', [req.params.id]);
+        await DB.query('DELETE FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        
+        return res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
 }
 
 //le participant veut se retirer d'un évenment
@@ -241,6 +250,3 @@ module.exports.rejoindreEve=async(req,res)=>{
     }
     res.sendStatus(200)
 }
-
-module.exports.getEvenementConsultation = getIdEvenementConsultation
-module.exports.supprEvenement = supprEvenement
