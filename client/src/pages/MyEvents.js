@@ -14,10 +14,6 @@ class MyEvents extends React.Component {
     componentDidMount = () => {
         axios.get('/api/compte/mes-evenements')
         .then((res) => {
-            if(res.data) res.data.forEach(element => {
-                element.debut = new Date(element.debut).toLocaleDateString();
-                element.fin = new Date(element.fin).toLocaleDateString();
-            });
             this.setState({myevents: res.data, isMyEventsLoaded: true});
         })
         .catch((err) => {
@@ -26,10 +22,6 @@ class MyEvents extends React.Component {
 
         axios.get('/api/compte/mes-participations')
         .then((res) => {
-            if(res.data) res.data.forEach(element => {
-                element.debut = new Date(element.debut).toLocaleDateString();
-                element.fin = new Date(element.fin).toLocaleDateString();
-            });
             this.setState({mycontributing: res.data, isMyContribLoaded: true});
         })
         .catch((err) => {

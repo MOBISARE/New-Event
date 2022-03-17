@@ -3,12 +3,14 @@ const multer = require("multer");
 const upload = multer({ dest: './upload' })
 
 const { checkUser, requireAuth } = require('../middleware/auth.middleware');
-const eventController = require('../controllers/evenement');
-const needController = require('../controllers/besoin');
+const eventController = require('../controllers/event.controller');
+const needController = require('../controllers/need.controller');
 
 
 
 router.get('/:id', eventController.getEvenement);
+
+router.get('/recherche/:search', eventController.search);
 
 router.put('/creer', requireAuth, eventController.createEvent);
 router.put('/modifier/:id', requireAuth, upload.single('img_banniere'), eventController.saveEvent);
