@@ -84,31 +84,13 @@ app.put('/api/evenement/supprimer', async(req, res) => {
     else res.sendStatus(200)
 })
 
-const maxAge = 3 * 24 * 60 * 60 * 1000;
-const createToken = (id) => {
-    return jwt.sign({ id }, process.env.TOKEN_SECRET, {
-        expiresIn: maxAge
-    })
-};
+
 
 
 //se connecter
-app.post('/api/compte/connexion', async(req, res) => {
 
-    let data = await cbCompte.getCompteConnexion(req.body.email, req.body.mot_de_passe)
-    if (data == -1) res.status(400).send("Adresse mail/mot de passe incorrect")
-    else if (data == -2) res.sendStatus(400)
-    else {
-        const token = createToken(data.id_compte);
-        res.cookie('jwt', token, { httpOnly: true, maxAge });
-        res.sendStatus(200);
-    }
-})
 
-app.post('/api/compte/deconnexion', (req, res) => {
-    res.cookie('jwt', '', { maxAge: 1 });
-    res.sendStatus(200);
-})
+
 
 //********************modifier compte*************
 //app.get('/api/compte/modifier/:id', requireAuth, cbCompte.getCompte)
