@@ -10,6 +10,8 @@ const needController = require('../controllers/need.controller');
 
 router.get('/:id', eventController.getEvenement);
 
+router.get('/recherche/:search', eventController.search);
+
 router.put('/creer', requireAuth, eventController.createEvent);
 router.put('/modifier/:id', requireAuth, upload.single('img_banniere'), eventController.saveEvent);
 router.post('/publier/:id', requireAuth, eventController.publishEvent);

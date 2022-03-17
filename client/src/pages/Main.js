@@ -1,51 +1,31 @@
 import React from 'react';
+import axios from 'axios';
 
 import EventCard from '../components/Event/EventCard'
-
-let fakeEvents = [
-    {
-        id:1,
-        title:"Titre d'événement",
-        description:"Description de cet événement. Description de cet événement. Description de cet événement. Description de cet événement. Description de cet événement. Description de cet événement. Description de cet événement. Description de cet événement. Description de cet événement. Description de cet événement. ",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    },
-    {
-        id:2,
-        title:"Titre d'événement",
-        description:"Description de cet événement",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    }
-]
+import LoadingEventCard from '../components/Event/LoadingEventCard';
 
 function handlerFocusSearchbar(ev) {
     ev.target.placeholder = (ev.type==="blur")? "Anniversaire de...":""
 }
 
 class Main extends React.Component {
-    render(){
-        let events = fakeEvents
-        const eventCards = events.map(value =>
-            <EventCard
-                key={value.id}
-                id={value.id}
-                title={value.title}
-                description={value.description}
-                imgUrl={value.imgUrl}
-                membersNumber={value.membersNumber}
-                location={value.location}
-                startDate={value.startDate}
-                endDate={value.endDate}
-            />
-        )
 
+    constructor(props) {
+        super(props);
+        this.state = {searchedEvents: [], isSearchLoaded: false};
+    }
+
+    componentDidMount = () => {
+        axios.get('/api/evenement/recherche/""')
+        .then((res) => {
+            this.setState({searchedEvents: res.data, isSearchLoaded: true});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
+
+    render(){
         return(
             <div className='text-center flex flex-col items-center max-w-[1000px] mx-auto'>
                 <div className='bg-gray h-screen w-full absolute'>
@@ -104,7 +84,25 @@ class Main extends React.Component {
                                 <option>Récent</option>
                             </select>
                         </div>
-                        { eventCards }
+                        {
+                            !this.state.isSearchLoaded
+                            ? <LoadingEventCard></LoadingEventCard>
+                            : this.state.searchedEvents.map((elem) => {
+                                return(
+                                <EventCard
+                                    key={elem.id_evenement}
+                                    id={elem.id_evenement}
+                                    title={elem.titre}
+                                    description={elem.description}
+                                    imgUrl={elem.img_banniere}
+                                    membersNumber={'?'}
+                                    etat={elem.etat}
+                                    location={elem.departement}
+                                    startDate={elem.debut}
+                                    endDate={elem.fin}
+                                />)
+                            }) 
+                        }
                     </div>
                 </div>
             </div>

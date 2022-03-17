@@ -41,14 +41,14 @@ class EventCard extends React.Component {
                             </span>
                             { (this.props.membersNumber==='?')? '0':this.props.membersNumber }
                         </span>
-                        <span className='flex items-center ml-auto'>{ this.props.startDate }</span>
+                        <span className='flex items-center ml-auto'>{ new Date(this.props.startDate).toLocaleDateString() }</span>
                         <span className='flex items-center'>
                             <span className="material-icons md-18 mr-1">
                                 place
                             </span>
                             { this.props.location || "Non définie" }
                         </span>
-                        <span className='flex items-center ml-auto'>{ this.props.endDate }</span>
+                        <span className='flex items-center ml-auto'>{ new Date(this.props.endDate).toLocaleDateString() }</span>
                     </div>
                 </div>
             </Link>

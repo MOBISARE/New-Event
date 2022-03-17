@@ -15,6 +15,12 @@ modelToJSON = (event) => {
     }
 }
 
+module.exports.search = async(req, res) => {
+    let events = await DB.query('SELECT * FROM evenement WHERE etat = 1 LIMIT 10');
+
+    return res.status(200).json(events);
+}
+
 module.exports.getEvenement = async(req, res) => {
     let evenement;
     let participants = []
