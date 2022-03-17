@@ -151,8 +151,6 @@ module.exports.saveEvent = async(req, res) => {
             departement: req.body.departement,
             debut: req.body.debut,
             fin: req.body.fin,
-            archivage: req.body.archivage,
-            etat: req.body.etat,
         }
 
         if(req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
