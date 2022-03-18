@@ -63,7 +63,6 @@ class ModifyEvent extends React.Component {
             }
         })
         .then((res) => {
-            //this.props.container.setEvent(res.data);
             this.props.container.setState({event: res.data, isModifing: false})
         })
         .catch((err) => {

@@ -6,6 +6,7 @@ import NeedList from '../../components/Event/NeedList'
 import Button from "../../components/Button"
 import ParticipantViewer from '../../components/Event/ParticipantViewer'
 import EventMenu from '../../components/Event/EventMenu'
+import InviteMenu from '../../components/Event/InviteMenu'
 
 class Event extends React.Component {
     constructor(props) {
@@ -15,6 +16,8 @@ class Event extends React.Component {
         this.participantViewer = React.createRef();
         this.eventMenuBtn = React.createRef();
         this.eventMenu = React.createRef();
+
+        this.inviteMenu = React.createRef();
     }
 
     inviteUsers = () => {
@@ -26,7 +29,7 @@ class Event extends React.Component {
     OwnerEventMenu = () => {
 
         let buttons = [
-            {title: "Inviter des participants"},
+            {title: "Inviter des participants", onClick: () => {this.inviteMenu.current.showComponent()}},
             {title: "Modifier événement", onClick: () => {this.props.container.setState({isModifing: true})}}
         ]
 
@@ -136,6 +139,7 @@ class Event extends React.Component {
                 </div>
 
                 <NeedList needs={this.props.eventModel.besoins}/>
+                <InviteMenu ref={this.inviteMenu}/>
             </div>
         );
     }
