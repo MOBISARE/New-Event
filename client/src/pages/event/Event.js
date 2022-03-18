@@ -5,6 +5,7 @@ import UserMini from '../../components/UserMini'
 import NeedList from '../../components/Event/NeedList'
 import Button from "../../components/Button"
 import ParticipantViewer from '../../components/Event/ParticipantViewer'
+import EventMenu from '../../components/Event/EventMenu'
 
 class Event extends React.Component {
     constructor(props) {
@@ -12,6 +13,31 @@ class Event extends React.Component {
 
         this.participantBtn = React.createRef();
         this.participantViewer = React.createRef();
+        this.eventMenuBtn = React.createRef();
+        this.eventMenu = React.createRef();
+    }
+
+    inviteUsers = () => {
+
+    }
+
+
+
+    OwnerEventMenu = () => {
+
+        let buttons = [
+            {title: "Inviter des participants"},
+            {title: "Modifier événement", onClick: () => {this.props.container.setState({isModifing: true})}}
+        ]
+
+        return (
+            <div className='relative'>
+                <span className="material-icons cursor-pointer" onClick={() => {this.eventMenu.current.toggleActive()}} ref={this.eventMenuBtn}>
+                more_vert
+                </span>
+                <EventMenu ref={this.eventMenu} button={this.eventMenuBtn} values={buttons}></EventMenu>
+            </div>
+        )
     }
 
     ClickableUserMenu = () => {
@@ -51,7 +77,17 @@ class Event extends React.Component {
                                  src={this.props.eventModel.img_banniere} onError={event => event.target.hidden=true} alt=" "/>
                         </div>
                         <div className='p-6 border-t-8 border-green'>
-                            <h5 className='text-xl font-bold'>{ this.props.eventModel.titre }</h5>
+                            <div className='flex flex-row justify-between'>
+                                <h5 className='text-xl font-bold'>{ this.props.eventModel.titre }</h5>
+                                {
+                                    this.props.eventModel.etatAppartenance === 2
+                                    ? this.OwnerEventMenu()
+                                    : this.props.eventModel.etatAppartenance === 1
+                                    ? <></>
+                                    : <></>
+                                }
+                            </div>
+                            
                             <p>{ this.props.eventModel.description }</p>
                         </div>
                     </div>
