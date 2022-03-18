@@ -65,8 +65,8 @@ module.exports.getParticipants = async(req, res) => {
         let participants = await DB.query('SELECT id_compte, email, img_profil, nom, prenom FROM compte WHERE id_compte IN (SELECT id_compte FROM participant WHERE id_evenement = ?)', [req.params.id]);
 
         participants.forEach(element => {
-            if(element['id_compte'] == proprio) element['propietaire'] = true;
-            else element['propietaire'] = false;
+            if(element['id_compte'] == proprio) element['proprietaire'] = true;
+            else element['proprietaire'] = false;
 
             if(element['id_compte'] == res.locals.user.id_compte) element['vous'] = true;
             else element['vous'] = false;

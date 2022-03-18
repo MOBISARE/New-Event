@@ -5,6 +5,8 @@ import FormButton from "../../components/FormButton";
 import Button from "../../components/Button";
 import axios from "axios";
 import dateformat from 'dateformat'
+import UserMini from '../../components/UserMini';
+import ParticipantViewer from '../../components/Event/ParticipantViewer';
 
 let today = new Date()
 let dd = today.getDate()
@@ -23,6 +25,8 @@ class ModifyEvent extends React.Component {
         super(props);
         this.hiddenInput = React.createRef()
         this.previewImage = React.createRef()
+        this.participantBtn = React.createRef();
+        this.participantViewer = React.createRef();
     }
 
     componentDidMount = () => {
@@ -120,6 +124,31 @@ class ModifyEvent extends React.Component {
                             <InputField type='date' id='end-date' children='Date de fin' required min={today}
                                         className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
                             <InputField type='text' id='location' name='location' children='Localisation' required defaultValue={this.props.eventModel.departement}/>
+                        </div>
+
+                        <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
+                            <div>
+                                Organisateur
+                                <div className='ml-10'>
+                                    <UserMini firstname={this.props.eventModel.proprietaire.prenom} lastname={this.props.eventModel.proprietaire.nom} />
+                                </div>
+                            </div>
+                            <div className='my-2'>
+                                Participants
+                                <div className='ml-10 relative'>
+                                    <span className='flex items-center'>
+                                    
+                                        <div className='flex cursor-pointer' onClick={() => {this.participantViewer.current.toggleActive()}} ref={this.participantBtn}>
+                                            <span className="material-icons md-18 mr-1">
+                                                people
+                                            </span>
+                                            { (this.props.eventModel.id_participants)? this.props.eventModel.id_participants.length:0 }
+                                        </div>
+                                        <ParticipantViewer ref={this.participantViewer} button={this.participantBtn} eventId={this.props.eventModel.id} editable/>
+                                    
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
