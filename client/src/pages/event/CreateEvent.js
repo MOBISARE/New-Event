@@ -46,13 +46,19 @@ class CreateEvent extends React.Component {
         e.preventDefault();
 
         try {
-            let save = await axios.put('/api/evenement/modifier/' + this.props.eventModel.id, {
-                titre: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                departement: document.getElementById('location').value,
-                debut: document.getElementById('start-date').value,
-                fin: document.getElementById('end-date').value,
-                img_banniere: document.getElementById('image').value,
+            let data = new FormData();
+
+            data.append('titre', document.getElementById('title').value);
+            data.append('description', document.getElementById('description').value);
+            data.append('departement', document.getElementById('location').value);
+            data.append('debut', document.getElementById('start-date').value);
+            data.append('fin', document.getElementById('end-date').value);
+            data.append('img_banniere', document.getElementById('image').files[0]);
+
+            await axios.put('/api/evenement/modifier/' + this.props.eventModel.id, data, {
+                headers: {
+                    'content-type': 'multipart/form-data'
+                }
             });
 
             let res = await axios.post('/api/evenement/publier/' + this.props.eventModel.id);

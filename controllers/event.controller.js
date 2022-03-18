@@ -22,58 +22,31 @@ module.exports.search = async(req, res) => {
 }
 
 module.exports.getEvenement = async(req, res) => {
-    let evenement;
-    let participants = []
-    let besoins = []
     try {
         // recupere les informations de l evenement
-        evenement = await DB.query('SELECT evenement.id_evenement, titre, description, departement, debut, fin, archivage, etat, img_banniere, id_proprietaire ' +
-            'FROM evenement ' +
-            'WHERE id_evenement = ?', [req.params.id])
+        let evenement = await DB.query('SELECT id_evenement, titre, description, departement, debut, fin, etat, img_banniere, id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        evenement = evenement[0]
+        if (!evenement.length) return res.sendStatus(404); // Not Found
+        evenement = modelToJSON(evenement[0]);
 
-        let rows = []
-            // recupere les participants de l evenement
-        rows = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ?', [req.params.id])
-        rows.forEach(e => {
-            participants.push(e.id_compte)
-        })
+        let proprietaire = await DB.query('SELECT nom, prenom FROM compte WHERE id_compte = ?', [evenement.id_proprietaire]);
+        if (!proprietaire.length) return res.sendStatus(500); // Internal Error
 
-        // recupere les besoins de l evenement
-        // nom prenom id participant
-        rows = await DB.query('SELECT id_besoin, description, id_participant, nom, prenom' +
-            ' FROM besoin INNER JOIN compte ON besoin.id_participant=compte.id_compte WHERE id_evenement = ?', [req.params.id])
+        evenement['proprietaire'] = proprietaire[0];
+        
+        if (evenement.id_proprietaire === res.locals.user.id_compte) evenement['etatAppartenance'] = 2;
+        else {
+            part = await DB.query('SELECT id_evenement FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
+            if (!evenement.length) evenement['etatAppartenance'] = 0;
+            else evenement['etatAppartenance'] = 1;
+        }
 
-        rows.forEach(e => {
-            besoins.push({
-                id_besoin: e.id_besoin,
-                description: e.description,
-                id_participant: e.id_participant,
-                nom_participant: e.nom,
-                prenom_participant: e.prenom
-            })
-        })
+        res.status(200).json(evenement);
+
     } catch (err) {
         console.log(err)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
-
-    if (evenement == undefined) res.sendStatus(404) // evenement inconnu (404)
-    else res.json({
-        id: evenement.id_evenement,
-        titre: evenement.titre,
-        description: evenement.description,
-        departement: evenement.departement,
-        debut: evenement.debut,
-        fin: evenement.fin,
-        archivage: evenement.archivage,
-        etat: evenement.etat,
-        img_banniere: evenement.img_banniere,
-        id_proprietaire: evenement.id_proprietaire,
-        id_participants: participants,
-        besoins: besoins
-    })
 }
 
 module.exports.getParticipants = async(req, res) => {
@@ -158,9 +131,11 @@ module.exports.saveEvent = async(req, res) => {
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 
-        let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        //let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        res.status(200).json(modelToJSON(newEvent[0]));
+        //res.status(200).json(modelToJSON(newEvent[0]));
+
+        await this.getEvenement(req, res);
 
     } catch (err) {
         console.log(err);
@@ -184,7 +159,8 @@ module.exports.publishEvent = async(req, res) => {
 
         let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        res.status(200).json(modelToJSON(newEvent[0]));
+        //res.status(200).json(modelToJSON(newEvent[0]));
+        await this.getEvenement(req, res);
 
     } catch (err) {
         console.log(err);

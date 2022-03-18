@@ -14,12 +14,39 @@ class Event extends React.Component {
         this.participantViewer = React.createRef();
     }
 
+    ClickableUserMenu = () => {
+        return(
+            <div>
+                <div className='flex cursor-pointer' onClick={() => {this.participantViewer.current.toggleActive()}} ref={this.participantBtn}>
+                    <span className="material-icons md-18 mr-1">
+                        people
+                    </span>
+                    { (this.props.eventModel.id_participants)? this.props.eventModel.id_participants.length:0 }
+                </div>
+                <ParticipantViewer ref={this.participantViewer} button={this.participantBtn} eventId={this.props.eventModel.id}/>
+            </div>
+        );
+    }
+
+    UnclickableUserMenu = () => {
+        return(
+            <div>
+                <div className='flex'>
+                    <span className="material-icons md-18 mr-1">
+                        people
+                    </span>
+                    { (this.props.eventModel.id_participants)? this.props.eventModel.id_participants.length:0 }
+                </div>
+            </div>
+        );
+    }
+
     render() {
         return(
             <div className='max-w-[1000px] mx-auto'>
                 <div className='flex'>
                     <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
-                        <div className='flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
+                        <div className=' bg-darkgray min-h-[250px] max-h-80 rounded-t-3xl overflow-hidden'>
                             <img className='object-cover w-full h-auto'
                                  src={this.props.eventModel.img_banniere} onError={event => event.target.hidden=true} alt=" "/>
                         </div>
@@ -42,28 +69,30 @@ class Event extends React.Component {
                                     {this.props.eventModel.departement}
                                 </div>
                             </div>
-                            <Button className='bg-green-valid'>Rejoindre</Button>
+                            {
+                                this.props.eventModel.etatAppartenance === 0
+                                ? <Button className='bg-green-valid'>Rejoindre</Button>
+                                : <></>
+                            }
+                            
                         </div>
                         <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                             <div>
                                 Organisateur
                                 <div className='ml-10'>
-                                    <UserMini firstname='Prénom' lastname='Nom' />
+                                    <UserMini firstname={this.props.eventModel.proprietaire.prenom} lastname={this.props.eventModel.proprietaire.nom} />
                                 </div>
                             </div>
                             <div className='my-2'>
                                 Participants
                                 <div className='ml-10 relative'>
                                     <span className='flex items-center'>
-                                        <div className='flex cursor-pointer' onClick={() => {this.participantViewer.current.toggleActive()}} ref={this.participantBtn}>
-                                            <span className="material-icons md-18 mr-1">
-                                                people
-                                            </span>
-                                            { (this.props.eventModel.id_participants)? this.props.eventModel.id_participants.length:0 }
-                                        </div>
-                                        
+                                        {
+                                            this.props.eventModel.etatAppartenance === 0
+                                            ? this.UnclickableUserMenu()
+                                            : this.ClickableUserMenu()
+                                        }
                                     </span>
-                                    <ParticipantViewer ref={this.participantViewer} button={this.participantBtn} eventId={this.props.eventModel.id}/>
                                 </div>
                             </div>
                         </div>
