@@ -141,7 +141,7 @@ class ModifyEvent extends React.Component {
                                             <span className="material-icons md-18 mr-1">
                                                 people
                                             </span>
-                                            { (this.props.eventModel.id_participants)? this.props.eventModel.id_participants.length:0 }
+                                            { this.props.eventModel.nbParticipants }
                                         </div>
                                         <ParticipantViewer ref={this.participantViewer} button={this.participantBtn} eventId={this.props.eventModel.id} editable/>
                                     

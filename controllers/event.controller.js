@@ -23,12 +23,13 @@ module.exports.search = async(req, res) => {
 
 module.exports.getEvenement = async(req, res) => {
     try {
-        // recupere les informations de l evenement
+        // get event
         let evenement = await DB.query('SELECT id_evenement, titre, description, departement, debut, fin, etat, img_banniere, id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
         if (!evenement.length) return res.sendStatus(404); // Not Found
         evenement = modelToJSON(evenement[0]);
 
+        // get state of user (0:user, 1:participant, 2:owner)
         let proprietaire = await DB.query('SELECT nom, prenom FROM compte WHERE id_compte = ?', [evenement.id_proprietaire]);
         if (!proprietaire.length) return res.sendStatus(500); // Internal Error
 
@@ -37,10 +38,15 @@ module.exports.getEvenement = async(req, res) => {
         if (evenement.id_proprietaire === res.locals.user.id_compte) evenement['etatAppartenance'] = 2;
         else {
             part = await DB.query('SELECT id_evenement FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
-            if (!evenement.length) evenement['etatAppartenance'] = 0;
+            if (!part.length) evenement['etatAppartenance'] = 0;
             else evenement['etatAppartenance'] = 1;
         }
 
+        // get nb of participants
+        let nbParticipants = await DB.query('SELECT Count(id_compte) as nbParticipants FROM participant WHERE id_evenement = ?', [req.params.id]);
+        evenement['nbParticipants'] = nbParticipants[0].nbParticipants;
+
+        
         res.status(200).json(evenement);
 
     } catch (err) {
