@@ -10,6 +10,7 @@ class InviteMenu extends React.Component {
         this.componentDiv = React.createRef();
 
         this.state = {users: [], isOpen: false};
+        this.abortController = new AbortController();
     }
 
     showComponent() {
@@ -21,8 +22,15 @@ class InviteMenu extends React.Component {
     }
 
     handleSearch = async(e) => {
-        if (this.searchField.current.value === '') return;
-        axios.get('/api/compte/recherche/' + this.searchField.current.value)
+        this.abortController.abort();
+        this.abortController = new AbortController();
+        
+        if (this.searchField.current.value === '') {
+            this.setState({users: []});
+            return;
+        }
+
+        axios.get('/api/compte/recherche/' + this.searchField.current.value, {signal: this.abortController.signal})
         .then((res) => {
             this.setState({users: res.data});
         })
@@ -52,7 +60,7 @@ class InviteMenu extends React.Component {
                         close
                     </span>
                     <h1 className='text-3xl text-center'>Inviter utilisateur</h1>
-                    <div className='border border-transparentgray h-56 flex flex-col'>
+                    <div className='border border-transparentgray h-72 flex flex-col'>
                         <div className='flex items-center border-b border-transparentgray px-1 bg-white z-10'>
                             <span className="material-icons text-transparentgray">
                                 search
@@ -63,7 +71,7 @@ class InviteMenu extends React.Component {
                             </span>
                         </div>
 
-                        <div className={'flex items-center border-b border-transparentgray px-1 relative transition-transform ' + (this.state.isOpen ? '' : '-translate-y-full')}>
+                        <div className={'flex items-center border-b border-transparentgray px-1 relative transition-all ' + (this.state.isOpen ? '' : '-translate-y-full -mb-10')}>
                             <span className="material-icons text-transparentgray">
                                 location_on
                             </span>
