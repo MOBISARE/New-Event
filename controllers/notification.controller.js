@@ -1,11 +1,10 @@
 const DB = require("./db").DB
-var async = require('async')
 
 //Consulte toute les notifs liées au compte dont l'id est passé en paramètre
 module.exports.getNotification = async(req, res) => {
     let notif = [];
     try {
-        notif = await DB.query("SELECT * FROM notification where id_compte = ?", [req.params.id])
+        notif = await DB.query("SELECT * FROM notification where id_compte = ?", [res.locals.user.id_compte])
         return res.status(200).json(notif);
     } catch (error) {
         console.log(err)
@@ -14,7 +13,7 @@ module.exports.getNotification = async(req, res) => {
 }
 
 //Check les notifs de type ajouter (invitation)
-module.exports.getEvenement = async(req, res) => {
+module.exports.getNotificationSpe = async(req, res) => {
     let notif = [];
     try {
         notif = await DB.query("SELECT * FROM notification where id_compte = ? and type = ?", [req.params.id], [req.params.type])

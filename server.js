@@ -10,6 +10,7 @@ const { checkUser, requireAuth } = require('./middleware/auth.middleware');
 const userRoutes = require('./routes/user.routes');
 const eventRoutes = require('./routes/event.routes');
 const uploadRoutes = require('./routes/upload.routes');
+const notifRoutes = require('./routes/notif.routes');
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.get('/api/jwtid', requireAuth, (req, res) => {
 app.use('/api/compte', userRoutes);
 app.use('/api/evenement', eventRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/notification', notifRoutes);
 
 // V V V V V V V Doit être déplacé vers les routeurs (voir './routes/') V V V V V V V V
 
