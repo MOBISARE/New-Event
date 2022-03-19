@@ -40,7 +40,7 @@ class EventMenu extends React.Component {
             <div className={'absolute right-0 rounded-md flex flex-col z-10 overflow-hidden ' + (this.state.active? '': 'hidden')} ref={this.DOM_element}>
                 {
                     this.props.values.map((val, index) => {
-                        return <Button key={index} className='rounded-none whitespace-nowrap py-1' onClick={val.onClick}>{val.title}</Button>
+                        return <Button key={index} className={'rounded-none whitespace-nowrap py-1 ' + (val.color ? 'bg-' + val.color : '')} onClick={val.onClick}>{val.title}</Button>
                     })
                 }
             </div>

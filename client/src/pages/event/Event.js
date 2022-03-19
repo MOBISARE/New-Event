@@ -27,10 +27,25 @@ class Event extends React.Component {
 
 
     OwnerEventMenu = () => {
-
         let buttons = [
             {title: "Inviter des participants", onClick: () => {this.inviteMenu.current.showComponent()}},
             {title: "Modifier événement", onClick: () => {this.props.container.setState({isModifing: true})}}
+        ]
+
+        return (
+            <div className='relative'>
+                <span className="material-icons cursor-pointer" onClick={() => {this.eventMenu.current.toggleActive()}} ref={this.eventMenuBtn}>
+                more_vert
+                </span>
+                <EventMenu ref={this.eventMenu} button={this.eventMenuBtn} values={buttons}></EventMenu>
+            </div>
+        )
+    }
+
+    ParticipantEventMenu = () => {
+        let buttons = [
+            {title: "Modifier événement", onClick: () => {this.props.container.setState({isModifing: true})}},
+            {title: "Quitter événement", onClick: () => {console.log("TODO: QUIT EVENT")}, color:'red-500'}
         ]
 
         return (
@@ -86,7 +101,7 @@ class Event extends React.Component {
                                     this.props.eventModel.etatAppartenance === 2
                                     ? this.OwnerEventMenu()
                                     : this.props.eventModel.etatAppartenance === 1
-                                    ? <></>
+                                    ? this.ParticipantEventMenu()
                                     : <></>
                                 }
                             </div>
