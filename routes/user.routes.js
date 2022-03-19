@@ -6,6 +6,7 @@ const { checkUser, requireAuth } = require('../middleware/auth.middleware');
 const authController = require('../controllers/auth.controller');
 const userController = require('../controllers/user.controller');
 const eventController = require('../controllers/event.controller');
+const recupController = require('../controllers/recup.controller');
 
 // authentification
 router.post('/connexion', authController.login)
@@ -20,5 +21,9 @@ router.get('/mes-participations', requireAuth, eventController.getMesParticipati
 
 router.put('/modifier/:id', requireAuth, userController.putCompteModification);
 router.put('/supprimer/:id', requireAuth, userController.supprCompte);
+
+router.post('/recupmdp', recupController.postStartRecuperation)
+router.get('/recupmdp', recupController.getStartRecuperation)
+router.put('/recupmdp/:token', recupController.putResetMdp)
 
 module.exports = router;
