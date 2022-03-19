@@ -26,9 +26,11 @@ class EventCard extends React.Component {
                 </div>
                 <div className={'flex flex-col p-2 border-t-8 border-darkgray transition-[max-height] ease-in-out duration-1000 ' +
                     (this.state.descriptionVisible? "max-h-[80%]":"max-h-[6.8rem]")}>
-                    <h5 className='text-xl font-bold'>{ this.props.title }</h5>
+                    <span className='font-bold text-xl'>
+                        <h5 className='truncate'>{ this.props.title }</h5>
+                    </span>
                     <p className={'description-event overflow-hidden '
-                     + (this.state.descriptionVisible? "h-max":" ")}
+                     + (this.state.descriptionVisible? "h-max":"")}
                        style={{hyphens:'auto'}}>
                         { (this.props.description==='NULL')? '':this.props.description }
                     </p>
