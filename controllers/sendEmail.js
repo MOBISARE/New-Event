@@ -14,8 +14,6 @@ SERVICE = "google.com";
  */
 const sendEmail = async(email, subject, text) => {
 
-    let testAccount = await nodemailer.createTestAccount();
-
     try {
         const transporter = nodemailer.createTransport({
             host: HOST,
@@ -34,10 +32,13 @@ const sendEmail = async(email, subject, text) => {
             text: text,
         });
 
-        console.log("email envoyé");
+        console.log("email envoyé")
     } catch (error) {
-        console.log(error, "email non envoyé");
+        console.log(error, "email non envoyé")
+        return -1
     }
+
+    return 0
 };
 
 //sendEmail("lespagnolcesttropbien@gmail.com", "TestJs", "Pitié que ça fonctionne");
