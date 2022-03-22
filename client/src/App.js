@@ -18,7 +18,6 @@ import MyEvents from './pages/MyEvents'
 import Navbar from './components/Header/Navbar';
 import Error from './pages/Error'
 import EventContainer from './pages/event/EventContainer'
-import CreateEvent from "./pages/event/CreateEvent";
 
 class App extends React.Component {
 

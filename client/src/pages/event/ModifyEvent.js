@@ -152,7 +152,9 @@ class ModifyEvent extends React.Component {
                     </div>
                 </div>
 
-                <NeedList />
+                <NeedList needs={this.props.eventModel.besoins}
+                          eventId={this.props.eventModel.id}
+                          actionType='modify' />
             </form>
         );
     }

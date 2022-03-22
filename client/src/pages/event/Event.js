@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from "axios"
 
 import UserMini from '../../components/UserMini'
 import NeedList from '../../components/Event/NeedList'
@@ -153,7 +152,9 @@ class Event extends React.Component {
                     </div>
                 </div>
 
-                <NeedList needs={this.props.eventModel.besoins}/>
+                <NeedList needs={this.props.eventModel.besoins}
+                          eventId={this.props.eventModel.id}
+                          actionType='show'/>
                 <InviteMenu ref={this.inviteMenu}/>
             </div>
         );

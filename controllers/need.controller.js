@@ -2,18 +2,35 @@ const DB = require("./db").DB
 
 module.exports.postAjouterBesoin = async(req, res) => {
     try {
-        var result = await DB.query('INSERT INTO besoin SET ?', { "description": req.body.description, "id_participant": req.body.id_participant, "id_evenement": req.params.id });
+        let participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.participant])
+        if (participant===undefined) {
+            res.json({
+                msg: "Cet utilisateur n'existe pas.",
+                code: 1
+            })
+            return
+        }
 
-        if (result == undefined) {
+        await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)',
+            [req.body.description, participant[0].id_compte, req.params.id ])
+        let result = await DB.query('SELECT last_insert_id() as id_besoin')
+
+        if (result === undefined) {
             res.sendStatus(404)
+            return
+        } else {
+            res.json({
+                id_besoin: result[0].id_besoin,
+                participant: participant[0]
+            })
+            return
         }
 
     } catch (err) {
-        console.log(err)
+        console.error(err)
         res.sendStatus(500)
+        return
     }
-
-    res.sendStatus(200)
 }
 
 module.exports.putModifierBesoin = async(req, res) => {
@@ -40,13 +57,11 @@ module.exports.postSupprBesoin = async(req, res) => {
         res.sendStatus(401)
     }*/
     try {
-        var result = await DB.query('DELETE FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [req.params.idbesoin, req.params.id])
-        if (result == undefined || result.changedRows == 0) {
-            res.sendStatus(404)
-        }
+        await DB.query('DELETE FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [req.params.idbesoin, req.params.id])
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
+        return
     }
 
     res.sendStatus(200)
