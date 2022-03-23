@@ -28,5 +28,6 @@ router.post('/:id/besoin/creer', requireAuth, needController.postAjouterBesoin)
 router.put('/:id/besoin/:idbesoin/modifier', requireAuth, needController.putModifierBesoin)
 router.post('/:id/besoin/:idbesoin/supprimer', requireAuth, needController.postSupprBesoin)
 router.get('/:id/besoin/:idbesoin', requireAuth, needController.getBesoin)
+router.get('/:id/besoins', requireAuth, needController.getListeBesoins)
 
 module.exports = router;
