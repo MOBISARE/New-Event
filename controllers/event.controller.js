@@ -15,13 +15,55 @@ modelToJSON = (event) => {
     }
 }
 
-module.exports.search = async(req, res) => {
-    let events = await DB.query('SELECT * FROM evenement WHERE etat = 1 LIMIT 10');
+module.exports.search = async (req, res) => {
+    //let events = await DB.query('SELECT * FROM evenement WHERE etat = 1 ');
+    let query = 'SELECT * FROM evenement WHERE etat = 1 '
+    let debut = ""
+    let fin = ""
+    let dep = ""
+    let tri1 = ""
+    let tri2 = ""
+    if (req.params.datedebut != "")
+        debut = "and debut >= ? "
+    if (req.params.datefin != "")
+        fin = "and fin <= ? "
 
-    return res.status(200).json(events);
+    //requete api pour connaitre departement par rapport a ville
+    req.params.ville
+    let data = 'https://geo.api.gouv.fr/communes?nom=Nantes&fields=departement&limit=5'
+    console.log(data)
+
+    //popularite = nombre de partcipants
+    //recent
+    if (req.params.tri == "popularite") {
+        tri2 = ' oder by count(id_compte) desc'
+        tri1 = ' inner join participant on participant.id_compte=evenement.id_compte'
+    } else if (req.params.tri == "recent") {
+        //date debut plus proche date courante
+        tri2 = ""
+        "SELECT * FROM `evenement`  ORDER BY (CURRENT_DATE()-debut);"
+    }
+
+    //nb occurence
+    let regex = new RegExp(req.params.search, "i")
+    let tmp = await DB.query('SELECT * FROM evenement WHERE etat = 1 ')
+    tmp.forEach(tuple => {
+        tuple["occurence"] = (tuple["titre"].match(regex) || []).length + (tuple["description"].match(regex) || []).length
+        console.log(tuple["titre"].match(regex))
+    })
+    tmp.sort((a, b) => b["occurence"] - a["occurence"])
+    console.log(tmp)
+    result = []
+    tmp.forEach(e => {
+        result.push(modelToJSON(e))
+    })
+    //console.log(result)
+
+
+    return res.sendStatus(200);
 }
 
-module.exports.getEvenement = async(req, res) => {
+module.exports.getEvenement = async (req, res) => {
     try {
         // get event
         let evenement = await DB.query('SELECT id_evenement, titre, description, departement, debut, fin, etat, img_banniere, id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
@@ -34,7 +76,7 @@ module.exports.getEvenement = async(req, res) => {
         if (!proprietaire.length) return res.sendStatus(500); // Internal Error
 
         evenement['proprietaire'] = proprietaire[0];
-        
+
         if (evenement.id_proprietaire === res.locals.user.id_compte) evenement['etatAppartenance'] = 2;
         else {
             part = await DB.query('SELECT id_evenement FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
@@ -46,7 +88,7 @@ module.exports.getEvenement = async(req, res) => {
         let nbParticipants = await DB.query('SELECT Count(id_compte) as nbParticipants FROM participant WHERE id_evenement = ?', [req.params.id]);
         evenement['nbParticipants'] = nbParticipants[0].nbParticipants;
 
-        
+
         res.status(200).json(evenement);
 
     } catch (err) {
@@ -55,7 +97,7 @@ module.exports.getEvenement = async(req, res) => {
     }
 }
 
-module.exports.getParticipants = async(req, res) => {
+module.exports.getParticipants = async (req, res) => {
     try {
         // --- CHECK
         let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
@@ -71,10 +113,10 @@ module.exports.getParticipants = async(req, res) => {
         let participants = await DB.query('SELECT id_compte, email, img_profil, nom, prenom FROM compte WHERE id_compte IN (SELECT id_compte FROM participant WHERE id_evenement = ?)', [req.params.id]);
 
         participants.forEach(element => {
-            if(element['id_compte'] == proprio) element['proprietaire'] = true;
+            if (element['id_compte'] == proprio) element['proprietaire'] = true;
             else element['proprietaire'] = false;
 
-            if(element['id_compte'] == res.locals.user.id_compte) element['vous'] = true;
+            if (element['id_compte'] == res.locals.user.id_compte) element['vous'] = true;
             else element['vous'] = false;
 
             delete element['id_compte'];
@@ -88,10 +130,10 @@ module.exports.getParticipants = async(req, res) => {
     }
 }
 
-module.exports.getMesEvenements = async(req, res) => {
+module.exports.getMesEvenements = async (req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
-        
+
         return res.status(200).json(events);
 
     } catch (err) {
@@ -100,7 +142,7 @@ module.exports.getMesEvenements = async(req, res) => {
     }
 }
 
-module.exports.getMesParticipations = async(req, res) => {
+module.exports.getMesParticipations = async (req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
 
@@ -112,7 +154,7 @@ module.exports.getMesParticipations = async(req, res) => {
     }
 }
 
-module.exports.saveEvent = async(req, res) => {
+module.exports.saveEvent = async (req, res) => {
     try {
         // --- CHECK
 
@@ -132,8 +174,8 @@ module.exports.saveEvent = async(req, res) => {
             fin: req.body.fin,
         }
 
-        if(req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
-        
+        if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
+
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 
@@ -149,7 +191,7 @@ module.exports.saveEvent = async(req, res) => {
     }
 }
 
-module.exports.publishEvent = async(req, res) => {
+module.exports.publishEvent = async (req, res) => {
     try {
         // --- CHECK
 
@@ -174,7 +216,7 @@ module.exports.publishEvent = async(req, res) => {
     }
 }
 
-module.exports.createEvent = async(req, res) => {
+module.exports.createEvent = async (req, res) => {
     try {
         let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire, img_banniere) VALUES (?, ?, ?, ?, ?)', ["Nouvel événement", new Date(), new Date(), res.locals.user.id_compte, '']);
         await DB.query('INSERT INTO participant VALUES(?, ?)', [res.locals.user.id_compte, insert.insertId])
@@ -185,19 +227,19 @@ module.exports.createEvent = async(req, res) => {
     }
 }
 
-module.exports.archiveEvent = async(req, res) => {
+module.exports.archiveEvent = async (req, res) => {
     try {
         let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
-        
+
         if (!event.length) return res.sendStatus(404); // 	Not Found
         event = event[0];
 
         if (event.id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
 
-        if(event.etat !== 1) return res.sendStatus(403); // Forbidden
+        if (event.etat !== 1) return res.sendStatus(403); // Forbidden
 
         await DB.query('UPDATE evenement SET etat = 2 WHERE id_evenement = ?', [req.params.id]);
-        
+
         return res.sendStatus(200);
     } catch (err) {
         console.log(err);
@@ -205,10 +247,10 @@ module.exports.archiveEvent = async(req, res) => {
     }
 }
 
-module.exports.supprEvenement = async(req, res) => {
+module.exports.supprEvenement = async (req, res) => {
     try {
         let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
-        
+
         if (!event.length) return res.sendStatus(404); // 	Not Found
         event = event[0];
 
@@ -219,7 +261,7 @@ module.exports.supprEvenement = async(req, res) => {
         await DB.query('DELETE FROM participant WHERE id_evenement = ?', [req.params.id]);
         await DB.query('DELETE FROM besoin WHERE id_evenement = ?', [req.params.id]);
         await DB.query('DELETE FROM evenement WHERE id_evenement = ?', [req.params.id]);
-        
+
         return res.sendStatus(200);
     } catch (err) {
         console.log(err);
@@ -229,12 +271,12 @@ module.exports.supprEvenement = async(req, res) => {
 
 //le participant veut se retirer d'un évenment
 
-module.exports.seRetirer = async(req, res) => {
+module.exports.seRetirer = async (req, res) => {
 
     try {
         result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte])
-            //let idR=await DB.query('SELECT id_compte FROM evenement WHERE id_eve=idEve')
-            //sendNotif(idR,idPar)
+        //let idR=await DB.query('SELECT id_compte FROM evenement WHERE id_eve=idEve')
+        //sendNotif(idR,idPar)
 
         if (result == undefined || result.changedRows == 0) res.sendStatus(404)
 
@@ -248,10 +290,10 @@ module.exports.seRetirer = async(req, res) => {
 
 //le participant veut rejoindre un evenement
 
-module.exports.rejoindreEve=async(req,res)=>{
+module.exports.rejoindreEve = async (req, res) => {
     try {
 
-    }catch (err){
+    } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
