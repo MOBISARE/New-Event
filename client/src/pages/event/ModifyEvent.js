@@ -62,79 +62,80 @@ class ModifyEvent extends React.Component {
                 'content-type': 'multipart/form-data'
             }
         })
-        .then((res) => {
-            this.props.container.setState({event: res.data, isModifing: false})
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+            .then((res) => {
+                this.props.container.setState({event: res.data, isModifing: false})
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     archiveEvent = () => {
         axios.post('/api/evenement/archiver/' + this.props.eventModel.id)
-        .then((res) => {
-            this.props.container.props.router.navigate('/');
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+            .then((res) => {
+                this.props.container.props.router.navigate('/');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     render(){
         return(
-            <form className='max-w-[1000px] mx-auto' onSubmit={this.saveEvent} >
-                <div className='flex'>
-                    <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
-                        <div className='relative flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
-                            <label htmlFor='image' className='hover:cursor-pointer w-full h-full relative flex items-center justify-center bg-cover'
-                                   onInput={this.processImg} ref={this.previewImage}>
-                                <input type='file' accept='image/*' id='image' ref={this.hiddenInput}
-                                       className='absolute top-[-1000px]' name='img-banniere' />
-                                <span className="material-icons text-white text-9xl transition hover:scale-110">
+            <div className='max-w-[1000px] mx-auto'>
+                <form onSubmit={this.saveEvent} >
+                    <div className='flex'>
+                        <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
+                            <div className='relative flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
+                                <label htmlFor='image' className='hover:cursor-pointer w-full h-full relative flex items-center justify-center bg-cover'
+                                       onInput={this.processImg} ref={this.previewImage}>
+                                    <input type='file' accept='image/*' id='image' ref={this.hiddenInput}
+                                           className='absolute top-[-1000px]' name='img-banniere' />
+                                    <span className="material-icons text-white text-9xl transition hover:scale-110">
                                     upload_file
                                 </span>
-                            </label>
-                            <span className="material-icons absolute top-0 right-0 m-4 text-red-600 transition hover:scale-110 hover:cursor-pointer"
-                                onClick={(evt) => {
-                                    this.previewImage.current.style.backgroundImage = ''
-                                    this.hiddenInput.current.value = ''
-                                    evt.target.hidden = true
-                                }} id='delete-imginput' hidden>
+                                </label>
+                                <span className="material-icons absolute top-0 right-0 m-4 text-red-600 transition hover:scale-110 hover:cursor-pointer"
+                                      onClick={(evt) => {
+                                          this.previewImage.current.style.backgroundImage = ''
+                                          this.hiddenInput.current.value = ''
+                                          evt.target.hidden = true
+                                      }} id='delete-imginput' hidden>
                                 cancel
                             </span>
-                        </div>
-                        <div className='p-6 border-t-8 border-green'>
-                            <InputField type='text' children='Titre' id='title' required name='titre' className='font-bold' defaultValue={this.props.eventModel.titre} />
-                            <div className='mt-3'>
-                                <label htmlFor='description' className='block leading-3 ml-4 text-lg z-0'>Description</label>
-                                <textarea id='description' className='rounded-xl border-transparentgray w-full bg-transparent' rows='6' name='description' defaultValue={this.props.eventModel.description}/>
                             </div>
-                        </div>
-                    </div>
-                    <div className='w-2/5'>
-                        <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
-                            <FormButton value='Sauvegarder' name='submit-action' className='bg-green-valid' />
-                            <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.setState({isModifing: false})}>Annuler</Button>
-                            <Button className='bg-red-600' onClick={this.archiveEvent}>Archiver</Button>
-                        </div>
-                        <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
-                            <InputField type='date' id='start-date' children='Date de début' required min={today}
-                                        className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
-                            <InputField type='date' id='end-date' children='Date de fin' required min={today}
-                                        className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
-                            <InputField type='text' id='location' name='location' children='Localisation' required defaultValue={this.props.eventModel.departement}/>
-                        </div>
-
-                        <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
-                            <div>
-                                Organisateur
-                                <div className='ml-10'>
-                                    <UserMini firstname={this.props.eventModel.proprietaire.prenom} lastname={this.props.eventModel.proprietaire.nom} />
+                            <div className='p-6 border-t-8 border-green'>
+                                <InputField type='text' children='Titre' id='title' required name='titre' className='font-bold' defaultValue={this.props.eventModel.titre} />
+                                <div className='mt-3'>
+                                    <label htmlFor='description' className='block leading-3 ml-4 text-lg z-0'>Description</label>
+                                    <textarea id='description' className='rounded-xl border-transparentgray w-full bg-transparent' rows='6' name='description' defaultValue={this.props.eventModel.description}/>
                                 </div>
                             </div>
-                            <div className='my-2'>
-                                Participants
-                                <div className='ml-10 relative'>
+                        </div>
+                        <div className='w-2/5'>
+                            <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
+                                <FormButton value='Sauvegarder' name='submit-action' className='bg-green-valid' />
+                                <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.setState({isModifing: false})}>Annuler</Button>
+                                <Button className='bg-red-600' onClick={this.archiveEvent}>Archiver</Button>
+                            </div>
+                            <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
+                                <InputField type='date' id='start-date' children='Date de début' required min={today}
+                                            className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
+                                <InputField type='date' id='end-date' children='Date de fin' required min={today}
+                                            className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
+                                <InputField type='text' id='location' name='location' children='Localisation' required defaultValue={this.props.eventModel.departement}/>
+                            </div>
+
+                            <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
+                                <div>
+                                    Organisateur
+                                    <div className='ml-10'>
+                                        <UserMini firstname={this.props.eventModel.proprietaire.prenom} lastname={this.props.eventModel.proprietaire.nom} />
+                                    </div>
+                                </div>
+                                <div className='my-2'>
+                                    Participants
+                                    <div className='ml-10 relative'>
                                     <span className='flex items-center'>
                                     
                                         <div className='flex cursor-pointer' onClick={() => {this.participantViewer.current.toggleActive()}} ref={this.participantBtn}>
@@ -146,16 +147,17 @@ class ModifyEvent extends React.Component {
                                         <ParticipantViewer ref={this.participantViewer} button={this.participantBtn} eventId={this.props.eventModel.id} editable/>
                                     
                                     </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
 
                 <NeedList needs={this.props.eventModel.besoins}
                           eventId={this.props.eventModel.id}
                           actionType='modify' />
-            </form>
+            </div>
         );
     }
 }

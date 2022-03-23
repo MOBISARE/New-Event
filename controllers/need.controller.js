@@ -21,7 +21,8 @@ module.exports.postAjouterBesoin = async(req, res) => {
         } else {
             res.json({
                 id_besoin: result[0].id_besoin,
-                participant: participant[0]
+                nom: participant[0].nom,
+                prenom: participant[0].prenom
             })
             return
         }
@@ -36,8 +37,17 @@ module.exports.postAjouterBesoin = async(req, res) => {
 module.exports.putModifierBesoin = async(req, res) => {
 
     try {
-        var result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [req.body, req.params.idbesoin, req.params.id])
+        let compte = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email = ?', [req.body.email])
+        if (compte[0]===undefined)
+            return res.sendStatus(404)
 
+        let newNeed = {
+            description: req.body.description,
+            id_participant: compte[0].id_compte
+        }
+        var result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [newNeed, req.params.idbesoin, req.params.id])
+        result.nom = compte.nom
+        result.prenom = compte.prenom
         if (result == undefined || result.changedRows == 0) {
             return res.sendStatus(404)
         }
@@ -85,4 +95,18 @@ module.exports.getBesoin = async(req, res) => {
         res.sendStatus(500)
     }
 
+}
+
+module.exports.getListeBesoins = async(req, res) => {
+    let result;
+    try {
+        result = await DB.query('SELECT id_besoin as id, description, id_participant, email, prenom, nom FROM besoin INNER JOIN compte c on besoin.id_participant = c.id_compte WHERE id_evenement=?', [req.params.id])
+        console.log(req.params.id)
+
+        if (result === undefined) { res.sendStatus(404) }
+        else res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
 }
