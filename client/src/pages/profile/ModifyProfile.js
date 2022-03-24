@@ -20,7 +20,7 @@ class ModifyProfile extends React.Component {
         // Envoi des données modifiées
         let registerRes = await axios({
             method: "post",
-            url:"/api/compte/inscription",
+            url:"/api/compte/modifier",
             data: {
                 nom: document.getElementById("nom").value,
                 prenom: document.getElementById("prenom").value,
