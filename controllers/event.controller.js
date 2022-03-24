@@ -1,4 +1,6 @@
 const DB = require("./db").DB
+const notif = require("./notification.controller")
+
 
 modelToJSON = (event) => {
     return {
@@ -276,8 +278,7 @@ module.exports.seRetirer = async(req, res) => {
     try {
         result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte])
         proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement=?', [req.params.id])
-            //faut envoyer une notif au proprio de l'event 
-            // attendre la fonction de quentin
+            //faire la notif
 
         if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
 
@@ -293,13 +294,14 @@ module.exports.seRetirer = async(req, res) => {
 
 module.exports.rejoindreEve = async(req, res) => {
     try {
-
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
     res.sendStatus(200)
 }
+
+
 
 module.exports.getProprioEve = async(id) => {
     var proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement=?', [id])
