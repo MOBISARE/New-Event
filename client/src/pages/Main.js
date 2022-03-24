@@ -87,11 +87,11 @@ class Main extends React.Component {
                         {
                             !this.state.isSearchLoaded
                             ? <LoadingEventCard></LoadingEventCard>
-                            : this.state.searchedEvents.map((elem) => {
+                            : this.state.searchedEvents.map((elem, index) => {
                                 return(
                                 <EventCard
-                                    key={elem.id_evenement}
-                                    id={elem.id_evenement}
+                                    key={index}
+                                    id={elem.id}
                                     title={elem.titre}
                                     description={elem.description}
                                     imgUrl={elem.img_banniere}

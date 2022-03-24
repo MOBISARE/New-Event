@@ -119,7 +119,7 @@ class CreateNeed extends React.Component {
     render(){
         return(
             <div ref={this.componentDiv}
-                 className='flex place-items-center fixed right-0 left-0 bottom-0 top-0 bg-transparentgray z-50 '>
+                 className='flex place-items-center fixed right-0 left-0 bottom-0 top-0 bg-transparentgray z-50 hidden'>
                 <div className='flex flex-col relative bg-white m-auto max-h-[300px] h-1/2 w-1/2 rounded-2xl p-2'>
                     <span className="material-icons hover:cursor-pointer text-3xl font-bold absolute right-0 top-0 m-1"
                           onClick={() => this.hideComponent()}>

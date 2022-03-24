@@ -91,7 +91,7 @@ class Register extends React.Component {
                         <InputField id='mdp' type='password' className='col-span-5' required>Mot de passe *</InputField>
                         <InputField id='confmdp' type='password' className='col-span-5' required>Confirmation mot de passe *</InputField>
                         <div className='flex justify-between col-span-10'>
-                            <Checkbox id='notif'>Je souaite recevoire les notifications par mail</Checkbox> <div>* champs obligatoires</div>
+                            <Checkbox id='notif'>Je souhaite recevoir les notifications par mail</Checkbox> <div>* champs obligatoires</div>
                         </div>
                         
                         <FormButton className='col-span-10' value="S'inscrire"></FormButton>
