@@ -3,11 +3,17 @@ import InputField from '../../components/InputField'
 import PictureField from '../../components/PictureField'
 import Checkbox from '../../components/Checkbox'
 import axios from 'axios'
-import LinkButton from '../../components/LinkButton';
+import LinkButton from '../../components/LinkButton'
+import Button from "../../components/Button"
+import FormButton from "../../components/FormButton"
 import { Link } from 'react-router-dom';
 
 class ModifyProfile extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {myprofile: [], isMyProfileLoaded: false};
+    }
     handleRegister = async (e) => {
         e.preventDefault();
 
@@ -37,10 +43,21 @@ class ModifyProfile extends React.Component {
         }
     }
 
+    archiveProfile = () => {
+        axios.post('/api/evenement/archiver/' /*+ this.props.eventModel.id*/)
+            .then((res) => {
+                //revenir à la page d'accueil et déconnecter l'utilisateur
+                this.props.container.props.router.navigate('/');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     render(){
         return(
-            <div className='bg-gray rounded-md drop-shadow-md max-w-lg mx-auto p-8 flex'>
-                <Link to={'/'} className='col-span-1 relative -left-14'>
+            <div className='bg-white rounded-md drop-shadow-md max-w-lg mx-auto p-8 flex'>
+                <Link to={'/'} className='col-span-1 relative -left-5'>
                             <span className='material-icons text-5xl'>
                                 keyboard_arrow_left
                             </span>
@@ -48,45 +65,45 @@ class ModifyProfile extends React.Component {
                 {/*Formulaire de modification des données personnelles*/}
                 <form onSubmit={this.handleRegister}>
                     <div>
-                        <h1 className='text-2x1 text-darkgray'>Profil :</h1>
-                        <InputField id='prenom' type='text' className='text-darkgray' required>Prénom *</InputField>
-                        <InputField id='nom' type='text' className='text-darkgray' required>Nom *</InputField>
-                        <InputField id='ville' type='text' className='text-darkgray' required>Ville *</InputField>
-                        <InputField id='naissance' type='date' className='text-darkgray' required>Date de Naissance *</InputField>
+                        <h1 className='text-2xl text-darkgray border-solid border-b-selected-gray-2 border-0 border-b-2 mt-4 mb-4'>Profil :</h1>
+                        <InputField id='prenom' type='text' className='text-darkgray mb-2' required>Prénom *</InputField>
+                        <InputField id='nom' type='text' className='text-darkgray mb-2' required>Nom *</InputField>
+                        <InputField id='ville' type='text' className='text-darkgray mb-2' required>Ville *</InputField>
+                        <InputField id='naissance' type='date' className='text-darkgray mb-2' required>Date de Naissance *</InputField>
                         <h2 className='mb-2 text-darkgray'>Photo :</h2>
                         <PictureField id='picture' className='col-span-2 row-span-2 w-32 h-32'></PictureField>
                     </div>
 
                     <div>
-                        <h1 className='text-2xl'>Contact :</h1>
+                        <h1 className='text-2xl text-darkgray border-solid border-b-selected-gray-2 border-0 border-b-2 mt-4 mb-4'>Contact :</h1>
 
-                        <InputField id='email' type='email' className='w-full' required>Adresse email *</InputField>
-                        <InputField id='no_telephone' type='tel' className='w-full' required>N° de Téléphone</InputField>
+                        <InputField id='email' type='email' className='w-full mb-2' required>Adresse email *</InputField>
+                        <InputField id='no_telephone' type='tel' className='w-full mb-2'>N° de Téléphone</InputField>
                     </div>
 
                     <div>
-                        <h1 className='text-2xl'>Notifications :</h1>
+                        <h1 className='text-2xl text-darkgray border-solid border-b-selected-gray-2 border-0 border-b-2 mt-4 mb-4'>Notifications :</h1>
                         <Checkbox id='notif'>Je souhaite recevoir les notifications par mail</Checkbox>
                     </div>
 
                     <div>
-                        <h1 className='text-2xl'>Changement de mot de passe :</h1>
+                        <h1 className='text-2xl text-darkgray border-solid border-b-selected-gray-2 border-0 border-b-2 mt-4 mb-4'>Changement de mot de passe :</h1>
                         <h2>Ancien mot de passe *</h2>
-                        <InputField id='mot_de_passe' type='password' className='w-full' required></InputField>
+                        <InputField id='mot_de_passe' type='password' className='w-full mb-2' required></InputField>
                         <h2>Nouveau mot de passe *</h2>
-                        <InputField id='mot_de_passe' type='password' className='w-full' required></InputField>
+                        <InputField id='mot_de_passe' type='password' className='w-full mb-2' required></InputField>
                         <h2>Confirmation du mot de passe *</h2>
-                        <InputField id='mot_de_passe' type='password' className='w-full' required></InputField>
+                        <InputField id='mot_de_passe' type='password' className='w-full mb-2' required></InputField>
                         <LinkButton bg_class='bg-white' text_class='text-black' to='/' width='0'>Modifier mot de passe</LinkButton>
                     </div>
 
                     <div>
                         <h1 className='text-2xl text-red-500'>Suppression du compte :</h1>
                         <p>Attention la suppression du compte est définitive</p>
-                        <LinkButton className='col-span-2' bg_class='bg-red-500' text_class='text-white' to='/' width='0'>Supprimer</LinkButton>
+                        <Button className='bg-red-600' onClick={this.archiveEvent}>Supprimer</Button>
                     </div>
+                    <FormButton value='Valider' name='submit-action' className='bg-green-valid min-w-full'/>
 
-                    <LinkButton className='col-span-2' bg_class='bg-green' text_class='text-white' to='/' width='0'>Valider</LinkButton>
                 </form>
                 
             </div>
