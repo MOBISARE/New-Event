@@ -19,8 +19,8 @@ router.post('/publier/:id', requireAuth, eventController.publishEvent);
 router.post('/supprimer/:id', requireAuth, eventController.supprEvenement);
 router.post('/archiver/:id', requireAuth, eventController.archiveEvent);
 
-
-router.post('/rejoindreEve/:id', requireAuth, eventController.rejoindreEve)
+router.put('/rejoindreEve/:id',requireAuth,eventController.ajouterParticipant)
+router.post('/demanderRejoindreEve/:id', requireAuth, eventController.demanderRejoindreEve)
 router.post('/seretirer/:id', requireAuth, eventController.seRetirer)
 
 // besoins

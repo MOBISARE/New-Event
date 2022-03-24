@@ -277,8 +277,9 @@ module.exports.seRetirer = async(req, res) => {
 
     try {
         result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte])
-        proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement=?', [req.params.id])
-            //faire la notif
+        proprio = await this.getProprioEve(req.params.id_evenement)
+        notif.CreerNotifMess(proprio,req.body.message,res)
+        
 
         if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
 
@@ -290,13 +291,28 @@ module.exports.seRetirer = async(req, res) => {
     res.sendStatus(200)
 }
 
-//le participant veut rejoindre un evenement
+//le participant demande à rejoindre un evenement
 
-module.exports.rejoindreEve = async(req, res) => {
+module.exports.demanderRejoindreEve = async(req, res) => {
     try {
         var proprio=await this.getProprioEve(req.params.id_evenement)
         notif.CreerNotifRejoindre(proprio,req.params.id_evenement,req.body.message,res)
     } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+    res.sendStatus(200)
+}
+
+//le proprietaire d'un evenement ajoute un participant
+module.exports.ajouterParticipant=async(req,res)=>{
+    try{
+        var result=await DB.query('INSERT INTO participant (id_compte,id_evenement) VALUES (?,?)',[req.body.id_compte,req.params.id_evenement])
+        notif.CreerNotifMess(req.body.id_compte,req.body.message,res)
+
+        if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
+
+    }catch (err){
         console.log(err)
         res.sendStatus(500)
     }
