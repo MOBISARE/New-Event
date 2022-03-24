@@ -278,7 +278,7 @@ module.exports.seRetirer = async (req, res) => {
         //let idR=await DB.query('SELECT id_compte FROM evenement WHERE id_eve=idEve')
         //sendNotif(idR,idPar)
 
-        if (result == undefined || result.changedRows == 0) res.sendStatus(404)
+        if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
 
     } catch (err) {
         console.log(err)
