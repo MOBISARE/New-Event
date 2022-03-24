@@ -1,15 +1,17 @@
 const DB = require("./db").DB
+const notif = require("./notification.controller")
+const event = require("./event.controller")
+const https = require('https')
 
 module.exports.postAjouterBesoin = async(req, res) => {
     try {
         let participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.email])
-        if (participant[0]===undefined) {
+        if (participant[0] === undefined) {
             console.log(participant)
             return
         }
 
-        await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)',
-            [req.body.description, participant[0].id_compte, req.params.id ])
+        await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)', [req.body.description, participant[0].id_compte, req.params.id])
         let result = await DB.query('SELECT last_insert_id() as id_besoin')
 
         if (result === undefined) {
@@ -35,7 +37,7 @@ module.exports.putModifierBesoin = async(req, res) => {
 
     try {
         let compte = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email = ?', [req.body.email])
-        if (compte[0]===undefined)
+        if (compte[0] === undefined)
             return res.sendStatus(404)
 
         let newNeed = {
@@ -100,8 +102,25 @@ module.exports.getListeBesoins = async(req, res) => {
         result = await DB.query('SELECT id_besoin as id, description, id_participant, email, prenom, nom FROM besoin INNER JOIN compte c on besoin.id_participant = c.id_compte WHERE id_evenement=?', [req.params.id])
         console.log(req.params.id)
 
-        if (result === undefined) { res.sendStatus(404) }
-        else res.json(result)
+        if (result === undefined) { res.sendStatus(404) } else res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
+
+module.exports.postProposerBesoin = async(req, res) => {
+    try {
+        let participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.email])
+        if (participant[0] === undefined) {
+            console.log(participant)
+            return
+        }
+
+        await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)', [req.body.description, participant[0].id_compte, req.params.id])
+        let result = await DB.query('SELECT last_insert_id() as id_besoin')
+
+        await notif.CreerNotifAjoutBesoin(result[0].id_besoin, req.body.message, res)
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
