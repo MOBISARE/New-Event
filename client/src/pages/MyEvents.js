@@ -55,6 +55,7 @@ class MyEvents extends React.Component {
                             !this.state.isMyEventsLoaded
                             ? <LoadingEventCard/>
                             : this.state.myevents.map((elem) => {
+                                if(elem.etat == 2) return(<></>)
                                 return(
                                 <EventCard
                                     key={elem.id_evenement}
