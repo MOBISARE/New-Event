@@ -8,8 +8,10 @@ const userController = require('../controllers/user.controller');
 const eventController = require('../controllers/event.controller');
 const recupController = require('../controllers/recup.controller');
 
+router.get('/', requireAuth, userController.getMonCompte);
+
 // authentification
-router.post('/connexion', authController.login)
+router.post('/connexion', authController.login);
 router.post('/inscription', authController.register);
 router.post('/deconnexion', authController.logout);
 

@@ -1,33 +1,19 @@
 const DB = require("./db").DB
 
 
-module.exports.getCompte = async(req, res) => {
+module.exports.getMonCompte = async(req, res) => {
     let compte;
     try {
         // recupere les informations du compte
-        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [req.params.id])
-        compte = compte[0]
-    } catch (err) {
-        console.log(err)
-        res.sendStatus(200) // erreur lors de l execution de la requete (500)
-    }
+        compte = await DB.query('SELECT * FROM compte WHERE id_compte = ?', [res.locals.user.id_compte])
+        if (!compte.length) return res.sendStatus(404); // Not Found
+        compte = compte[0];
 
-    if (compte == undefined) res.sendStatus(404) // evenement inconnu (404)
-    else res.json({
-        id_compte: compte.id_compte,
-        email: compte.email,
-        mot_de_passe: compte.mot_de_passe,
-        prenom: compte.prenom,
-        nom: compte.nom,
-        naissance: compte.naissance,
-        ville: compte.ville,
-        departement: compte.departement,
-        no_telephone: compte.no_telephone,
-        role: compte.role,
-        etat: compte.etat,
-        img_profil: compte.img_profil,
-        notif_email: compte.notif_email
-    })
+        res.status(200).json(compte);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal error
+    }
 }
 
 module.exports.rechercheUtilisateur = async(req, res) => {

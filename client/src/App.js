@@ -53,7 +53,6 @@ class App extends React.Component {
                         <Route path='/connexion' element={<Login />} />
                         <Route path='/inscription' element={<Register />} />
                         <Route path='/reinitialisation-mot-de-passe' element={<LostPassword />} />
-                        
                     </Routes>
                 </UidContext.Provider>
             )
