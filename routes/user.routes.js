@@ -25,7 +25,7 @@ router.put('/modifier/:id', requireAuth, userController.putCompteModification);
 router.put('/supprimer/:id', requireAuth, userController.supprCompte);
 
 router.post('/recupmdp', recupController.postStartRecuperation)
-router.get('/recupmdp', recupController.getStartRecuperation)
-router.put('/recupmdp/:token', recupController.putResetMdp)
+router.post('/checkToken', recupController.checkRecuperation)
+router.put('/modifieMdp', recupController.putResetMdp)
 
 module.exports = router;
