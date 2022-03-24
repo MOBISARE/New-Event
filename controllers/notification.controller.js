@@ -70,13 +70,13 @@ async function SupprimerNotifAjout(req) {
 
 async function SupprimerNotifSuppr(req) { //Suppression des notifs de suppression de besoin
     await DB.query("DELETE FROM `modele_besoin` WHERE `id_m_besoin` = (SELECT id_modele FROM `notif_supprimer` JOIN `notification` on `notif_supprimer`.id = `notification`.id_type WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
-    await DB.query("DELETE FROM `notif_supprimer` WHERE `id` = (SELECT id_type FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
+    await DB.query("DELETE FROM `notif_` WHERE `id` = (SELECT id_type FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
     await DB.query("DELETE FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?;", [req.params.id], [req.params.Notifid_type])
 }
 
 async function SupprimerNotifModif(req) {
     if (req.params.type_notif == 1) {
-        await DB.query("DELETE FROM `modele_besoin` WHERE `id_m_besoin` = (SELECT id_modele FROM `notif_modifier` JOIN `notification` on `notif_supprimer`.id = `notification`.id_type WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
+        await DB.query("DELETE FROM `modele_evenement` WHERE `id_m_evenement` = (SELECT id_modele FROM `notif_modifier` JOIN `notification` on `notif_supprimer`.id = `notification`.id_type WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
         await DB.query("DELETE FROM `notif_modifier` WHERE `id` = (SELECT id_type FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?);", [req.params.id], [req.params.Notifid_type])
         await DB.query("DELETE FROM `notification` WHERE `notification`.id_compte = ? AND `notification`.type = 2 AND `notification`.id_type = ?;", [req.params.id], [req.params.Notifid_type])
     } else if (req.params.type_notif == 2) { //Suppression des notifs de modification d'event
@@ -87,7 +87,7 @@ async function SupprimerNotifModif(req) {
 }
 
 
-module.exports.CreerNotifMess = async(req, res) => { //TODO
+module.exports.CreerNotifMess = async(req, res) => {
     try {
         await DB.query("INSERT INTO `notif_message`(`message`) VALUES (?);", [req.params.message])
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,0,0,?,?,?)", [req.params.message], new Date(), [id_mod], [req.params.id_compte])
@@ -138,7 +138,6 @@ module.exports.CreerNotifAjoutBesoin = async(id, message, res) => {
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
-
 module.exports.CreerNotifSupprBesoin = async(req, res) => {
     try {
         await DB.query("INSERT INTO `modele_besoin`(`id_vrai_besoin`, `message`) VALUES (?,?);", [req.params.id], [req.params.message])
