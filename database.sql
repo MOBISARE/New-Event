@@ -105,7 +105,7 @@ CREATE TABLE `notification` (
   `type` int(11) NOT NULL DEFAULT 0,
   `etat` int(11) NOT NULL DEFAULT 0,
   `recu` datetime NOT NULL,
-  `id_type` int(10) unsigned NOT NULL,
+  `id_type` int(10) unsigned DEFAULT NULL,
   `id_compte` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id_notif`),
   KEY `notification_fk_compte` (`id_compte`),
