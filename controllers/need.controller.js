@@ -60,11 +60,6 @@ module.exports.putModifierBesoin = async(req, res) => {
 }
 
 module.exports.postSupprBesoin = async(req, res) => {
-
-    /*var proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id])
-    if (proprio[0].id_proprietaire != req.params.id) {
-        res.sendStatus(401)
-    }*/
     try {
         await DB.query('DELETE FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [req.params.idbesoin, req.params.id])
     } catch (err) {
@@ -125,6 +120,19 @@ module.exports.postProposerBesoin = async(req, res) => {
         if (result == -1) res.sendStatus(500)
 
         res.sendStatus(200)
+
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
+
+module.exports.postProposerSupprBesoin = async(req, res) => {
+    try {
+        var result = notif.CreerNotifSupprBesoin(req.params.idbesoin, req.body.message)
+
+        if (result == -1) res.sendStatus(500)
+        else res.sendStatus(200)
 
     } catch (err) {
         console.log(err)

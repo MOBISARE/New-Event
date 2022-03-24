@@ -144,7 +144,7 @@ module.exports.CreerNotifAjoutBesoin = async(id, message) => {
 module.exports.CreerNotifSupprBesoin = async(id, message) => {
     try {
         await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, message) VALUES (?,?);", [id, message])
-        id_mod = await DB.query("SELECT id_modele from modele_besoin where id_vrai_besoin = ?", [id])
+        id_mod = await DB.query("SELECT id_m_besoin from modele_besoin where id_vrai_besoin = ?", [id])
         await DB.query("INSERT INTO notif_supprimer(type, id_modele) VALUES (1,?);", [id_mod[0].id_m_besoin])
         var proprio_id = await event.getProprioBesoin(id)
 
