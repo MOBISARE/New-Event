@@ -30,8 +30,8 @@ class UserProfile extends React.Component {
                 <div className=' bg-white rounded-lg drop-shadow-md max-h-lg mx-auto  flex '>
                     <div className='pb-40 px-8 border-solid border-0 border-r-2 border-r-selected-gray-2 mt-10 mr-10'>
                         
-                            <img src='/images/icon.png'></img>
-                            <h1 className='font-bold inline '>{this.state.myprofile.prenom}</h1>
+                            <img src='/images/icon.png'>{this.state.myprofile.img_profil}</img>
+                            <h1 className='font-bold inline '>{this.state.myprofile.prenom} </h1>
                             <h1 className='font-bold inline'>{this.state.myprofile.nom}</h1>
                             <LinkButton bg_class='h-1 px-1 m-2 bg-white' text_class='text-xs text-black' to='/modifier-profil' width='0'>Modifier informations</LinkButton>
                    </div>

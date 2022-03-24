@@ -14,6 +14,18 @@ class ModifyProfile extends React.Component {
         super(props);
         this.state = {myprofile: [], isMyProfileLoaded: false};
     }
+
+    componentDidMount = () => {
+        axios.get('/api/compte/')
+        .then((res) => {
+            console.log(res.data);
+            this.setState({myprofile: res.data, isMyProfileLoaded: true});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
+
     handleRegister = async (e) => {
         e.preventDefault();
 
@@ -28,7 +40,7 @@ class ModifyProfile extends React.Component {
                 mot_de_passe: document.getElementById("mdp").value,
                 naissance: document.getElementById("naissance").value,
                 ville: document.getElementById("ville").value,
-                departement: "00",
+                departement: document.getElementById("departement").value,
                 no_telephone: document.getElementById("telephone").value,
                 img_profil: document.getElementById("picture").value
             }
@@ -43,11 +55,46 @@ class ModifyProfile extends React.Component {
         }
     }
 
-    archiveProfile = () => {
-        axios.post('/api/evenement/archiver/' /*+ this.props.eventModel.id*/)
+    supprimerProfile = () => {
+        axios.post('/api/compte/supprimer/' /*+ this.props.eventModel.id*/)
             .then((res) => {
                 //revenir à la page d'accueil et déconnecter l'utilisateur
                 this.props.container.props.router.navigate('/');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    modifierMDP = () => {
+        axios.post('/api/compte/modifieMdp')
+            .then((res) => {
+                this.props.container.props.router.navigate('/modifier-profil');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    saveProfile = async(e) => {
+        e.preventDefault();
+        let data = new FormData();
+
+        data.append('nom', document.getElementById('nom').value);
+        data.append('prenom', document.getElementById('prenom').value);
+        data.append('naissance', document.getElementById('naissance').value);
+        data.append('departement', document.getElementById('departement').value);
+        data.append('ville', document.getElementById('ville').value);
+        data.append('img_profil', document.getElementById('img_profil').files[0]);
+        data.append('no_telephone', document.getElementById('no_telephone').value);
+        data.append('email', document.getElementById('email').value);
+        axios.put('/api/compte/modifier/', data, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        })
+            .then((res) => {
+                this.props.container.setState({profile: res.data, isModifing: false})
             })
             .catch((err) => {
                 console.log(err);
@@ -63,10 +110,10 @@ class ModifyProfile extends React.Component {
                             </span>
                 </Link>
                 {/*Formulaire de modification des données personnelles*/}
-                <form onSubmit={this.handleRegister}>
+                <form onSubmit={this.saveProfile}>
                     <div>
                         <h1 className='text-2xl text-darkgray border-solid border-b-selected-gray-2 border-0 border-b-2 mt-4 mb-4'>Profil :</h1>
-                        <InputField id='prenom' type='text' className='text-darkgray mb-2' required>Prénom *</InputField>
+                        <InputField id='prenom' type='text' className='text-darkgray mb-2' /*placeholder={this.state.myprofile.prenom.placeholder}*/ required>Prénom *</InputField>
                         <InputField id='nom' type='text' className='text-darkgray mb-2' required>Nom *</InputField>
                         <InputField id='ville' type='text' className='text-darkgray mb-2' required>Ville *</InputField>
                         <InputField id='naissance' type='date' className='text-darkgray mb-2' required>Date de Naissance *</InputField>
@@ -100,7 +147,7 @@ class ModifyProfile extends React.Component {
                     <div>
                         <h1 className='text-2xl text-red-500'>Suppression du compte :</h1>
                         <p>Attention la suppression du compte est définitive</p>
-                        <Button className='bg-red-600' onClick={this.archiveEvent}>Supprimer</Button>
+                        <Button className='bg-red-600' onClick={this.supprimerProfile}>Supprimer</Button>
                     </div>
                     <FormButton value='Valider' name='submit-action' className='bg-green-valid min-w-full'/>
 
