@@ -54,9 +54,14 @@ CREATE TABLE `besoin` (
   `id_besoin` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT '',
   `id_participant` int(10) unsigned DEFAULT NULL,
+  `id_evenement` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id_besoin`),
   KEY `besoin_fk_participant` (`id_participant`),
-  CONSTRAINT `besoin_fk_participant` FOREIGN KEY (`id_participant`) REFERENCES `compte` (`id_compte`) ON DELETE NO ACTION ON
+  KEY `besoin_fk_evenement` (`id_evenement`),
+  CONSTRAINT `besoin_fk_evenement` FOREIGN KEY (`id_evenement`) REFERENCES `evenement` (`id_evenement`) ON DELETE NO ACTION ON
+  UPDATE
+    NO ACTION,
+    CONSTRAINT `besoin_fk_participant` FOREIGN KEY (`id_participant`) REFERENCES `compte` (`id_compte`) ON DELETE NO ACTION ON
   UPDATE
     NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
@@ -64,7 +69,8 @@ CREATE TABLE `besoin` (
 CREATE TABLE `modele_besoin` (
   `id_m_besoin` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `id_vrai_besoin` int(10) unsigned NOT NULL,
-  `message` varchar(255) NOT NULL DEFAULT '',
+  `message` varchar(255) DEFAULT NULL,
+  `id_participant` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id_m_besoin`),
   KEY `modele_besoin_fk_vraibesoin` (`id_vrai_besoin`),
   CONSTRAINT `modele_besoin_fk_vraibesoin` FOREIGN KEY (`id_vrai_besoin`) REFERENCES `besoin` (`id_besoin`) ON DELETE NO ACTION ON
