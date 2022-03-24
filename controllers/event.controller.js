@@ -294,6 +294,8 @@ module.exports.seRetirer = async(req, res) => {
 
 module.exports.rejoindreEve = async(req, res) => {
     try {
+        var proprio=await this.getProprioEve(req.params.id_evenement)
+        notif.CreerNotifRejoindre(proprio,req.params.id_evenement,req.body.message,res)
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
