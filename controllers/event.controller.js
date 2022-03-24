@@ -275,8 +275,9 @@ module.exports.seRetirer = async (req, res) => {
 
     try {
         result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte])
-        //let idR=await DB.query('SELECT id_compte FROM evenement WHERE id_eve=idEve')
-        //sendNotif(idR,idPar)
+        proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement=?',[req.params.id])
+        //faut envoyer une notif au proprio de l'event 
+        // attendre la fonction de quentin
 
         if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
 
