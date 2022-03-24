@@ -2,12 +2,9 @@ const DB = require("./db").DB
 
 module.exports.postAjouterBesoin = async(req, res) => {
     try {
-        let participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.participant])
-        if (participant===undefined) {
-            res.json({
-                msg: "Cet utilisateur n'existe pas.",
-                code: 1
-            })
+        let participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.email])
+        if (participant[0]===undefined) {
+            console.log(participant)
             return
         }
 
