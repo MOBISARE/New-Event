@@ -3,11 +3,17 @@ import InputField from '../../components/InputField'
 import PictureField from '../../components/PictureField'
 import Checkbox from '../../components/Checkbox'
 import axios from 'axios'
-import LinkButton from '../../components/LinkButton';
+import LinkButton from '../../components/LinkButton'
+import Button from "../../components/Button"
+import FormButton from "../../components/FormButton"
 import { Link } from 'react-router-dom';
 
 class ModifyProfile extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {myprofile: [], isMyProfileLoaded: false};
+    }
     handleRegister = async (e) => {
         e.preventDefault();
 
@@ -37,6 +43,17 @@ class ModifyProfile extends React.Component {
         }
     }
 
+    archiveProfile = () => {
+        axios.post('/api/evenement/archiver/' /*+ this.props.eventModel.id*/)
+            .then((res) => {
+                //revenir à la page d'accueil et déconnecter l'utilisateur
+                this.props.container.props.router.navigate('/');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     render(){
         return(
             <div className='bg-white rounded-md drop-shadow-md max-w-lg mx-auto p-8 flex'>
@@ -61,7 +78,7 @@ class ModifyProfile extends React.Component {
                         <h1 className='text-2xl text-darkgray border-solid border-b-selected-gray-2 border-0 border-b-2 mt-4 mb-4'>Contact :</h1>
 
                         <InputField id='email' type='email' className='w-full mb-2' required>Adresse email *</InputField>
-                        <InputField id='no_telephone' type='tel' className='w-full mb-2' required>N° de Téléphone</InputField>
+                        <InputField id='no_telephone' type='tel' className='w-full mb-2'>N° de Téléphone</InputField>
                     </div>
 
                     <div>
@@ -83,10 +100,10 @@ class ModifyProfile extends React.Component {
                     <div>
                         <h1 className='text-2xl text-red-500'>Suppression du compte :</h1>
                         <p>Attention la suppression du compte est définitive</p>
-                        <LinkButton className='col-span-2 mb-2' bg_class='bg-red-500' text_class='text-white' to='/' width='0'>Supprimer</LinkButton>
+                        <Button className='bg-red-600' onClick={this.archiveEvent}>Supprimer</Button>
                     </div>
+                    <FormButton value='Valider' name='submit-action' className='bg-green-valid min-w-full'/>
 
-                    <LinkButton className='col-span-2 mb-2' bg_class='bg-green' text_class='text-white' to='/' width='0'>Valider</LinkButton>
                 </form>
                 
             </div>
