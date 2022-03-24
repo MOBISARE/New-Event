@@ -8,7 +8,7 @@ module.exports.getNotification = async(req, res) => {
         notif = await DB.query("SELECT * FROM notification where id_compte = ?", [res.locals.user.id_compte])
         return res.status(200).json(notif);
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
@@ -20,7 +20,7 @@ module.exports.getNotificationSpe = async(req, res) => {
         notif = await DB.query("SELECT * FROM notification where id_compte = ? and type = ?", [req.params.id], [req.params.type])
         return res.status(200).json(notif);
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
@@ -46,7 +46,7 @@ module.exports.supprimerNotif = async(req, res) => {
         }
         return res.status(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
@@ -93,7 +93,7 @@ module.exports.CreerNotifMess = async(req, res) => { //TODO
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,0,0,?,?,?)", [req.params.message], new Date(), [id_mod], [req.params.id_compte])
         return res.status(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
@@ -106,7 +106,7 @@ module.exports.CreerNotifInvitation = async(req, res) => {
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [req.params.message], new Date(), [id_mod], [req.params.id_compte])
         return res.status(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
@@ -119,7 +119,7 @@ module.exports.CreerNotifRejoindre = async(req, res) => {
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [req.params.message], new Date(), [id_mod], [req.params.id_compte])
         return res.status(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
@@ -147,7 +147,7 @@ module.exports.CreerNotifSupprBesoin = async(req, res) => {
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,2,0,?,?,?)", [req.params.message], new Date(), [id_mod], [req.params.id_compte])
         return res.status(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
@@ -156,11 +156,24 @@ module.exports.CreerNotifModifBesoin = async(req, res) => {
     try {
         await DB.query("INSERT INTO `modele_besoin`(`id_vrai_besoin`, `message`) VALUES (?,?);", [req.params.id], [req.params.message])
         id_mod = await DB.query("SELECT `id_modele` from `modele_besoin` where `id_vrai_besoin` = ?", [req.params.id])
-        await DB.query("INSERT INTO `notif_supprimer`(`type`, `id_modele`) VALUES (1,?);", [id_mod])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?)", [req.params.message], new Date(), [id_mod], [req.params.id_compte])
+        await DB.query("INSERT INTO `notif_modifier`(`type`, `id_modele`) VALUES (1,?);", [id_mod])
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?);", [req.params.message],  new Date() ,[id_mod], [req.params.id_compte])
         return res.status(200)
     } catch (error) {
-        console.log(err)
+        console.log(error)
+        res.sendStatus(500) //erreur lors de l execution de la requete
+    }
+}
+
+module.exports.CreerNotifModifEvent = async(req, res) =>{//TODO
+    try {
+        await DB.query("INSERT INTO `modele_evenement`(`id_vrai_evenement`, `titre`, `description`, `departement`, `debut`, `fin`, `img_banniere`) VALUES (?,?,?,?,?,?,?);", [req.params.id_event], [req.params.titre])
+        id_mod = await DB.query("SELECT `id_modele` from `modele_evenement` where `id_vrai_evenement` = ?", [req.params.id])
+        await DB.query("INSERT INTO `notif_modifier`(`type`, `id_modele`) VALUES (1,?);", [id_mod])
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?);", [req.params.message],  new Date() ,[id_mod], [req.params.id_compte])
+        return res.status(200)
+    } catch (error) {
+        console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
     }
 }
