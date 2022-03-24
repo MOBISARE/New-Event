@@ -19,8 +19,8 @@ router.post('/publier/:id', requireAuth, eventController.publishEvent);
 router.post('/supprimer/:id', requireAuth, eventController.supprEvenement);
 router.post('/archiver/:id', requireAuth, eventController.archiveEvent);
 
-
-router.post('/rejoindreEve/:id', requireAuth, eventController.rejoindreEve)
+router.put('/rejoindreEve/:id',requireAuth,eventController.ajouterParticipant)
+router.post('/demanderRejoindreEve/:id', requireAuth, eventController.demanderRejoindreEve)
 router.post('/seretirer/:id', requireAuth, eventController.seRetirer)
 
 // besoins
@@ -29,5 +29,7 @@ router.put('/:id/besoin/:idbesoin/modifier', requireAuth, needController.putModi
 router.post('/:id/besoin/:idbesoin/supprimer', requireAuth, needController.postSupprBesoin)
 router.get('/:id/besoin/:idbesoin', requireAuth, needController.getBesoin)
 router.get('/:id/besoins', requireAuth, needController.getListeBesoins)
+router.post('/:id/besoin/proposer', requireAuth, needController.postProposerBesoin)
+router.post('/:id/besoin/:idbesoin/demande/suppression', requireAuth, needController.postProposerSupprBesoin)
 
 module.exports = router;

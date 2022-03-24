@@ -36,7 +36,7 @@ class Main extends React.Component {
                 </div>
                 <div className='relative z-10'>
                     <h1 className='font-bold text-7xl mt-24'>Rechercher un
-                        <div className='font-black text-transparent bg-clip-text bg-gradient-to-r from-purple to-blue'>
+                        <div className='font-black text-transparent bg-clip-text bg-gradient-to-r from-purple to-blue w-max m-auto'>
                             événement</div>
                     </h1>
 
@@ -86,12 +86,12 @@ class Main extends React.Component {
                         </div>
                         {
                             !this.state.isSearchLoaded
-                            ? <LoadingEventCard></LoadingEventCard>
-                            : this.state.searchedEvents.map((elem) => {
+                            ? [<LoadingEventCard key={1} />,<LoadingEventCard key={2} />,<LoadingEventCard key={3} />]
+                            : this.state.searchedEvents.map((elem, index) => {
                                 return(
                                 <EventCard
-                                    key={elem.id_evenement}
-                                    id={elem.id_evenement}
+                                    key={index}
+                                    id={elem.id}
                                     title={elem.titre}
                                     description={elem.description}
                                     imgUrl={elem.img_banniere}

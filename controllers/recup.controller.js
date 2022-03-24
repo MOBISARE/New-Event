@@ -55,10 +55,22 @@ module.exports.getStartRecuperation = async(req, res) => {
 
 }
 
+module.exports.checkRecuperation = async(req, res) => {
+    try {
+        token = await DB.query('SELECT * FROM recuperation WHERE id_compte = (SELECT id_compte FROM compte WHERE email = ?) AND token_id = ?', [req.body.email, req.body.token])
+        if (!token.length) return res.sendStatus(404); // Not Found
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
+
 module.exports.putResetMdp = async(req, res) => {
 
     try {
-        verifToken = await DB.query('SELECT id_compte FROM recuperation WHERE token_id = ?', [req.params.token])
+        verifToken = await DB.query('SELECT id_compte FROM recuperation WHERE id_compte = (SELECT id_compte FROM compte WHERE email = ?) AND token_id = ?', [req.body.email, req.body.token])
 
         if (verifToken == undefined || verifToken.length == 0) {
             res.sendStatus(404)
