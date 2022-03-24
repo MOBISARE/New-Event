@@ -53,7 +53,6 @@ class App extends React.Component {
                         <Route path='/connexion' element={<Login />} />
                         <Route path='/inscription' element={<Register />} />
                         <Route path='/reinitialisation-mot-de-passe' element={<LostPassword />} />
-                        <Route path='modifier-profil' element={<ModifyProfile/>}/>
                     </Routes>
                 </UidContext.Provider>
             )
@@ -69,6 +68,7 @@ class App extends React.Component {
                             <Route path='mes-evenements' element={<MyEvents/>}/>
                             <Route path='evenement/:id' element={<EventContainer/>}/>
                             <Route path='mon-profil' element={<UserProfile/>} />
+                            <Route path='/modifier-profil' element={<ModifyProfile/>}/>
                             <Route path='*' element={<Error/>}/>
                         </Routes>
                     </div>
