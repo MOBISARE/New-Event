@@ -118,9 +118,14 @@ module.exports.postProposerBesoin = async(req, res) => {
         }
 
         await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)', [req.body.description, participant[0].id_compte, req.params.id])
-        let result = await DB.query('SELECT last_insert_id() as id_besoin')
+        let last_id = await DB.query('SELECT last_insert_id() as id_besoin')
 
-        await notif.CreerNotifAjoutBesoin(result[0].id_besoin, req.body.message, res)
+        var result = await notif.CreerNotifAjoutBesoin(last_id[0].id_besoin, req.body.message, res)
+
+        if (result == -1) res.sendStatus(500)
+
+        res.sendStatus(200)
+
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
