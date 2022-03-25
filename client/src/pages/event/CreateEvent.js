@@ -5,6 +5,7 @@ import FormButton from "../../components/FormButton";
 import Button from "../../components/Button";
 import axios from "axios";
 import dateformat from 'dateformat'
+import InputLocation from "../../components/InputLocation";
 
 let today = new Date()
 let dd = today.getDate()
@@ -148,7 +149,7 @@ class CreateEvent extends React.Component {
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
                                 <InputField type='date' id='end-date' children='Date de fin' required min={today}
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
-                                <InputField type='text' id='location' name='location' children='Localisation' required defaultValue={this.props.eventModel.departement}/>
+                                <InputLocation />
                             </div>
                         </div>
                     </div>

@@ -6,6 +6,7 @@ import Checkbox from '../../components/Checkbox';
 import FormButton from '../../components/FormButton';
 import InputField from '../../components/InputField';
 import PictureField from '../../components/PictureField';
+import InputLocation from "../../components/InputLocation";
 
 class Register extends React.Component {
 
@@ -85,7 +86,7 @@ class Register extends React.Component {
                         <InputField id='nom' className='col-span-4' required>Nom *</InputField>
                         <PictureField id='picture' className='col-span-2 row-span-2 w-32 h-32'>Photo</PictureField>
                         <InputField id='mail' type='email' className='col-span-8' required>Adresse e-mail *</InputField>
-                        <InputField id='ville' className='col-span-7' required>Ville *</InputField>
+                        <InputLocation inputId='ville' className='col-span-7' required>Ville *</InputLocation>
                         <InputField id='naissance' type='date' className='col-span-3' required>Date de naissance *</InputField>
                         <InputField id='telephone' className='col-span-10'>N° de téléphone</InputField>
                         <InputField id='mdp' type='password' className='col-span-5' required>Mot de passe *</InputField>
@@ -94,7 +95,7 @@ class Register extends React.Component {
                             <Checkbox id='notif'>Je souhaite recevoir les notifications par mail</Checkbox> <div>* champs obligatoires</div>
                         </div>
                         
-                        <FormButton className='col-span-10' value="S'inscrire"></FormButton>
+                        <FormButton className='col-span-10' value="S'inscrire"/>
                     </form>
 
                     {/* Links */}
