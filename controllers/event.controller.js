@@ -1,5 +1,6 @@
 const DB = require("./db").DB
 const notif = require("./notification.controller")
+const axios = require('axios')
 
 
 modelToJSON = (event) => {
@@ -17,55 +18,83 @@ modelToJSON = (event) => {
     }
 }
 
-module.exports.search = async(req, res) => {
-    //let events = await DB.query('SELECT * FROM evenement WHERE etat = 1 ');
-    let query = 'SELECT * FROM evenement WHERE etat = 1 '
-    let debut = ""
-    let fin = ""
+module.exports.search = async (req, res) => {
+    let date = ""
     let dep = ""
     let tri1 = ""
     let tri2 = ""
-    if (req.params.datedebut != "")
-        debut = "and debut >= ? "
-    if (req.params.datefin != "")
-        fin = "and fin <= ? "
 
-    //requete api pour connaitre departement par rapport a ville
-    req.params.ville
-    let data = 'https://geo.api.gouv.fr/communes?nom=Nantes&fields=departement&limit=5'
-    console.log(data)
+    //critere date debut / fin
+    if (req.query.datedebut != "")
+        date += "and debut >= " + DB.connection.escape(req.query.datedebut)
+    if (req.query.datefin != "")
+        date += "and debut <= " + DB.connection.escape(req.query.datefin)
 
-    //popularite = nombre de partcipants
-    //recent
-    if (req.params.tri == "popularite") {
-        tri2 = ' oder by count(id_compte) desc'
-        tri1 = ' inner join participant on participant.id_compte=evenement.id_compte'
-    } else if (req.params.tri == "recent") {
-        //date debut plus proche date courante
-        tri2 = ""
-        "SELECT * FROM `evenement`  ORDER BY (CURRENT_DATE()-debut);"
+    // critere ville
+    if (req.query.ville != "") {
+        dep = "and ("
+        let result = await axios.get('https://geo.api.gouv.fr/communes', {
+            params: {
+                nom: req.query.ville,
+                fields: 'departement',
+                limit: 5
+            }
+        })
+
+        let tab = result.data.map(e => e.departement.code)
+        let unique = {};
+        tab.forEach(i => {
+            if (!unique[i]) {
+                unique[i] = true;
+            }
+        })
+        tab = Object.keys(unique);
+        i = 1
+        tab.forEach(e => {
+            if (i == 1)
+                dep += "departement = " + e
+            else
+                dep += " or departement = " + e
+            i++
+        })
+        dep += ")"
     }
 
-    //nb occurence
-    let regex = new RegExp(req.params.search, "i")
-    let tmp = await DB.query('SELECT * FROM evenement WHERE etat = 1 ')
+    //critere popularite = nombre de partcipants
+    //critere recent
+    if (req.query.tri == "popularite") {
+        tri1 = "inner join participant on participant.id_evenement=evenement.id_evenement"
+        tri2 = "group by evenement.id_evenement order BY count(id_compte) desc"
+    } else if (req.query.tri == "recent") {
+        //date debut plus proche date courante
+        tri2 = "order by abs(CURRENT_DATE()-debut)"
+    }
+
+    //requete
+    let query = `SELECT * FROM evenement ${tri1} WHERE etat = 1 ${date} ${dep} ${tri2}`
+
+    //critere barre de recherche (nb occurence du mot dans barre de recherche)
+    //https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript/5912746#5912746
+    let regex = new RegExp(req.params.search, "gi")
+    let tmp = await DB.query(query)
+
     tmp.forEach(tuple => {
         tuple["occurence"] = (tuple["titre"].match(regex) || []).length + (tuple["description"].match(regex) || []).length
-        console.log(tuple["titre"].match(regex))
     })
+    //ordre decroissant nombre participant
     tmp.sort((a, b) => b["occurence"] - a["occurence"])
-    console.log(tmp)
-    result = []
+    events = []
+
     tmp.forEach(e => {
-            result.push(modelToJSON(e))
-        })
-        //console.log(result)
+        // si il y a pas d occurence
+        if (e["occurence"] != 0)
+            events.push(modelToJSON(e))
+    })
 
-
-    return res.status(200).json(result);
+    return res.status(200).json(events);
 }
 
-module.exports.getEvenement = async(req, res) => {
+module.exports.getEvenement = async (req, res) => {
     try {
         // get event
         let evenement = await DB.query('SELECT id_evenement, titre, description, departement, debut, fin, etat, img_banniere, id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
@@ -99,7 +128,7 @@ module.exports.getEvenement = async(req, res) => {
     }
 }
 
-module.exports.getParticipants = async(req, res) => {
+module.exports.getParticipants = async (req, res) => {
     try {
         // --- CHECK
         let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
@@ -132,7 +161,7 @@ module.exports.getParticipants = async(req, res) => {
     }
 }
 
-module.exports.getMesEvenements = async(req, res) => {
+module.exports.getMesEvenements = async (req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
 
@@ -144,7 +173,7 @@ module.exports.getMesEvenements = async(req, res) => {
     }
 }
 
-module.exports.getMesParticipations = async(req, res) => {
+module.exports.getMesParticipations = async (req, res) => {
     try {
         events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
 
@@ -156,7 +185,7 @@ module.exports.getMesParticipations = async(req, res) => {
     }
 }
 
-module.exports.saveEvent = async(req, res) => {
+module.exports.saveEvent = async (req, res) => {
     try {
         // --- CHECK
 
@@ -193,7 +222,7 @@ module.exports.saveEvent = async(req, res) => {
     }
 }
 
-module.exports.publishEvent = async(req, res) => {
+module.exports.publishEvent = async (req, res) => {
     try {
         // --- CHECK
 
@@ -218,7 +247,7 @@ module.exports.publishEvent = async(req, res) => {
     }
 }
 
-module.exports.createEvent = async(req, res) => {
+module.exports.createEvent = async (req, res) => {
     try {
         let insert = await DB.query('INSERT INTO evenement (titre, debut, fin, id_proprietaire, img_banniere) VALUES (?, ?, ?, ?, ?)', ["Nouvel événement", new Date(), new Date(), res.locals.user.id_compte, '']);
         await DB.query('INSERT INTO participant VALUES(?, ?)', [res.locals.user.id_compte, insert.insertId])
@@ -229,7 +258,7 @@ module.exports.createEvent = async(req, res) => {
     }
 }
 
-module.exports.archiveEvent = async(req, res) => {
+module.exports.archiveEvent = async (req, res) => {
     try {
         let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
@@ -249,7 +278,7 @@ module.exports.archiveEvent = async(req, res) => {
     }
 }
 
-module.exports.supprEvenement = async(req, res) => {
+module.exports.supprEvenement = async (req, res) => {
     try {
         let event = await DB.query('SELECT id_proprietaire, etat FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
@@ -273,13 +302,13 @@ module.exports.supprEvenement = async(req, res) => {
 
 //le participant veut se retirer d'un évenment
 
-module.exports.seRetirer = async(req, res) => {
+module.exports.seRetirer = async (req, res) => {
 
     try {
         result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte])
         proprio = await this.getProprioEve(req.params.id_evenement)
-        notif.CreerNotifMess(proprio,req.body.message,res)
-        
+        notif.CreerNotifMess(proprio, req.body.message, res)
+
 
         if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
 
@@ -293,10 +322,10 @@ module.exports.seRetirer = async(req, res) => {
 
 //le participant demande à rejoindre un evenement
 
-module.exports.demanderRejoindreEve = async(req, res) => {
+module.exports.demanderRejoindreEve = async (req, res) => {
     try {
-        var proprio=await this.getProprioEve(req.params.id_evenement)
-        notif.CreerNotifRejoindre(proprio,req.params.id_evenement,req.body.message,res)
+        var proprio = await this.getProprioEve(req.params.id_evenement)
+        notif.CreerNotifRejoindre(proprio, req.params.id_evenement, req.body.message, res)
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
@@ -305,14 +334,14 @@ module.exports.demanderRejoindreEve = async(req, res) => {
 }
 
 //le proprietaire d'un evenement ajoute un participant
-module.exports.ajouterParticipant=async(req,res)=>{
-    try{
-        var result=await DB.query('INSERT INTO participant (id_compte,id_evenement) VALUES (?,?)',[req.body.id_compte,req.params.id_evenement])
-        notif.CreerNotifMess(req.body.id_compte,req.body.message,res)
+module.exports.ajouterParticipant = async (req, res) => {
+    try {
+        var result = await DB.query('INSERT INTO participant (id_compte,id_evenement) VALUES (?,?)', [req.body.id_compte, req.params.id_evenement])
+        notif.CreerNotifMess(req.body.id_compte, req.body.message, res)
 
         if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
 
-    }catch (err){
+    } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
@@ -321,13 +350,13 @@ module.exports.ajouterParticipant=async(req,res)=>{
 
 
 
-module.exports.getProprioEve = async(id) => {
+module.exports.getProprioEve = async (id) => {
     var proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement=?', [id])
 
     return proprio[0].id_proprietaire
 }
 
-module.exports.getProprioBesoin = async(id) => {
+module.exports.getProprioBesoin = async (id) => {
     var proprio = await DB.query('SELECT id_proprietaire FROM evenement e, besoin b WHERE e.id_evenement = b.id_evenement AND id_besoin = ?', [id])
 
     return proprio[0].id_proprietaire
