@@ -73,7 +73,6 @@ module.exports.postSupprBesoin = async(req, res) => {
 
 module.exports.getBesoin = async(req, res) => {
 
-    var result;
     try {
         var result = await DB.query('SELECT * FROM besoin WHERE id_besoin = ? AND id_evenement = ?', [req.params.idbesoin, req.params.id])
         console.log(result)
@@ -94,7 +93,9 @@ module.exports.getBesoin = async(req, res) => {
 module.exports.getListeBesoins = async(req, res) => {
     let result;
     try {
-        result = await DB.query('SELECT id_besoin as id, description, id_participant, email, prenom, nom FROM besoin INNER JOIN compte c on besoin.id_participant = c.id_compte WHERE id_evenement=?', [req.params.id])
+        result = await DB.query('SELECT id_besoin as id, description, id_participant, email, prenom, nom ' +
+            'FROM besoin INNER JOIN compte c on besoin.id_participant = c.id_compte WHERE id_evenement=? AND ' +
+            'id_besoin NOT IN (SELECT id_vrai_besoin FROM modele_besoin)', [req.params.id])
         console.log(req.params.id)
 
         if (result === undefined) { res.sendStatus(404) } else res.json(result)
@@ -115,9 +116,14 @@ module.exports.postProposerBesoin = async(req, res) => {
         await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)', [req.body.description, participant[0].id_compte, req.params.id])
         let last_id = await DB.query('SELECT last_insert_id() as id_besoin')
 
-        var result = await notif.CreerNotifAjoutBesoin(last_id[0].id_besoin, req.body.message, res)
+        let event = await DB.query('SELECT description FROM evenement WHERE id_evenement=?', [req.params.id])
 
-        if (result == -1) res.sendStatus(500)
+        let msg = participant[0].prenom+" "+participant[0].nom+" souhaite ajouter le besoin "+req.body.description
+        if (event[0])
+            msg += " à l'événement "+event[0].description
+        let result = await notif.CreerNotifAjoutBesoin(last_id[0].id_besoin, msg)
+
+        if (result === -1) return res.sendStatus(500)
 
         res.sendStatus(200)
 

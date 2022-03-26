@@ -154,7 +154,8 @@ class Event extends React.Component {
 
                 <NeedList needs={this.props.eventModel.besoins}
                           eventId={this.props.eventModel.id}
-                          actionType={(this.props.eventModel.etatAppartenance === 0)? 'show':'modify'} />
+                          actionType={(this.props.eventModel.etatAppartenance === 0)? 'show':'modify'}
+                          appartenance={this.props.eventModel.etatAppartenance}/>
                 <InviteMenu ref={this.inviteMenu}/>
             </div>
         );

@@ -23,7 +23,7 @@ class NeedLine extends React.Component {
                             </span>
                         </div>
                 }
-
+                <p></p>
             </div>
         );
     }
@@ -68,6 +68,10 @@ class NeedList extends React.Component {
         })
     }
 
+    async proposeNeed(need) {
+        await axios.post("/api/evenement/"+this.props.eventId+"/besoin/proposer", need).catch(console.log)
+    }
+
     async modifyNeed(need) {
         console.log(need)
         let res = axios.put(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
@@ -108,7 +112,7 @@ class NeedList extends React.Component {
                     {
                         (this.props.actionType==='show')? '':
                             <button type='button' className='w-max rounded-full px-4 py-1 bg-darkgray text-lg text-gray transition hover:scale-105 '
-                                    onClick={() => this.componentAddNeed.current.showComponent() }>Ajouter un besoin</button>
+                                    onClick={() => this.componentAddNeed.current.showComponent() }>{(this.props.appartenance===1)? "Proposer un besoin":"Ajouter un besoin"}</button>
                     }
                 </div>
                 <div className='flex flex-col flex-grow border border-transparentgray rounded-lg'>
@@ -134,12 +138,20 @@ class NeedList extends React.Component {
 
                 {
                     (this.props.actionType==='show')? '':
-                        <div>
-                            <CreateNeed ref={this.componentAddNeed} titleWindow='Créer un besoin' actionType={"creer"}
-                                        addNeed={(need) => this.addNeed(need)} eventId={this.props.eventId} />
-                            <CreateNeed ref={this.componentModifyNeed} titleWindow='Modifier un besoin' actionType={"modifier"}
-                                        addNeed={(need) => this.modifyNeed(need)} eventId={this.props.eventId} />
-                        </div>
+                        (this.props.appartenance===1)?
+                            <div>
+                                <CreateNeed ref={this.componentAddNeed} titleWindow='Proposer un besoin' actionType={"creer"}
+                                            addNeed={(need) => this.proposeNeed(need)} eventId={this.props.eventId} />
+                                <CreateNeed ref={this.componentModifyNeed} titleWindow='Proposer une modification' actionType={"modifier"}
+                                            addNeed={(need) => this.modifyNeed(need)} eventId={this.props.eventId} />
+                            </div>
+                            :
+                            <div>
+                                <CreateNeed ref={this.componentAddNeed} titleWindow='Créer un besoin' actionType={"creer"}
+                                            addNeed={(need) => this.addNeed(need)} eventId={this.props.eventId} />
+                                <CreateNeed ref={this.componentModifyNeed} titleWindow='Modifier un besoin' actionType={"modifier"}
+                                            addNeed={(need) => this.modifyNeed(need)} eventId={this.props.eventId} />
+                            </div>
                 }
             </div>
         );

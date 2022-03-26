@@ -155,6 +155,7 @@ class CreateEvent extends React.Component {
                     </div>
                 </form>
                 <NeedList eventId={this.props.eventModel.id}
+                          appartenance={this.props.eventModel.etatAppartenance}
                           actionType='create' />
             </div>
         );

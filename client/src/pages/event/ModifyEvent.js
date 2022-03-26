@@ -157,7 +157,7 @@ class ModifyEvent extends React.Component {
 
                 <NeedList needs={this.props.eventModel.besoins}
                           eventId={this.props.eventModel.id}
-                          actionType='modify' />
+                          actionType='modify' appartenance={this.props.eventModel.etatAppartenance} />
             </div>
         );
     }
