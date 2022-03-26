@@ -51,25 +51,27 @@ class MyEvents extends React.Component {
                     <hr/>
 
                     <div className='flex flex-wrap flex-row'>
-                        { 
+                        {
                             !this.state.isMyEventsLoaded
                             ? <LoadingEventCard/>
+                            : this.state.myevents.length===0
+                            ? <p className='text-center w-full my-3'>Vous n'avez pas créé d'événement.</p>
                             : this.state.myevents.map((elem) => {
-                                if(elem.etat == 2) return(<div key={elem.id_evenement}></div>)
+                                if(elem.etat === 2) return(<div key={elem.id_evenement}/>)
                                 return(
-                                <EventCard
-                                    key={elem.id_evenement}
-                                    id={elem.id_evenement}
-                                    title={elem.titre}
-                                    description={elem.description}
-                                    imgUrl={elem.img_banniere}
-                                    membersNumber={'?'}
-                                    etat={elem.etat}
-                                    location={elem.departement}
-                                    startDate={elem.debut}
-                                    endDate={elem.fin}
-                                />)
-                            }) 
+                                    <EventCard
+                                        key={elem.id_evenement}
+                                        id={elem.id_evenement}
+                                        title={elem.titre}
+                                        description={elem.description}
+                                        imgUrl={elem.img_banniere}
+                                        membersNumber={'?'}
+                                        etat={elem.etat}
+                                        location={elem.departement}
+                                        startDate={elem.debut}
+                                        endDate={elem.fin}
+                                    />)
+                            })
                         }
                     </div>
                 </div>
@@ -77,25 +79,27 @@ class MyEvents extends React.Component {
                     <span className='text-3xl'>Mes participations</span>
                     <hr/>
                     <div className='flex flex-wrap flex-row'>
-                    { 
-                        !this.state.isMyContribLoaded
-                        ? <LoadingEventCard/>
-                        : this.state.mycontributing.map((elem) => {
-                            if(elem.etat == 2) return(<div key={elem.id_evenement}></div>)
-                            return(
-                            <EventCard
-                                key={elem.id_evenement}
-                                id={elem.id_evenement}
-                                title={elem.titre}
-                                description={elem.description}
-                                imgUrl={elem.img_banniere}
-                                membersNumber={'?'}
-                                etat={elem.etat}
-                                location={elem.departement}
-                                startDate={elem.debut}
-                                endDate={elem.fin}
-                            />)
-                        }) 
+                        {
+                            !this.state.isMyContribLoaded
+                            ? <LoadingEventCard/>
+                            : this.state.mycontributing.length===0
+                            ? <p className='text-center w-full my-3'>Vous ne participez à aucun événement.</p>
+                            : this.state.mycontributing.map((elem) => {
+                                if(elem.etat === 2) return(<div key={elem.id_evenement}/>)
+                                return(
+                                    <EventCard
+                                        key={elem.id_evenement}
+                                        id={elem.id_evenement}
+                                        title={elem.titre}
+                                        description={elem.description}
+                                        imgUrl={elem.img_banniere}
+                                        membersNumber={'?'}
+                                        etat={elem.etat}
+                                        location={elem.departement}
+                                        startDate={elem.debut}
+                                        endDate={elem.fin}
+                                    />)
+                            })
                         }
                     </div>
                 </div>
