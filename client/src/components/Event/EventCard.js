@@ -12,7 +12,7 @@ class EventCard extends React.Component {
 
     render() {
         return(
-            <Link to={'/evenement/'+this.props.id} className={'w-72 h-64 rounded-lg bg-white m-3 flex flex-col justify-center shadow transition-transform ease-in-out delay-75 duration-300 hover:scale-105 ' + (this.props.etat === 0 ? 'grayscale' : '')}
+            <Link to={'/evenement/'+this.props.id} className={'select-none w-72 h-64 rounded-lg bg-white m-3 flex flex-col justify-center shadow transition-transform ease-in-out delay-75 duration-300 hover:scale-105 ' + (this.props.etat === 0 ? 'grayscale' : '')}
                         onMouseEnter={() => {
                             this.setState({ descriptionVisible: true })
                         }}

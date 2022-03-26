@@ -28,7 +28,7 @@ class Main extends React.Component {
     render(){
         return(
             <div className='text-center flex flex-col items-center max-w-[1000px] mx-auto'>
-                <div className='bg-gray h-screen w-full absolute'>
+                <div className='bg-gray h-screen w-full absolute select-none'>
                     <img src='/images/blob1.svg'
                          className='fixed top-0 right-0 w-2/5' alt=''/>
                     <img src='/images/blob2.svg'

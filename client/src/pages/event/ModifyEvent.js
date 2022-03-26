@@ -6,7 +6,8 @@ import Button from "../../components/Button";
 import axios from "axios";
 import dateformat from 'dateformat'
 import UserMini from '../../components/UserMini';
-import ParticipantViewer from '../../components/Event/ParticipantViewer';
+import ParticipantViewer from '../../components/Event/ParticipantViewer'
+import InputLocation from "../../components/InputLocation";
 
 let today = new Date()
 let dd = today.getDate()
@@ -119,11 +120,11 @@ class ModifyEvent extends React.Component {
                                 <Button className='bg-red-600' onClick={this.archiveEvent}>Archiver</Button>
                             </div>
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
-                                <InputField type='date' id='start-date' children='Date de début' required min={today}
+                                <InputField type='date' id='start-date' children='Date de début' required
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
-                                <InputField type='date' id='end-date' children='Date de fin' required min={today}
+                                <InputField type='date' id='end-date' children='Date de fin' required
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
-                                <InputField type='text' id='location' name='location' children='Localisation' required defaultValue={this.props.eventModel.departement}/>
+                                <InputLocation defaultValue={this.props.eventModel.departement} />
                             </div>
 
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>

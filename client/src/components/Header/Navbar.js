@@ -21,7 +21,7 @@ class Navbar extends React.Component {
         var activeNavLink = 'font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple to-blue '
 
         return(
-            <nav className='fixed container h-16 p-2 px-5 max-w-full flex justify-between bg-white shadow-md z-50'>
+            <nav className='select-none fixed container h-16 p-2 px-5 max-w-full flex justify-between bg-white shadow-md z-50'>
                 <Link to='/' className='flex items-end gap-1'><img className='object-cover h-full py-1' src='/images/icon.png' alt='Logo newEvent'/><span className='text-4xl font-logo font-black leading-7'>newEvent</span></Link>
                 <div className='flex gap-16'>
                     <div className='flex gap-12 items-center'>
