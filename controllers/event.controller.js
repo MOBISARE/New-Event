@@ -25,13 +25,13 @@ module.exports.search = async (req, res) => {
     let tri2 = ""
 
     //critere date debut / fin
-    if (req.query.datedebut != "")
+    if (req.query.datedebut)
         date += "and debut >= " + DB.connection.escape(req.query.datedebut)
-    if (req.query.datefin != "")
+    if (req.query.datefin)
         date += "and debut <= " + DB.connection.escape(req.query.datefin)
 
     // critere ville
-    if (req.query.ville != "") {
+    if (req.query.ville) {
         dep = "and ("
         let result = await axios.get('https://geo.api.gouv.fr/communes', {
             params: {
