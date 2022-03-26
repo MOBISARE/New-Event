@@ -103,7 +103,7 @@ module.exports.getEvenement = async (req, res) => {
         evenement = modelToJSON(evenement[0]);
 
         // get state of user (0:user, 1:participant, 2:owner)
-        let proprietaire = await DB.query('SELECT nom, prenom FROM compte WHERE id_compte = ?', [evenement.id_proprietaire]);
+        let proprietaire = await DB.query('SELECT nom, prenom, email, img_profil FROM compte WHERE id_compte = ?', [evenement.id_proprietaire]);
         if (!proprietaire.length) return res.sendStatus(500); // Internal Error
 
         evenement['proprietaire'] = proprietaire[0];

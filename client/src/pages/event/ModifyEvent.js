@@ -131,7 +131,7 @@ class ModifyEvent extends React.Component {
                                 <div>
                                     Organisateur
                                     <div className='ml-10'>
-                                        <UserMini firstname={this.props.eventModel.proprietaire.prenom} lastname={this.props.eventModel.proprietaire.nom} />
+                                        <UserMini user={this.props.eventModel.proprietaire} />
                                     </div>
                                 </div>
                                 <div className='my-2'>

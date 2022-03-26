@@ -9,7 +9,7 @@ class NeedLine extends React.Component {
         return(
             <div className={'border-b border-b-transparentgray p-2 pl-6 flex items-center'}>
                 <p className='title flex-grow'>{ this.props.need.description }</p>
-                <UserMini firstname={this.props.need.prenom || 'Prenom'} lastname={this.props.need.nom || 'Nom'} />
+                <UserMini user={this.props.need} />
                 {
                     (this.props.actionType==='show')? '':
                         <div>
@@ -60,12 +60,7 @@ class NeedList extends React.Component {
 
     async addNeed(need) {
         let res = await axios.post("/api/evenement/"+this.props.eventId+"/besoin/creer", need).catch(console.log)
-        need.id = res.data.id_besoin
-        need.nom = res.data.nom
-        need.prenom = res.data.prenom
-        this.setState({
-            needs: this.state.needs.concat([need])
-        })
+        this.actualiser()
     }
 
     async proposeNeed(need) {

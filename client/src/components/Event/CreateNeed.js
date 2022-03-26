@@ -146,7 +146,7 @@ class CreateNeed extends React.Component {
                         <div className='w-2/5'>
                             <label htmlFor={'associated-to'+this.props.actionType} className='block leading-3 ml-4 text-lg relative z-20'>Associé à</label>
                             <input type='text' id={'associated-to'+this.props.actionType} className='rounded-full border-transparentgray z-10 w-full bg-white' ref={this.inputParticipant}
-                                   defaultValue={this.state.need.email} onFocus={() => this.participants.current.toggleActive()} required />
+                                   defaultValue={this.state.need.email} onFocus={() => this.participants.current.toggleActive()} />
                         </div>
                         <FormButton value='Créer' />
                     </div>

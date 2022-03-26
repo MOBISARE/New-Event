@@ -5,50 +5,45 @@ const https = require('https')
 
 module.exports.postAjouterBesoin = async(req, res) => {
     try {
-        let participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.email])
-        if (participant[0] === undefined) {
-            console.log(participant)
-            return
+        let participant = []
+        if (req.body.email) {
+            participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.email])
+            if (participant[0] === undefined) {
+                console.log(participant)
+                return
+            }
         }
 
-        await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)', [req.body.description, participant[0].id_compte, req.params.id])
-        let result = await DB.query('SELECT last_insert_id() as id_besoin')
+        if (participant[0])
+            await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)', [req.body.description, participant[0].id_compte, req.params.id])
+        else
+            await DB.query('INSERT INTO besoin(description, id_evenement) VALUES (?, ?)', [req.body.description, req.params.id])
 
-        if (result === undefined) {
-            res.sendStatus(404)
-            return
-        } else {
-            res.json({
-                id_besoin: result[0].id_besoin,
-                nom: participant[0].nom,
-                prenom: participant[0].prenom
-            })
-            return
-        }
-
+        res.sendStatus(200)
     } catch (err) {
         console.error(err)
         res.sendStatus(500)
-        return
     }
 }
 
 module.exports.putModifierBesoin = async(req, res) => {
-
     try {
-        let compte = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email = ?', [req.body.email])
-        if (compte[0] === undefined)
-            return res.sendStatus(404)
+        let compte=[]
+        if (req.body.email) {
+            compte = await DB.query('SELECT id_compte FROM compte WHERE email = ?', [req.body.email])
+            if (compte[0] === undefined)
+                return res.sendStatus(404)
+        }
 
         let newNeed = {
             description: req.body.description,
-            id_participant: compte[0].id_compte
+            id_participant: compte[0]? compte[0].id_compte:null
         }
-        var result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [newNeed, req.params.idbesoin, req.params.id])
-        result.nom = compte.nom
-        result.prenom = compte.prenom
-        if (result == undefined || result.changedRows == 0) {
-            return res.sendStatus(404)
+        let result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [newNeed, req.params.idbesoin, req.params.id])
+        if (compte[0]) {
+            if (result.changedRows === 0) {
+                return res.sendStatus(404)
+            }
         }
     } catch (err) {
         console.log(err)
@@ -91,14 +86,19 @@ module.exports.getBesoin = async(req, res) => {
 }
 
 module.exports.getListeBesoins = async(req, res) => {
-    let result;
     try {
-        result = await DB.query('SELECT id_besoin as id, description, id_participant, email, prenom, nom ' +
-            'FROM besoin INNER JOIN compte c on besoin.id_participant = c.id_compte WHERE id_evenement=? AND ' +
+        let result = await DB.query('SELECT id_besoin as id, description, id_participant FROM besoin WHERE id_evenement=? AND ' +
             'id_besoin NOT IN (SELECT id_vrai_besoin FROM modele_besoin)', [req.params.id])
-        console.log(req.params.id)
 
-        if (result === undefined) { res.sendStatus(404) } else res.json(result)
+        for (let i = 0; i < result.length; i++) {
+            let participant = await DB.query('SELECT email, prenom, nom, img_profil FROM compte WHERE id_compte=?', [result[i].id_participant])
+            result[i] = {
+                ...result[i],
+                ...participant[0]
+            }
+        }
+
+        res.json(result)
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
