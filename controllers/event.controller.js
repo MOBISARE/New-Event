@@ -208,11 +208,41 @@ module.exports.saveEvent = async (req, res) => {
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 
-        //let newEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        await this.getEvenement(req, res);
 
-        //res.status(200).json(modelToJSON(newEvent[0]));
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal Server Error
+    }
+}
+
+module.exports.proposeToSaveEvent = async (req, res) => {
+    try {
+        // --- CHECK
+        let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
+        if (!checkPrivileges.length) return res.sendStatus(403); // Forbidden
+
+        // --- REQUEST
+
+        //
+        data = {
+            titre: req.body.titre,
+            description: req.body.description,
+            departement: req.body.departement,
+            debut: req.body.debut,
+            fin: req.body.fin,
+        }
+
+        if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
+
+        // TODO : Link to notification controller (waiting)
+        return res.sendStatus(200);
+
+        /*
+        await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 
         await this.getEvenement(req, res);
+        */
 
     } catch (err) {
         console.log(err);

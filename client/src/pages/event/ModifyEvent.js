@@ -81,6 +81,20 @@ class ModifyEvent extends React.Component {
             })
     }
 
+    FormButtons = () => {
+        return (
+            <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
+                <FormButton value={this.props.eventModel.etatAppartenance === 2 ? 'Sauvegarder' : 'Proposer la modification'} name='submit-action' className='bg-green-valid' />
+                <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.setState({isModifing: false})}>Annuler</Button>
+                {
+                this.props.eventModel.etatAppartenance === 2
+                ?<Button className='bg-red-600' onClick={this.archiveEvent}>Archiver</Button>
+                :<></>
+                }
+            </div>
+        );
+    }
+
     render(){
         return(
             <div className='max-w-[1000px] mx-auto'>
@@ -114,11 +128,9 @@ class ModifyEvent extends React.Component {
                             </div>
                         </div>
                         <div className='w-2/5'>
-                            <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
-                                <FormButton value='Sauvegarder' name='submit-action' className='bg-green-valid' />
-                                <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.setState({isModifing: false})}>Annuler</Button>
-                                <Button className='bg-red-600' onClick={this.archiveEvent}>Archiver</Button>
-                            </div>
+
+                            {this.FormButtons()}
+
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                                 <InputField type='date' id='start-date' children='Date de début' required
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
