@@ -11,8 +11,10 @@ class ParticipantViewer extends React.Component {
 
     constructor(props){
         super(props);
-        this.state = { active : false, participants : [] };
+        this.state = { active : false, participants : [], search : "" };
         this.DOM_element = createRef();
+
+        this.searchInput = createRef();
     }
 
     toggleActive = () => {
@@ -70,17 +72,17 @@ class ParticipantViewer extends React.Component {
                     <span className="material-icons text-transparentgray">
                         search
                     </span>
-                    <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Rechercher des membres' />
+                    <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Rechercher des membres' onChange={() => this.setState({search : this.searchInput.current.value.toLowerCase()})} ref={this.searchInput} />
                 </div>
-
-                
 
                 <div className='overflow-y-scroll'>
                     <div className='flex flex-col gap-1'>
                         {
                             this.state.participants.length > 0
                             ? this.state.participants.map((elem, index) => {
-                                return this.showUser(elem, index)
+                                let val = elem.prenom + " " + elem.nom
+                                if(val.toLowerCase().indexOf(this.state.search) > -1)
+                                    return this.showUser(elem, index)
                             })
                             : <></>
                         }
