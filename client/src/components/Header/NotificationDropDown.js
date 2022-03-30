@@ -15,20 +15,6 @@ class NotificationDropDown extends React.Component {
         this.DOM_element = createRef();
     }
 
-    componentDidMount = () => {
-        this.updateNotifications();
-    }
-
-    updateNotifications = () => {
-        axios.get('/api/notification/getAll')
-        .then((res) => {
-            this.setState({notifications: res.data});
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-    }
-
     toggleActive = () => {
         this.setState({ active : !this.state.active });
         
@@ -56,13 +42,11 @@ class NotificationDropDown extends React.Component {
     SimpleNotification = (elem, index) => {
 
         let supprNotif = () => {
-            console.log(elem);
-            
             axios.post('/api/notification/' + elem.id_notif + '/supprimer')
             .then((res) => {
                 console.log(res);
-                // update
-                this.updateNotifications();
+                // update notifications
+                this.props.refresh();
             })
             .catch((err) => {
                 console.log(err);

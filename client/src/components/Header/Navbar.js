@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import NotificationDropDown from './NotificationDropDown';
+import NotificationMenu from './NotificationMenu';
 import ProfilDropDown from './ProfilDropDown';
 
 
@@ -8,14 +8,12 @@ class Navbar extends React.Component {
 
     constructor(props){
         super(props);
-        this.profilDropDown = React.createRef();
-        this.notificationDropDown = React.createRef();
 
+        this.profilDropDown = React.createRef();
         this.profilButton = React.createRef();
-        this.notificationButton = React.createRef();
     }
 
-
+    
     render(){
 
         var activeNavLink = 'font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple to-blue '
@@ -62,14 +60,7 @@ class Navbar extends React.Component {
                             <ProfilDropDown compRef={this.profilDropDown} button={this.profilButton}/>
                         </div>
                         
-                        <div className='relative'>
-                            <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.notificationDropDown.current.toggleActive();}} ref={this.notificationButton}>
-                            <span className="material-icons text-4xl text-white">
-                                notifications
-                            </span>
-                            </button>
-                            <NotificationDropDown ref={this.notificationDropDown} button={this.notificationButton}/>
-                        </div>
+                        <NotificationMenu/>
                     </div>
                 </div>
                 
