@@ -16,6 +16,10 @@ class NotificationDropDown extends React.Component {
     }
 
     componentDidMount = () => {
+        this.updateNotifications();
+    }
+
+    updateNotifications = () => {
         axios.get('/api/notification/getAll')
         .then((res) => {
             this.setState({notifications: res.data});
@@ -50,11 +54,27 @@ class NotificationDropDown extends React.Component {
     }
 
     SimpleNotification = (elem, index) => {
+
+        let supprNotif = () => {
+            console.log(elem);
+            
+            axios.post('/api/notification/' + elem.id_notif + '/supprimer')
+            .then((res) => {
+                console.log(res);
+                // update
+                this.updateNotifications();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            
+        }
+
         return (
             <div key={index} className='flex  pl-4 hover:bg-selected-gray cursor-pointer gap-1 place-items-stretch'>
                 <p className='flex-1 text-sm py-1'>{elem.message}</p>
-                <div className='flex items-center justify-center px-3 hover:bg-selected-gray-2 '>
-                    <span className="material-icons hover:animate-shake ">
+                <div className='flex items-center justify-center px-3 hover:bg-selected-gray-2' onClick={supprNotif}>
+                    <span className="material-icons hover:animate-shake">
                     delete
                     </span>
                 </div>

@@ -1,5 +1,4 @@
 const DB = require("./db").DB
-const { type } = require("express/lib/response");
 const { NULL } = require("mysql/lib/protocol/constants/types");
 const event = require("./event.controller")
 
@@ -28,21 +27,22 @@ module.exports.getNotificationSpe = async(req, res) => {
 }
 
 //Supprime la notification dont l'id est passé en paramètre En cours
-module.exports.supprimerNotif = async(id, res) => {
-    type = await DB.query("SELECT type FROM notification WHERE id_notif=?;", [id])
+module.exports.supprimerNotif = async(req, res) => {
+    let type = await DB.query("SELECT type FROM notification WHERE id_notif=?;", [req.params.id])
+    type = type[0].type;
     try {
         switch (type) {
             case 0: //Notifs de message
-                SupprimerNotifMess(id)
+                SupprimerNotifMess(req.params.id)
                 break;
             case 1: //Notifs d'invitation/demande pour rejoindre un event et ajout à un besoin
-                SupprimerNotifAjout(id, type)
+                SupprimerNotifAjout(req.params.id, type)
                 break;
             case 2:
-                SupprimerNotifSuppr(id)
+                SupprimerNotifSuppr(req.params.id)
                 break;
             case 3: //Notifs de modification
-                SupprimerNotifModif(id, type)
+                SupprimerNotifModif(req.params.id, type)
                 break;
             default:
                 break
