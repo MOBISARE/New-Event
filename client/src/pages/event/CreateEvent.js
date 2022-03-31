@@ -86,13 +86,13 @@ class CreateEvent extends React.Component {
                 'content-type': 'multipart/form-data'
             }
         })
-            .then((res) => {
-                this.props.container.setEvent(res.data);
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        .then((res) => {
+            this.props.container.setEvent(res.data);
+            console.log(res);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     deleteEvent = () => {

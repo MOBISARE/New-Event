@@ -49,7 +49,7 @@ class ParticipantViewer extends React.Component {
         return (
             <div key={i} className='w-full px-3 flex hover:bg-selected-gray items-stretch justify-between'>
                 <Link to={'/profil/' + elem.email} className='flex py-2 gap-2 items-center grow'>
-                    <img className='rounded-full h-6 w-6 bg-green flex-none' src={this.props.imgUrl} alt='' />
+                    <img className='rounded-full h-6 w-6 bg-green flex-none' src={elem.img_profil} alt='' />
                     <div className='text-sm whitespace-nowrap'>{elem.prenom + " " + elem.nom}</div>
                     <div className='text-sm text-darkergray font-light text-right flex-1'>{elem.vous ? 'Vous' : elem.proprietaire ? 'Propriétaire' : ''}</div>
                 </Link>

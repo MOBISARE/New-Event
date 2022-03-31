@@ -10,30 +10,36 @@ const createToken = (id) => {
 };
 
 module.exports.register = async(req, res) => {
+    try{
+        // Check email
+        let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', req.body.email);
+        if (result[0].nb != 0) return res.status(400).send("Email already exists");
+        
+        // Create data
+        let mdp = await crypto.hasherMotDePasse(req.body.mot_de_passe);
 
-    let result = await DB.query('SELECT count(*) AS nb FROM compte WHERE email = ?', req.body.email)
-    if (result[0].nb != 0) res.status(400).send("email already exists")
-    else {
-        try {
-            let mdp = await crypto.hasherMotDePasse(req.body.mot_de_passe)
-            result = await DB.query('INSERT INTO compte SET ?', {
-                nom: req.body.nom,
-                prenom: req.body.prenom,
-                email: req.body.email,
-                mot_de_passe: mdp,
-                naissance: req.body.naissance,
-                ville: req.body.ville,
-                departement: req.body.departement,
-                no_telephone: ((req.body.no_telephone == "") ? null : req.body.no_telephone),
-                img_profil: ((req.body.img_profil == "") ? null : req.body.img_profil),
-                role: "ROLE_USER"
-            })
-        } catch (err) {
-            console.log(err)
-            res.sendStatus(500)
-        }
-        res.sendStatus(200)
+        let data = {
+            nom: req.body.nom,
+            prenom: req.body.prenom,
+            email: req.body.email,
+            mot_de_passe: mdp,
+            naissance: req.body.naissance,
+            ville: req.body.ville,
+            departement: req.body.departement,
+            no_telephone: ((req.body.no_telephone == "") ? null : req.body.no_telephone),
+            img_profil: ((req.file) ? 'http://localhost:5000/api/upload/' + req.file.filename : null),
+            role: "ROLE_USER"
+        };
+
+        // Insert data to database
+        result = await DB.query('INSERT INTO compte SET ?', data);
+        res.sendStatus(200);
     }
+    catch (err){
+        console.log(err);
+        res.sendStatus(500) // Internal Error
+    }
+    
 }
 
 module.exports.login = async(req, res) => {

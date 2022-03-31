@@ -24,7 +24,7 @@ class Register extends React.Component {
                     limit: 5
                 }
             })
-
+            
             if(res.data[0] === null || res.data[0]._score < 1) {
                 document.getElementById("ville").setCustomValidity("Cette ville n'existe pas");
                 document.getElementById("ville").reportValidity();
@@ -37,21 +37,39 @@ class Register extends React.Component {
                 return;
             }
 
-            let registerRes = await axios({
-                method: "post",
-                url:"/api/compte/inscription",
-                data: {
-                    nom: document.getElementById("nom").value,
-                    prenom: document.getElementById("prenom").value,
-                    email: document.getElementById("mail").value,
-                    mot_de_passe: document.getElementById("mdp").value,
-                    naissance: document.getElementById("naissance").value,
-                    ville: document.getElementById("ville").value,
-                    departement: "00",
-                    no_telephone: document.getElementById("telephone").value,
-                    img_profil: document.getElementById("picture").value
+            let email = document.getElementById("mail").value
+            let mdp = document.getElementById("mdp").value
+
+            // Form data
+            let data = new FormData();
+            data.append("nom", document.getElementById("nom").value);
+            data.append("prenom", document.getElementById("prenom").value);
+            data.append("email", email);
+            data.append("mot_de_passe", mdp);
+            data.append("naissance", document.getElementById("naissance").value);
+            data.append("ville", res.data[0].nom);
+            data.append("departement", res.data[0].codeDepartement);
+            data.append("no_telephone", document.getElementById("telephone").value);
+            if(document.getElementById("picture").files[0] !== undefined)
+                data.append("img_profil", document.getElementById("picture").files[0]);
+
+            // Register
+            await axios.post("/api/compte/inscription", data, {
+                headers: {
+                    'content-type': 'multipart/form-data'
                 }
-            })
+            });
+            
+            // Login
+            await axios({
+                method:"post",
+                url:"/api/compte/connexion",
+                withCredentials: true,
+                data: {
+                    email: email,
+                    mot_de_passe: mdp
+                }
+            });
 
             window.location = "/";
         }
