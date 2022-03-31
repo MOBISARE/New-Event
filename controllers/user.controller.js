@@ -18,7 +18,7 @@ module.exports.getMonCompte = async(req, res) => {
 
 module.exports.rechercheUtilisateur = async(req, res) => {
     try {
-        let users = await DB.query('SELECT email, nom, prenom FROM compte WHERE Concat(prenom, " ", nom, " ", email) LIKE ?', ["%" + req.params.search + "%"]);
+        let users = await DB.query('SELECT email, nom, prenom, img_profil FROM compte WHERE Concat(prenom, " ", nom, " ", email) LIKE ?', ["%" + req.params.search + "%"]);
 
         res.status(200).json(users);
 
