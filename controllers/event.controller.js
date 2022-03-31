@@ -64,15 +64,14 @@ module.exports.search = async (req, res) => {
     //critere popularite = nombre de partcipants
     //critere recent
     if (req.query.tri == "popularite") {
-        tri1 = "inner join participant on participant.id_evenement=evenement.id_evenement"
-        tri2 = "group by evenement.id_evenement order BY count(id_compte) desc"
+        tri2 = "order BY count(id_compte) desc"
     } else if (req.query.tri == "recent") {
         //date debut plus proche date courante
         tri2 = "order by abs(CURRENT_DATE()-debut)"
     }
 
     //requete
-    let query = `SELECT * FROM evenement ${tri1} WHERE etat = 1 ${date} ${dep} ${tri2}`
+    let query = `SELECT *, count(id_compte) as nb FROM evenement inner join participant on participant.id_evenement=evenement.id_evenement WHERE etat = 1 ${date} ${dep} group by evenement.id_evenement ${tri2}`
 
     //critere barre de recherche (nb occurence du mot dans barre de recherche)
     //https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript/5912746#5912746
@@ -85,9 +84,11 @@ module.exports.search = async (req, res) => {
     //ordre decroissant nombre occurence
     tmp.sort((a, b) => b["occurence"] - a["occurence"])
     events = []
-
+    let etmp
     tmp.forEach(e => {
-        events.push(modelToJSON(e))
+        etmp = modelToJSON(e)
+        etmp.nb_participant = e.nb
+        events.push(etmp)
     })
 
     return res.status(200).json(events);
@@ -207,8 +208,8 @@ module.exports.saveEvent = async (req, res) => {
         }
 
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
-        if(req.body.supprImg) {
-            if(event[0].img_banniere) upload.removeImage(event[0].img_banniere);
+        if (req.body.supprImg) {
+            if (event[0].img_banniere) upload.removeImage(event[0].img_banniere);
             data['img_banniere'] = "";
         }
 
@@ -240,7 +241,7 @@ module.exports.proposeToSaveEvent = async (req, res) => {
         }
 
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
-        if(req.body.supprImg) {
+        if (req.body.supprImg) {
             data['img_banniere'] = "remove";
         }
 
@@ -249,7 +250,7 @@ module.exports.proposeToSaveEvent = async (req, res) => {
 
         // TODO : Link to notification controller (waiting)
         let resNotif = await notif.CreerNotifModifEvent(oldEvent[0], data, res.locals.user);
-        if(resNotif === -1) return res.sendStatus(500);
+        if (resNotif === -1) return res.sendStatus(500);
 
         return res.sendStatus(200);
     } catch (err) {
