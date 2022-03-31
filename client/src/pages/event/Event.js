@@ -19,12 +19,6 @@ class Event extends React.Component {
         this.inviteMenu = React.createRef();
     }
 
-    inviteUsers = () => {
-
-    }
-
-
-
     OwnerEventMenu = () => {
         let buttons = [
             {title: "Inviter des participants", onClick: () => {this.inviteMenu.current.showComponent()}},

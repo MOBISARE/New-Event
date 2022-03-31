@@ -22,6 +22,7 @@ class Main extends React.Component {
             advancedSearchActive: false
         };
         this.searchbar = React.createRef()
+        this.advancedSearchbar = React.createRef()
     }
 
     componentDidMount(){
@@ -41,13 +42,13 @@ class Main extends React.Component {
     }
 
     checkClickOutside = (e) => {
-        if(this.state.advancedSearchActive && !this.searchbar.current.contains(e.target)) {
+        if(this.state.advancedSearchActive && !this.searchbar.current.contains(e.target) && !this.advancedSearchbar.current.contains(e.target)) {
             this.toggleOrSetAdvancedSearchbar()
             window.removeEventListener('click', this.checkClickOutside)
         }
     }
 
-    handlerFocusSearchbar(ev) {
+    handlerFocusSearchbar() {
         if (!this.state.advancedSearchActive){
             this.setState({advancedSearchActive: true})
             window.addEventListener('click', this.checkClickOutside)
@@ -63,13 +64,12 @@ class Main extends React.Component {
         axios.get(`/api/evenement/recherche/${search}`, {
             params: {
                 tri: tri? tri.toLowerCase():undefined,
-                datedebut: debut,
-                datefin: fin,
-                ville: location
+                datedebut: debut || undefined,
+                datefin: fin || undefined,
+                ville: location || undefined
             }
         })
         .then((res) => {
-            console.log(res.data)
             this.setState({searchedEvents: res.data, isSearchLoaded: true, advancedSearchActive:false});
         })
         .catch((err) => {
@@ -93,14 +93,14 @@ class Main extends React.Component {
                             événement</div>
                     </h1>
 
-                    <div className='relative bg-white w-full rounded-full h-14 flex items-center p-2 mt-10 text-2xl border border-transparentgray'
+                    <div className='relative bg-white w-full rounded-full h-16 flex items-center p-4 mt-10 text-2xl border border-transparentgray'
                          ref={this.searchbar}>
                         <button className='flex' type='submit' onClick={() => this.search()}>
                             <span className="material-icons text-4xl text-transparentgray">
                                 search
                             </span>
                         </button>
-                        <input placeholder='Anniversaire de...' id='search-input' onFocus={(event => this.handlerFocusSearchbar(event))}
+                        <input placeholder='Anniversaire de...' id='search-input' onFocus={() => this.handlerFocusSearchbar()}
                                className='flex-grow focus:outline-none ml-2 placeholder:text-transparentgray' />
                         <button className='flex' onClick={this.toggleOrSetAdvancedSearchbar}>
                             <span className="material-icons text-4xl text-transparentgray">
@@ -108,8 +108,8 @@ class Main extends React.Component {
                             </span>
                         </button>
 
-                        <div id='advanced-searchbar' className={'absolute top-[3.25rem] left-0 right-0 bg-white rounded-b-3xl mx-4 px-4 py-2 text-base text-darkergray ' +
-                                'flex flex-wrap border border-t-0 border-transparentgray place-content-center ' + (this.state.advancedSearchActive? "":"hidden")}>
+                        <div ref={this.advancedSearchbar} className={'absolute top-[3.9rem] left-0 right-0 bg-white rounded-b-3xl mx-6 px-4 pt-4 pb-2 text-base text-darkergray -z-10 drop-shadow ' +
+                                'flex flex-wrap border border-t-0 border-transparentgray place-content-center transition-all ' + (this.state.advancedSearchActive? "":"-translate-y-full -mb-10")}>
                             <div className='flex flex-wrap justify-center'>
                                 <div className='flex place-content-center mr-4 mb-2'>
                                     <span className='mr-2'>Dates : </span>
@@ -126,7 +126,7 @@ class Main extends React.Component {
                         </div>
                     </div>
 
-                    <div className='flex flex-wrap flex-row justify-center w-full'>
+                    <div className='flex flex-wrap flex-row justify-center w-full relative -z-20'>
                         <div className='mt-14 w-full text-right mr-14'>
                             <span>Tri : </span>
                             <select id='tri' className='rounded-full h-8 py-0 border-transparentgray'
@@ -148,13 +148,13 @@ class Main extends React.Component {
                                     title={elem.titre}
                                     description={elem.description}
                                     imgUrl={elem.img_banniere}
-                                    membersNumber={'?'}
+                                    membersNumber={elem.nb_participants}
                                     etat={elem.etat}
                                     location={elem.departement}
                                     startDate={elem.debut}
                                     endDate={elem.fin}
                                 />)
-                            }) 
+                            })
                         }
                     </div>
                 </form>

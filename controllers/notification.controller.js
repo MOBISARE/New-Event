@@ -184,15 +184,18 @@ module.exports.CreerNotifModifBesoin = async (req, res) => {
     }
 }
 
-module.exports.CreerNotifModifEvent = async (req, res) => { //TODO
+module.exports.CreerNotifModifEvent = async (oldEvent, newData, user) => {
     try {
-        await DB.query("INSERT INTO `modele_evenement`(`id_vrai_evenement`, `titre`, `description`, `departement`, `debut`, `fin`, `img_banniere`) VALUES (?,?,?,?,?,?,?);", [req.params.id_event], [req.params.titre])
-        id_mod = await DB.query("SELECT `id_modele` from `modele_evenement` where `id_vrai_evenement` = ?", [req.params.id])
-        await DB.query("INSERT INTO `notif_modifier`(`type`, `id_modele`) VALUES (1,?);", [id_mod])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?);", [req.params.message], new Date(), [id_mod], [req.params.id_compte])
-        return res.status(200)
+        let message = "Nouvelle demande de modification de l'événement " + oldEvent.titre;
+
+        let insertEvent = await DB.query("INSERT INTO `modele_evenement`(`id_vrai_evenement`, `titre`, `description`, `departement`, `debut`, `fin`, `img_banniere`) VALUES (?,?,?,?,?,?,?);", [oldEvent.id_evenement, newData.titre, newData.description, newData.departement, newData.debut, newData.fin, newData.img_banniere])
+
+        await DB.query("INSERT INTO `notif_modifier`(`type`, `id_modele`) VALUES (1,?);", [insertEvent.insertId])
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?);", [message, new Date(), insertEvent.insertId, oldEvent.id_proprietaire])
+
+        return 0;
     } catch (error) {
         console.log(error)
-        res.sendStatus(500) //erreur lors de l execution de la requete
+        return -1;
     }
 }

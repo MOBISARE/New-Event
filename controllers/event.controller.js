@@ -1,5 +1,6 @@
 const DB = require("./db").DB
 const notif = require("./notification.controller")
+const upload = require("./upload.controller")
 const axios = require('axios')
 
 
@@ -161,7 +162,8 @@ module.exports.getParticipants = async (req, res) => {
 
 module.exports.getMesEvenements = async (req, res) => {
     try {
-        events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
+        events = await DB.query('SELECT *, count(p.id_compte) as nb_participants FROM evenement JOIN participant p on evenement.id_evenement = p.id_evenement WHERE id_proprietaire = ?' +
+            ' GROUP BY evenement.id_evenement', [res.locals.user.id_compte]);
 
         return res.status(200).json(events);
 
@@ -173,7 +175,8 @@ module.exports.getMesEvenements = async (req, res) => {
 
 module.exports.getMesParticipations = async (req, res) => {
     try {
-        events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
+        events = await DB.query('SELECT *, count(p.id_compte) as nb_participants FROM evenement evt JOIN participant p on evt.id_evenement = p.id_evenement ' +
+            'WHERE evt.id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ? GROUP BY evt.id_evenement', [res.locals.user.id_compte, res.locals.user.id_compte]);
 
         return res.status(200).json(events);
 
@@ -187,11 +190,11 @@ module.exports.saveEvent = async (req, res) => {
     try {
         // --- CHECK
 
-        let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        let event = await DB.query('SELECT id_proprietaire, img_banniere FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        if (!checkPrivileges.length) return res.sendStatus(404); // Not found
+        if (!event.length) return res.sendStatus(404); // Not found
 
-        if (checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
+        if (event[0].id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
 
         // --- REQUEST
 
@@ -204,7 +207,10 @@ module.exports.saveEvent = async (req, res) => {
         }
 
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
-
+        if(req.body.supprImg) {
+            if(event[0].img_banniere) upload.removeImage(event[0].img_banniere);
+            data['img_banniere'] = "";
+        }
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 
@@ -234,16 +240,18 @@ module.exports.proposeToSaveEvent = async (req, res) => {
         }
 
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
+        if(req.body.supprImg) {
+            data['img_banniere'] = "remove";
+        }
+
+        let oldEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        console.log(oldEvent);
 
         // TODO : Link to notification controller (waiting)
+        let resNotif = await notif.CreerNotifModifEvent(oldEvent[0], data, res.locals.user);
+        if(resNotif === -1) return res.sendStatus(500);
+
         return res.sendStatus(200);
-
-        /*
-        await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
-
-        await this.getEvenement(req, res);
-        */
-
     } catch (err) {
         console.log(err);
         res.sendStatus(500); // Internal Server Error

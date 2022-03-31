@@ -12,7 +12,8 @@ class EventCard extends React.Component {
 
     render() {
         return(
-            <Link to={'/evenement/'+this.props.id} className={'select-none w-72 h-64 rounded-lg bg-white m-3 flex flex-col justify-center shadow transition-transform ease-in-out delay-75 duration-300 hover:scale-105 ' + (this.props.etat === 0 ? 'grayscale' : '')}
+            <Link to={'/evenement/'+this.props.id} className={'select-none w-72 h-64 rounded-lg bg-white m-3 flex flex-col justify-center ' +
+                'drop-shadow-lg transition-transform ease-in-out delay-75 duration-300 hover:scale-105 ' + (this.props.etat === 0 ? 'grayscale' : '')}
                         onMouseEnter={() => {
                             this.setState({ descriptionVisible: true })
                         }}
@@ -24,7 +25,7 @@ class EventCard extends React.Component {
                     <img className='object-cover w-full h-auto'
                          src={this.props.imgUrl} onError={event => event.target.hidden=true} alt=" "/>
                 </div>
-                <div className={'flex flex-col p-2 border-t-8 border-darkgray transition-[max-height] ease-in-out duration-1000 ' +
+                <div className={'flex flex-col p-2 border-t-8 border-darkgray transition-[max-height] ease-in-out delay-75 duration-1000 ' +
                     (this.state.descriptionVisible? "max-h-[80%]":"max-h-[6.8rem]")}>
                     <span className='font-bold text-xl'>
                         <h5 className='truncate'>{ this.props.title }</h5>
@@ -39,7 +40,7 @@ class EventCard extends React.Component {
                             <span className="material-icons md-18 mr-1">
                                 people
                             </span>
-                            { (this.props.membersNumber==='?')? '0':this.props.membersNumber }
+                            { (this.props.membersNumber)? this.props.membersNumber:'1' }
                         </span>
                         <span className='flex items-center ml-auto'>{ new Date(this.props.startDate).toLocaleDateString() }</span>
                         <span className='flex items-center'>

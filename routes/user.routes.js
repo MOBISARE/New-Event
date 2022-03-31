@@ -12,7 +12,7 @@ router.get('/', requireAuth, userController.getMonCompte);
 
 // authentification
 router.post('/connexion', authController.login);
-router.post('/inscription', authController.register);
+router.post('/inscription', upload.single('img_profil'), authController.register);
 router.post('/deconnexion', authController.logout);
 
 // user
