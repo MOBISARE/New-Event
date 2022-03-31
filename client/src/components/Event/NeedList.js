@@ -142,7 +142,7 @@ class NeedList extends React.Component {
                             </div>
                             :
                             <div>
-                                <CreateNeed ref={this.componentAddNeed} titleWindow='Créer un besoin' actionType={"creer"}
+                                <CreateNeed ref={this.componentAddNeed} titleWindow='Créer un besoin' buttonText={"Créer"} actionType={"creer"}
                                             addNeed={(need) => this.addNeed(need)} eventId={this.props.eventId} />
                                 <CreateNeed ref={this.componentModifyNeed} titleWindow='Modifier un besoin' actionType={"modifier"}
                                             addNeed={(need) => this.modifyNeed(need)} eventId={this.props.eventId} />
