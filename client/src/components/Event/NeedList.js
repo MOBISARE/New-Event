@@ -9,7 +9,7 @@ class NeedLine extends React.Component {
         return(
             <div className={'border-b border-b-transparentgray p-2 pl-6 flex items-center'}>
                 <p className='title flex-grow'>{ this.props.need.description }</p>
-                <UserMini user={this.props.need} />
+                <UserMini user={this.props.need} proposeMe={() => this.props.proposeMe(this.props.need)} />
                 <div className={(this.props.actionType==='show')? "invisible":"visible"}>
                     <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
                           onClick={() => this.props.modify(this.props.need) }>
@@ -59,7 +59,7 @@ class NeedList extends React.Component {
     }
 
     async addNeed(need) {
-        let res = await axios.post("/api/evenement/"+this.props.eventId+"/besoin/creer", need).catch(console.log)
+        await axios.post("/api/evenement/"+this.props.eventId+"/besoin/creer", need).catch(console.log)
         this.actualiser()
     }
 
@@ -82,11 +82,22 @@ class NeedList extends React.Component {
     }
 
     proposeModifyNeed(need) {
-        axios.post(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
+        axios.put(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
     }
 
     proposeDeleteNeed(need) {
         axios.post(`/api/evenement/${this.props.eventId}/besoin/${need.id}/demande/suppression`, need).catch(console.log)
+    }
+
+    proposeMe(need) {
+        axios.put(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, {
+            description: need.description,
+            email: this.state.usermail
+        }).catch(console.log)
+        console.log({
+            description: need.description,
+            email: this.state.usermail
+        })
     }
 
     handlerInputNeedList(evt) {
@@ -137,7 +148,7 @@ class NeedList extends React.Component {
                                             (value.email === this.state.usermail)?
                                                 'modify':'show'
                                             : this.props.actionType
-                                    } />
+                                    } proposeMe={ (this.props.appartenance===1)? (need) => this.proposeMe(need) : undefined } />
                                 }, "")
                                 : <p className='text-center m-2'>Aucun besoin pour l'instant.</p>
                         }
