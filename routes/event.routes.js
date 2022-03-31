@@ -25,6 +25,7 @@ router.post('/demanderRejoindreEve/:id', requireAuth, eventController.demanderRe
 router.post('/seretirer/:id', requireAuth, eventController.seRetirer)
 router.get('/inviter/m1/:id', requireAuth, eventController.getInviterParticipantMethode1)
 router.get('/inviter/m2/:id', requireAuth, eventController.getInviterParticipantMethode2)
+router.post('/inviter/:id', requireAuth, eventController.postInviterParticipant)
 
 // besoins
 router.post('/:id/besoin/creer', requireAuth, needController.postAjouterBesoin)

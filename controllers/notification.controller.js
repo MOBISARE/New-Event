@@ -1,9 +1,10 @@
 const DB = require("./db").DB
+const res = require("express/lib/response");
 const { NULL } = require("mysql/lib/protocol/constants/types");
 const event = require("./event.controller")
 
 //Consulte toute les notifs liées au compte dont l'id est passé en paramètre
-module.exports.getNotification = async(req, res) => {
+module.exports.getNotification = async (req, res) => {
     let notif = [];
     try {
         notif = await DB.query("SELECT * FROM notification where id_compte = ?", [res.locals.user.id_compte])
@@ -15,7 +16,7 @@ module.exports.getNotification = async(req, res) => {
 }
 
 //Check les notifs de type ajouter (invitation)
-module.exports.getNotificationSpe = async(req, res) => {
+module.exports.getNotificationSpe = async (req, res) => {
     let notif = [];
     try {
         notif = await DB.query("SELECT * FROM notification where id_compte = ? and type = ?", [req.params.id], [req.params.type])
@@ -110,7 +111,7 @@ async function SupprimerNotifModif(id, type) {
 }
 
 
-module.exports.CreerNotifMess = async(id_compte, message, res) => {
+module.exports.CreerNotifMess = async (id_compte, message, res) => {
     try {
         await DB.query("INSERT INTO `notif_message`(`message`) VALUES (?);", [message])
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,0,0,?,?,?)", [message], new Date(), NULL, [id_compte])
@@ -121,20 +122,21 @@ module.exports.CreerNotifMess = async(id_compte, message, res) => {
     }
 }
 
-module.exports.CreerNotifInvitation = async(id_compte, id_event, message, res) => {
+module.exports.CreerNotifInvitation = async (id_compte, id_event, message, res) => {
     try {
-        await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES VALUES (?,?);", [id_compte], [id_event])
-        id_mod = await DB.query("SELECT `id_modele` from `modele_invitation` where `id_evenement` = ?", [id_event])
+        await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES (?,?);", [id_compte, id_event])
+        id_mod = await DB.query("SELECT `id_m_invitation` from `modele_invitation` where `id_evenement` = ?", [id_event])
+        id_mod = id_mod[0].id_m_invitation
         await DB.query("INSERT INTO `notif_ajouter`(`type`, `id_modele`) VALUES (1,?);", [id_mod])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message], new Date(), [id_mod], [id_compte])
-        return res.status(200)
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message, new Date(), id_mod, id_compte])
+        res.sendStatus(200)
     } catch (error) {
         console.log(error)
-        res.sendStatus(500) //erreur lors de l execution de la requete
+        res.sendStatus(500)
     }
 }
 
-module.exports.CreerNotifRejoindre = async(id_compte, id_event, message, res) => {
+module.exports.CreerNotifRejoindre = async (id_compte, id_event, message, res) => {
     try {
         await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES VALUES (?,?);", [id_compte], [id_event])
         id_mod = await DB.query("SELECT `id_modele` from `modele_invitation` where `id_evenement` = ?", [id_event])
@@ -147,7 +149,7 @@ module.exports.CreerNotifRejoindre = async(id_compte, id_event, message, res) =>
     }
 }
 
-module.exports.CreerNotifAjoutBesoin = async(id, message) => {
+module.exports.CreerNotifAjoutBesoin = async (id, message) => {
     try {
         await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, message) VALUES (?,?);", [id, message])
         id_mod = await DB.query("SELECT id_m_besoin from modele_besoin where id_vrai_besoin = ?", [id])
@@ -163,7 +165,7 @@ module.exports.CreerNotifAjoutBesoin = async(id, message) => {
         return -1 //erreur lors de l execution de la requete
     }
 }
-module.exports.CreerNotifSupprBesoin = async(id, message) => {
+module.exports.CreerNotifSupprBesoin = async (id, message) => {
     try {
         await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, message) VALUES (?,?);", [id, message])
         id_mod = await DB.query("SELECT id_m_besoin from modele_besoin where id_vrai_besoin = ?", [id])
@@ -179,7 +181,7 @@ module.exports.CreerNotifSupprBesoin = async(id, message) => {
     }
 }
 
-module.exports.CreerNotifModifBesoin = async(req, res) => {
+module.exports.CreerNotifModifBesoin = async (req, res) => {
     try {
         await DB.query("INSERT INTO `modele_besoin`(`id_vrai_besoin`, `message`) VALUES (?,?);", [req.params.id], [req.params.message])
         id_mod = await DB.query("SELECT `id_modele` from `modele_besoin` where `id_vrai_besoin` = ?", [req.params.id])
@@ -192,7 +194,7 @@ module.exports.CreerNotifModifBesoin = async(req, res) => {
     }
 }
 
-module.exports.CreerNotifModifEvent = async(oldEvent, newData, user) => {
+module.exports.CreerNotifModifEvent = async (oldEvent, newData, user) => {
     try {
         let message = "Nouvelle demande de modification de l'événement " + oldEvent.titre;
 
@@ -200,7 +202,7 @@ module.exports.CreerNotifModifEvent = async(oldEvent, newData, user) => {
 
         await DB.query("INSERT INTO `notif_modifier`(`type`, `id_modele`) VALUES (1,?);", [insertEvent.insertId])
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?);", [message, new Date(), insertEvent.insertId, oldEvent.id_proprietaire])
-        
+
         return 0;
     } catch (error) {
         console.log(error)
