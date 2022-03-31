@@ -77,6 +77,34 @@ class ModifyEvent extends React.Component {
         })
     }
 
+    proposeToSaveEvent = async(e) => {
+        e.preventDefault();
+        
+        let data = new FormData();
+
+        data.append('titre', document.getElementById('title').value);
+        data.append('description', document.getElementById('description').value);
+        data.append('departement', document.getElementById('location').value);
+        data.append('debut', document.getElementById('start-date').value);
+        data.append('fin', document.getElementById('end-date').value);
+        if(this.removeImg) data.append('supprImg', true);
+        data.append('img_banniere', document.getElementById('image').files[0]);
+
+        axios.put('/api/evenement/proposermodifier/' + this.props.eventModel.id, data, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        })
+        .then((res) => {
+            //this.props.container.setState({event: res.data, isModifing: false})
+            console.log(res);
+            this.props.container.setState({isModifing: false})
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
     archiveEvent = () => {
         axios.post('/api/evenement/archiver/' + this.props.eventModel.id)
         .then((res) => {
@@ -104,7 +132,7 @@ class ModifyEvent extends React.Component {
     render(){
         return(
             <div className='max-w-[1000px] mx-auto'>
-                <form onSubmit={this.saveEvent} >
+                <form onSubmit={this.props.eventModel.etatAppartenance === 2 ? this.saveEvent : this.proposeToSaveEvent} >
                     <div className='flex'>
                         <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
                             <div className='relative flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>

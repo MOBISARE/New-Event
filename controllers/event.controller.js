@@ -240,16 +240,18 @@ module.exports.proposeToSaveEvent = async (req, res) => {
         }
 
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
+        if(req.body.supprImg) {
+            data['img_banniere'] = "remove";
+        }
+
+        let oldEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        console.log(oldEvent);
 
         // TODO : Link to notification controller (waiting)
+        let resNotif = await notif.CreerNotifModifEvent(oldEvent[0], data, res.locals.user);
+        if(resNotif === -1) return res.sendStatus(500);
+
         return res.sendStatus(200);
-
-        /*
-        await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
-
-        await this.getEvenement(req, res);
-        */
-
     } catch (err) {
         console.log(err);
         res.sendStatus(500); // Internal Server Error
