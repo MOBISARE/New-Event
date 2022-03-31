@@ -6,12 +6,13 @@ import axios from 'axios';
 class NotificationDropDown extends React.Component {
 
     static defaultProps = {
-        button: null
+        button: null,
+        notifications: []
     }
 
     constructor(props){
         super(props);
-        this.state = { active : false, notifications: [] };
+        this.state = { active : false };
         this.DOM_element = createRef();
     }
 
@@ -51,7 +52,6 @@ class NotificationDropDown extends React.Component {
             .catch((err) => {
                 console.log(err);
             })
-            
         }
 
         return (
@@ -86,8 +86,8 @@ class NotificationDropDown extends React.Component {
         return(
             <div id='dropdown-account' className={'text-left bg-white absolute right-0 drop-shadow-sm border rounded-md border-transparentgray flex flex-col gap-1 py-1 min-w-[200px] max-w-[300px] w-max ' + (this.state.active? '': 'hidden')} ref={this.DOM_element}>
                 {
-                    this.state.notifications.length > 0 ?
-                    this.state.notifications.map((elem, index) => {
+                    this.props.notifications.length > 0 ?
+                    this.props.notifications.map((elem, index) => {
                         return this.Notification(elem, index);
                     })
                     :

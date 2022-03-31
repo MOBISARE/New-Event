@@ -28,9 +28,17 @@ module.exports.getNotificationSpe = async(req, res) => {
 
 //Supprime la notification dont l'id est passé en paramètre En cours
 module.exports.supprimerNotif = async(req, res) => {
-    let type = await DB.query("SELECT type FROM notification WHERE id_notif=?;", [req.params.id])
-    type = type[0].type;
     try {
+        // Check 
+        let notification = await DB.query("SELECT * FROM notification WHERE id_notif = ?", [req.params.id]);
+        if(!notification.length) return res.sendStatus(404); // Not Found
+        notification = notification[0];
+        if(notification.id_compte != res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
+    
+        await DB.query("DELETE FROM notification WHERE id_notif = ?", [notification.id_notif]);
+        /*
+        let type = notification.type;
+
         switch (type) {
             case 0: //Notifs de message
                 SupprimerNotifMess(req.params.id)
@@ -47,7 +55,9 @@ module.exports.supprimerNotif = async(req, res) => {
             default:
                 break
         }
-        return res.status(200)
+        */
+
+        return res.sendStatus(200);
     } catch (error) {
         console.log(error)
         res.sendStatus(500) //erreur lors de l execution de la requete
