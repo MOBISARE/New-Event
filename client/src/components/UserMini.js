@@ -12,7 +12,10 @@ class UserMini extends React.Component {
                                 {this.props.user.prenom} {this.props.user.nom}</span>
                         </div>
                         : this.props.proposeMe?
-                            <span className='flex items-center h-8 px-2 cursor-pointer' onClick={this.props.proposeMe}>
+                            <span className='flex items-center h-8 px-2 cursor-pointer' onClick={(evt) => {
+                                this.props.proposeMe()
+                                evt.target.innerText = "Demande envoyée"
+                            }}>
                                 Me proposer
                             </span>
                         : <span className='px-2 h-10'>Pas d'utilisateur</span>
