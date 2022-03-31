@@ -1,5 +1,6 @@
 const DB = require("./db").DB
 const notif = require("./notification.controller")
+const upload = require("./upload.controller")
 const axios = require('axios')
 
 
@@ -189,11 +190,11 @@ module.exports.saveEvent = async (req, res) => {
     try {
         // --- CHECK
 
-        let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        let event = await DB.query('SELECT id_proprietaire, img_banniere FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        if (!checkPrivileges.length) return res.sendStatus(404); // Not found
+        if (!event.length) return res.sendStatus(404); // Not found
 
-        if (checkPrivileges[0].id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
+        if (event[0].id_proprietaire !== res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
 
         // --- REQUEST
 
@@ -206,7 +207,10 @@ module.exports.saveEvent = async (req, res) => {
         }
 
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
-
+        if(req.body.supprImg) {
+            if(event[0].img_banniere) upload.removeImage(event[0].img_banniere);
+            data['img_banniere'] = "";
+        }
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 
