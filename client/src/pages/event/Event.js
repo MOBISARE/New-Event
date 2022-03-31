@@ -150,7 +150,7 @@ class Event extends React.Component {
                           eventId={this.props.eventModel.id}
                           actionType={(this.props.eventModel.etatAppartenance === 0)? 'show':'modify'}
                           appartenance={this.props.eventModel.etatAppartenance}/>
-                <InviteMenu ref={this.inviteMenu}/>
+                <InviteMenu ref={this.inviteMenu} eventId={this.props.eventModel.id}/>
             </div>
         );
     }

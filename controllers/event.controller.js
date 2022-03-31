@@ -472,12 +472,16 @@ module.exports.postInviterParticipant = async (req, res) => {
     try {
         // --- CHECK verifie proprio fait parti evenement + est bien proprietaire evnement
         let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
-
         if (!checkPrivileges.length) return res.sendStatus(404); // Not found
 
+        // verifie l'utilisateur a ajouter
+        let user = await DB.query('SELECT id_compte FROM compte WHERE email = ?', [req.params.email]);
+        if(!user.length) return res.sendStatus(404); // Not Found
+        user = user[0];
+
         //verifie que utilisateur n est pas participant de evenement
-        let checkUtil = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, req.body.id]);
-        if (checkUtil.length) return res.sendStatus(404); // Not found
+        let checkUtil = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = (SELECT id_compte FROM compte WHERE email = ?)', [req.params.id, req.params.email]);
+        if (checkUtil.length) return res.sendStatus(403); // Forbidden
 
         let proprio = await DB.query('SELECT id_proprietaire, nom, prenom, titre, evenement.departement FROM evenement INNER JOIN compte ON evenement.id_proprietaire=compte.id_compte WHERE id_evenement = ?', [req.params.id]);
         if (!proprio.length && proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
@@ -488,7 +492,7 @@ module.exports.postInviterParticipant = async (req, res) => {
         let msg = proprio.prenom + " " + proprio.nom + " vous invite à l'événement \""
             + proprio.titre + "\" (" + proprio.departement + ")"
 
-        await notif.CreerNotifInvitation(req.body.id, req.params.id, msg, res)
+        await notif.CreerNotifInvitation(user.id_compte, req.params.id, msg, res)
 
     } catch (err) {
         console.log(err);

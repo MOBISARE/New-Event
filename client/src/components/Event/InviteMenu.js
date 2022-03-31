@@ -40,6 +40,17 @@ class InviteMenu extends React.Component {
     }
 
     showUser = (elem, i) => {
+
+        let invite = () => {
+            axios.post('/api/evenement/' + this.props.eventId + '/inviter/' + elem.email)
+            .then((res) => {
+
+            })
+            .then((err) => {
+                
+            })
+        }
+
         return (
             <div key={i} className='w-full pl-3 flex hover:bg-selected-gray items-stretch justify-between'>
                 <Link to={'/profil/' + elem.email} className='flex py-2 gap-2 items-center grow'>
@@ -47,7 +58,7 @@ class InviteMenu extends React.Component {
                     <div className='text-sm whitespace-nowrap'>{elem.prenom + " " + elem.nom}</div>
                 </Link>
                 
-                <div className='bg-blue text-white text-sm px-10 flex items-center justify-center hover:shadow-inner hover:bg-sky-600 cursor-pointer text-center' onClick={() => console.log("inviter")}>Inviter</div>
+                <div className='bg-blue text-white text-sm px-10 flex items-center justify-center hover:shadow-inner hover:bg-sky-600 cursor-pointer text-center' onClick={invite}>Inviter</div>
             </div>
         );
     }

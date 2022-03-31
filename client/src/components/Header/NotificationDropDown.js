@@ -53,6 +53,7 @@ class NotificationDropDown extends React.Component {
                 console.log(err);
             })
         }
+        console.log(elem)
 
         return (
             <div key={index} className='flex  pl-4 hover:bg-selected-gray cursor-pointer gap-1 place-items-stretch'>
@@ -88,7 +89,10 @@ class NotificationDropDown extends React.Component {
                 {
                     this.props.notifications.length > 0 ?
                     this.props.notifications.map((elem, index) => {
-                        return this.Notification(elem, index);
+                        if(elem.type === 0)
+                            return this.Notification(elem, index);
+                        else
+                            return this.ChoiceNotification(elem, index);
                     })
                     :
                     <div className='inline-block px-4 whitespace-nowrap py-1 text-sm'>Vous n'avez pas de notification</div>
