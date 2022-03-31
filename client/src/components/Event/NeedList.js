@@ -10,19 +10,16 @@ class NeedLine extends React.Component {
             <div className={'border-b border-b-transparentgray p-2 pl-6 flex items-center'}>
                 <p className='title flex-grow'>{ this.props.need.description }</p>
                 <UserMini user={this.props.need} />
-                {
-                    (this.props.actionType==='show')? '':
-                        <div>
+                <div className={(this.props.actionType==='show')? "invisible":"visible"}>
                             <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
                                   onClick={() => this.props.modify(this.props.need) }>
                                 edit_note
                             </span>
-                            <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
-                                  onClick={() => this.props.delete(this.props.need)}>
+                    <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
+                          onClick={() => this.props.delete(this.props.need)}>
                                 delete_outline
                             </span>
-                        </div>
-                }
+                </div>
             </div>
         );
     }
@@ -53,7 +50,8 @@ class NeedList extends React.Component {
                 console.log(reason)
         })
         this.setState({
-            needs: needs.data
+            needs: needs.data.liste,
+            usermail: needs.data.usermail
         })
     }
 
@@ -62,8 +60,12 @@ class NeedList extends React.Component {
         this.actualiser()
     }
 
-    async proposeNeed(need) {
-        await axios.post("/api/evenement/"+this.props.eventId+"/besoin/proposer", need).catch(console.log)
+    proposeNeed(need) {
+        axios.post("/api/evenement/"+this.props.eventId+"/besoin/proposer", need).catch(console.log)
+    }
+
+    proposeModifyNeed(need) {
+        axios.post("/api/evenement/"+this.props.eventId+"/besoin/proposer", need).catch(console.log)
     }
 
     async modifyNeed(need) {
@@ -99,7 +101,6 @@ class NeedList extends React.Component {
     }
 
     render(){
-
         return(
             <div className='flex flex-col w-full min-h-[450px] bg-white rounded-3xl shadow mt-8 p-4'>
                 <div className='text-xl ml-4 mb-2 flex justify-between'>
@@ -123,8 +124,13 @@ class NeedList extends React.Component {
                         {
                             this.state.needs && this.state.needs.length>0 ?
                                 this.state.needs.map((value) => {
-                                    return <NeedLine key={value.id} need={value} actionType={this.props.actionType} modify={(need) => this.componentModifyNeed.current.showComponent(need)}
-                                                     delete={(need) => this.deleteNeed(need)} />
+                                    return <NeedLine key={value.id} need={value} modify={(need) => this.componentModifyNeed.current.showComponent(need)}
+                                                     delete={(need) => this.deleteNeed(need)} actionType={
+                                        (this.props.appartenance===1)?
+                                            (value.email === this.state.usermail)?
+                                                'modify':'show'
+                                        : this.props.actionType
+                                    } />
                                 }, "")
                                 : <p className='text-center m-2'>Aucun besoin pour l'instant.</p>
                         }
@@ -138,7 +144,7 @@ class NeedList extends React.Component {
                                 <CreateNeed ref={this.componentAddNeed} titleWindow='Proposer un besoin' actionType={"creer"}
                                             addNeed={(need) => this.proposeNeed(need)} eventId={this.props.eventId} />
                                 <CreateNeed ref={this.componentModifyNeed} titleWindow='Proposer une modification' actionType={"modifier"}
-                                            addNeed={(need) => this.modifyNeed(need)} eventId={this.props.eventId} />
+                                            addNeed={(need) => this.proposeModifyNeed(need)} eventId={this.props.eventId} />
                             </div>
                             :
                             <div>

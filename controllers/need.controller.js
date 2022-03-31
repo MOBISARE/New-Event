@@ -98,7 +98,10 @@ module.exports.getListeBesoins = async(req, res) => {
             }
         }
 
-        res.json(result)
+        res.json({
+            liste: result,
+            usermail: res.locals.user.email
+        })
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
