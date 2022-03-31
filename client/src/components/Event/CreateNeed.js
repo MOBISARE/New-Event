@@ -116,7 +116,7 @@ class CreateNeed extends React.Component {
             email : document.getElementById("associated-to"+this.props.actionType).value,
             eventId : this.props.eventId
         }
-        this.props.addNeed(newNeed)
+        this.props.callback(newNeed)
         this.hideComponent()
     }
 

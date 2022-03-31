@@ -11,14 +11,17 @@ class NeedLine extends React.Component {
                 <p className='title flex-grow'>{ this.props.need.description }</p>
                 <UserMini user={this.props.need} />
                 <div className={(this.props.actionType==='show')? "invisible":"visible"}>
-                            <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
-                                  onClick={() => this.props.modify(this.props.need) }>
-                                edit_note
-                            </span>
                     <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
-                          onClick={() => this.props.delete(this.props.need)}>
-                                delete_outline
-                            </span>
+                          onClick={() => this.props.modify(this.props.need) }>
+                        edit_note
+                    </span>
+                    <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
+                          onClick={(evt) => {
+                              this.props.delete(this.props.need)
+                              evt.target.classList.add('invisible')
+                          }}>
+                        delete_outline
+                    </span>
                 </div>
             </div>
         );
@@ -60,14 +63,6 @@ class NeedList extends React.Component {
         this.actualiser()
     }
 
-    proposeNeed(need) {
-        axios.post("/api/evenement/"+this.props.eventId+"/besoin/proposer", need).catch(console.log)
-    }
-
-    proposeModifyNeed(need) {
-        axios.post("/api/evenement/"+this.props.eventId+"/besoin/proposer", need).catch(console.log)
-    }
-
     async modifyNeed(need) {
         axios.put(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
         this.actualiser()
@@ -80,6 +75,18 @@ class NeedList extends React.Component {
                 needs: this.state.needs
             })
         })
+    }
+
+    proposeNeed(need) {
+        axios.post("/api/evenement/"+this.props.eventId+"/besoin/proposer", need).catch(console.log)
+    }
+
+    proposeModifyNeed(need) {
+        axios.post(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
+    }
+
+    proposeDeleteNeed(need) {
+        axios.post(`/api/evenement/${this.props.eventId}/besoin/${need.id}/demande/suppression`, need).catch(console.log)
     }
 
     handlerInputNeedList(evt) {
@@ -125,11 +132,11 @@ class NeedList extends React.Component {
                             this.state.needs && this.state.needs.length>0 ?
                                 this.state.needs.map((value) => {
                                     return <NeedLine key={value.id} need={value} modify={(need) => this.componentModifyNeed.current.showComponent(need)}
-                                                     delete={(need) => this.deleteNeed(need)} actionType={
+                                                     delete={(need) => this.proposeDeleteNeed(need)} actionType={
                                         (this.props.appartenance===1)?
                                             (value.email === this.state.usermail)?
                                                 'modify':'show'
-                                        : this.props.actionType
+                                            : this.props.actionType
                                     } />
                                 }, "")
                                 : <p className='text-center m-2'>Aucun besoin pour l'instant.</p>
@@ -142,16 +149,16 @@ class NeedList extends React.Component {
                         (this.props.appartenance===1)?
                             <div>
                                 <CreateNeed ref={this.componentAddNeed} titleWindow='Proposer un besoin' actionType={"creer"}
-                                            addNeed={(need) => this.proposeNeed(need)} eventId={this.props.eventId} />
+                                            callback={(need) => this.proposeNeed(need)} eventId={this.props.eventId} />
                                 <CreateNeed ref={this.componentModifyNeed} titleWindow='Proposer une modification' actionType={"modifier"}
-                                            addNeed={(need) => this.proposeModifyNeed(need)} eventId={this.props.eventId} />
+                                            callback={(need) => this.proposeModifyNeed(need)} eventId={this.props.eventId} />
                             </div>
                             :
                             <div>
                                 <CreateNeed ref={this.componentAddNeed} titleWindow='Créer un besoin' buttonText={"Créer"} actionType={"creer"}
-                                            addNeed={(need) => this.addNeed(need)} eventId={this.props.eventId} />
+                                            callback={(need) => this.addNeed(need)} eventId={this.props.eventId} />
                                 <CreateNeed ref={this.componentModifyNeed} titleWindow='Modifier un besoin' actionType={"modifier"}
-                                            addNeed={(need) => this.modifyNeed(need)} eventId={this.props.eventId} />
+                                            callback={(need) => this.modifyNeed(need)} eventId={this.props.eventId} />
                             </div>
                 }
             </div>
