@@ -21,8 +21,7 @@ class NotificationMenu extends React.Component {
         console.log('refresh');
         axios.get('/api/notification/getAll')
         .then((res) => {
-            this.notificationDropDown.current.setState({notifications: res.data});
-            this.setState({isLoading: false});
+            this.setState({isLoading: false, notifications : res.data});
         })
         .catch((err) => {
             console.log(err);
@@ -33,8 +32,8 @@ class NotificationMenu extends React.Component {
         return(
             <div className='relative'>
                 {
-                !this.state.isLoading && this.notificationDropDown.current.state.notifications.length != 0
-                ? <div className='absolute w-5 h-5 rounded-full bg-red-600 -top-2 -right-2 text-center text-white'>{this.notificationDropDown.current.state.notifications.length > 0 ? this.notificationDropDown.current.state.notifications.length : '9+'}</div>
+                !this.state.isLoading && this.state.notifications.length != 0
+                ? <div className='absolute w-5 h-5 rounded-full bg-red-600 -top-2 -right-2 text-center text-white'>{this.state.notifications.length > 0 ? this.state.notifications.length : '9+'}</div>
                 : <></>
                 }
                 <button className='bg-darkgray rounded-lg w-10 h-10' onClick={() => {this.notificationDropDown.current.toggleActive();}} ref={this.notificationButton}>
@@ -42,7 +41,7 @@ class NotificationMenu extends React.Component {
                     notifications
                 </span>
                 </button>
-                <NotificationDropDown ref={this.notificationDropDown} button={this.notificationButton} refresh={this.refreshNotifs}/>
+                <NotificationDropDown ref={this.notificationDropDown} button={this.notificationButton} refresh={this.refreshNotifs} notifications={this.state.notifications}/>
             </div>
         );
     }
