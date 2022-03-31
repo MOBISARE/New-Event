@@ -206,7 +206,7 @@ module.exports.saveEvent = async (req, res) => {
         }
 
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
-
+        if(req.body.supprImg) data['img_banniere'] = "";
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
 

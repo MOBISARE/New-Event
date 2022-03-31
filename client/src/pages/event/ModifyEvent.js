@@ -28,10 +28,14 @@ class ModifyEvent extends React.Component {
         this.previewImage = React.createRef()
         this.participantBtn = React.createRef();
         this.participantViewer = React.createRef();
+        this.removeImg = false;
     }
 
     componentDidMount = () => {
-        if(this.props.eventModel.img_banniere) this.previewImage.current.style.backgroundImage = "url('"+this.props.eventModel.img_banniere+"')"
+        if(this.props.eventModel.img_banniere) {
+            this.previewImage.current.style.backgroundImage = "url('"+this.props.eventModel.img_banniere+"')"
+            document.getElementById('delete-imginput').hidden = false;
+        }
     }
 
     processImg = () => {
@@ -44,6 +48,7 @@ class ModifyEvent extends React.Component {
 
         if(this.hiddenInput.current.files[0]){
             reader.readAsDataURL(this.hiddenInput.current.files[0]);
+            this.removeImg = false;
         }
     }
 
@@ -56,6 +61,7 @@ class ModifyEvent extends React.Component {
         data.append('departement', document.getElementById('location').value);
         data.append('debut', document.getElementById('start-date').value);
         data.append('fin', document.getElementById('end-date').value);
+        if(this.removeImg) data.append('supprImg', true);
         data.append('img_banniere', document.getElementById('image').files[0]);
 
         axios.put('/api/evenement/modifier/' + this.props.eventModel.id, data, {
@@ -63,22 +69,22 @@ class ModifyEvent extends React.Component {
                 'content-type': 'multipart/form-data'
             }
         })
-            .then((res) => {
-                this.props.container.setState({event: res.data, isModifing: false})
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        .then((res) => {
+            this.props.container.setState({event: res.data, isModifing: false})
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     archiveEvent = () => {
         axios.post('/api/evenement/archiver/' + this.props.eventModel.id)
-            .then((res) => {
-                this.props.container.props.router.navigate('/');
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        .then((res) => {
+            this.props.container.props.router.navigate('/');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     FormButtons = () => {
@@ -115,6 +121,7 @@ class ModifyEvent extends React.Component {
                                           this.previewImage.current.style.backgroundImage = ''
                                           this.hiddenInput.current.value = ''
                                           evt.target.hidden = true
+                                          this.removeImg = true;
                                       }} id='delete-imginput' hidden>
                                 cancel
                             </span>
