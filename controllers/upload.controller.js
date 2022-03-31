@@ -6,8 +6,13 @@ module.exports.getImage = async(req, res) => {
 }
 
 module.exports.removeImage = (pathName) => {
-    let sepPath = pathName.split("/");
-    let name = sepPath[sepPath.length - 1];
-
-    fs.unlinkSync(path.join(__dirname, "../upload/" + name))
+    try {
+        let sepPath = pathName.split("/");
+        let name = sepPath[sepPath.length - 1];
+    
+        fs.unlinkSync(path.join(__dirname, "../upload/" + name))
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
