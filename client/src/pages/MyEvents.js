@@ -65,7 +65,7 @@ class MyEvents extends React.Component {
                                         title={elem.titre}
                                         description={elem.description}
                                         imgUrl={elem.img_banniere}
-                                        membersNumber={'?'}
+                                        membersNumber={elem.nb_participants}
                                         etat={elem.etat}
                                         location={elem.departement}
                                         startDate={elem.debut}
@@ -93,7 +93,7 @@ class MyEvents extends React.Component {
                                         title={elem.titre}
                                         description={elem.description}
                                         imgUrl={elem.img_banniere}
-                                        membersNumber={'?'}
+                                        membersNumber={elem.nb_participants}
                                         etat={elem.etat}
                                         location={elem.departement}
                                         startDate={elem.debut}

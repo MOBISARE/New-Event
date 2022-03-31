@@ -161,7 +161,8 @@ module.exports.getParticipants = async (req, res) => {
 
 module.exports.getMesEvenements = async (req, res) => {
     try {
-        events = await DB.query('SELECT * FROM evenement WHERE id_proprietaire = ?', [res.locals.user.id_compte]);
+        events = await DB.query('SELECT *, count(p.id_compte) as nb_participants FROM evenement JOIN participant p on evenement.id_evenement = p.id_evenement WHERE id_proprietaire = ?' +
+            ' GROUP BY evenement.id_evenement', [res.locals.user.id_compte]);
 
         return res.status(200).json(events);
 
@@ -173,7 +174,8 @@ module.exports.getMesEvenements = async (req, res) => {
 
 module.exports.getMesParticipations = async (req, res) => {
     try {
-        events = await DB.query('SELECT * FROM evenement WHERE id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ?', [res.locals.user.id_compte, res.locals.user.id_compte]);
+        events = await DB.query('SELECT *, count(p.id_compte) as nb_participants FROM evenement evt JOIN participant p on evt.id_evenement = p.id_evenement ' +
+            'WHERE evt.id_evenement IN (SELECT id_evenement FROM participant WHERE id_compte = ?) AND id_proprietaire != ? GROUP BY evt.id_evenement', [res.locals.user.id_compte, res.locals.user.id_compte]);
 
         return res.status(200).json(events);
 

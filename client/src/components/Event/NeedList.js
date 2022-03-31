@@ -23,7 +23,6 @@ class NeedLine extends React.Component {
                             </span>
                         </div>
                 }
-                <p></p>
             </div>
         );
     }
@@ -68,8 +67,7 @@ class NeedList extends React.Component {
     }
 
     async modifyNeed(need) {
-        console.log(need)
-        let res = axios.put(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
+        axios.put(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
         this.actualiser()
     }
 
@@ -90,9 +88,11 @@ class NeedList extends React.Component {
         for (let needline of needlines) {
             let containsInput = needline.querySelector('.title').innerText
                 .search(inputText)+1 // incrémente de 1 pour le cas où inputText est trouvé au début du titre
-            if (!containsInput)
-                containsInput = needline.querySelector('.username').innerText
-                    .search(inputText)+1
+            if (!containsInput) {
+                let username = needline.querySelector('.username')
+                if (username)
+                    containsInput = username.innerText.search(inputText) + 1
+            }
             if (containsInput) needline.classList.remove("hidden")
             else needline.classList.add("hidden")
         }
