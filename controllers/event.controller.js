@@ -392,17 +392,16 @@ module.exports.getProprioBesoin = async (id) => {
 
 module.exports.getInviterParticipantMethode1 = async (req, res) => {
     try {
-        // --- CHECK
+        // --- CHECK verifie proprio fait parti evenement + est bien proprietaire evnement
         let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
 
         if (!checkPrivileges.length) return res.sendStatus(404); // Not found
 
-        // --- REQUEST
         let proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
         if (!proprio.length && proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
-        proprio = proprio[0].id_proprietaire;
 
+        // --- REQUEST
         // tous les comptes qui ne sont pas participants de l evenement
         let liste = await DB.query('SELECT id_compte, email, nom, prenom, departement, ville FROM compte WHERE id_compte NOT IN (SELECT id_compte FROM participant WHERE id_evenement = ?)', [req.params.id]);
 
@@ -416,17 +415,16 @@ module.exports.getInviterParticipantMethode1 = async (req, res) => {
 
 module.exports.getInviterParticipantMethode2 = async (req, res) => {
     try {
-        // --- CHECK
+        // --- CHECK verifie proprio fait parti evenement + est bien proprietaire evnement
         let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
 
         if (!checkPrivileges.length) return res.sendStatus(404); // Not found
 
-        // --- REQUEST
         let proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
         if (!proprio.length && proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
-        proprio = proprio[0].id_proprietaire;
 
+        // --- REQUEST
         let nom = ""
         let prenom = ""
         let email = ""
@@ -454,6 +452,34 @@ module.exports.getInviterParticipantMethode2 = async (req, res) => {
         let liste = await DB.query(query, [req.params.id]);
 
         res.status(200).json(liste);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal Server Error
+    }
+}
+
+module.exports.postInviterParticipant = async (req, res) => {
+    try {
+        // --- CHECK verifie proprio fait parti evenement + est bien proprietaire evnement
+        let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
+
+        if (!checkPrivileges.length) return res.sendStatus(404); // Not found
+
+        //verifie que utilisateur n est pas participant de evenement
+        let checkUtil = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, req.body.id]);
+        if (checkUtil.length) return res.sendStatus(404); // Not found
+
+        let proprio = await DB.query('SELECT id_proprietaire, nom, prenom, titre, evenement.departement FROM evenement INNER JOIN compte ON evenement.id_proprietaire=compte.id_compte WHERE id_evenement = ?', [req.params.id]);
+        if (!proprio.length && proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
+        proprio = proprio[0]
+
+        // --- REQUEST
+        // envoie une notification au participant potentiel
+        let msg = proprio.prenom + " " + proprio.nom + " vous invite à l'événement \""
+            + proprio.titre + "\" (" + proprio.departement + ")"
+
+        await notif.CreerNotifInvitation(req.body.id, req.params.id, msg, res)
 
     } catch (err) {
         console.log(err);
