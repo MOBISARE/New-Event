@@ -157,7 +157,7 @@ class CreateEvent extends React.Component {
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
                                 <InputField type='date' id='end-date' children='Date de fin' required min={today}
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
-                                <InputLocation />
+                                <InputLocation isDepartement={true} />
                             </div>
                         </div>
                     </div>

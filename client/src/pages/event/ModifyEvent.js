@@ -171,7 +171,7 @@ class ModifyEvent extends React.Component {
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
                                 <InputField type='date' id='end-date' children='Date de fin' required
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
-                                <InputLocation defaultValue={this.props.eventModel.departement} />
+                                <InputLocation defaultValue={this.props.eventModel.departement} isDepartement={true} />
                             </div>
 
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>

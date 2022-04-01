@@ -70,7 +70,7 @@ class Main extends React.Component {
             }
         })
         .then((res) => {
-            this.setState({searchedEvents: res.data, isSearchLoaded: true, advancedSearchActive:false});
+            this.setState({searchedEvents: res.data, isSearchLoaded: true});
         })
         .catch((err) => {
             console.log(err);
@@ -108,7 +108,7 @@ class Main extends React.Component {
                             </span>
                         </button>
 
-                        <div ref={this.advancedSearchbar} className={'absolute top-[3.9rem] left-0 right-0 bg-white rounded-b-3xl mx-6 px-4 pt-4 pb-2 text-base text-darkergray -z-10 drop-shadow ' +
+                        <div ref={this.advancedSearchbar} className={'absolute top-[3.9rem] left-0 right-0 bg-white rounded-b-3xl mx-6 px-4 pt-4 pb-2 text-base -z-10 drop-shadow ' +
                                 'flex flex-wrap border border-t-0 border-transparentgray place-content-center transition-all ' + (this.state.advancedSearchActive? "":"-translate-y-full -mb-10")}>
                             <div className='flex flex-wrap justify-center'>
                                 <div className='flex place-content-center mr-4 mb-2'>
@@ -120,7 +120,7 @@ class Main extends React.Component {
                                 <div className='flex place-content-center'>
                                     <span className='mr-2'>Ville : </span>
                                     <input className='h-7 rounded-full pt-1 pr-0 min-w-32' id='location'
-                                           placeholder='Nancy' type='text'/>
+                                           placeholder='' type='text'/>
                                 </div>
                             </div>
                         </div>

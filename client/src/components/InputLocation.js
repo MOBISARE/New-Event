@@ -10,7 +10,7 @@ class InputLocation extends React.Component {
     }
 
     async getVilles(input) {
-        let res = await axios.get("https://geo.api.gouv.fr/communes",
+        let res = await axios.get("https://geo.api.gouv.fr/" + (this.props.isDepartement? "departements" : "communes"),
             {
                 params: {
                     nom: input,
