@@ -63,9 +63,9 @@ module.exports.search = async (req, res) => {
 
     //critere popularite = nombre de partcipants
     //critere recent
-    if (req.query.tri == "popularite") {
+    if (req.query.tri === "populaire") {
         tri2 = "order BY count(id_compte) desc"
-    } else if (req.query.tri == "recent") {
+    } else if (req.query.tri === "récent") {
         //date debut plus proche date courante
         tri2 = "order by abs(CURRENT_DATE()-debut)"
     }
