@@ -80,7 +80,7 @@ class Main extends React.Component {
 
     render(){
         return(
-            <div className='text-center flex flex-col items-center w-[800px] max-w-[800px] mx-auto'>
+            <div className='text-center flex flex-col items-center mx-auto'>
                 <div className='bg-gray h-screen w-full absolute select-none'>
                     <img src='/images/blob1.svg'
                          className='fixed top-0 right-0 w-2/5' alt=''/>
@@ -93,7 +93,7 @@ class Main extends React.Component {
                             événement</div>
                     </h1>
 
-                    <div className='relative bg-white w-full rounded-full h-16 flex items-center p-4 mt-10 text-2xl border border-transparentgray'
+                    <div className='relative bg-white rounded-full h-16 w-[800px] flex items-center p-4 mt-10 mx-auto text-2xl border border-transparentgray'
                          ref={this.searchbar}>
                         <button className='flex' type='submit' onClick={() => this.search()}>
                             <span className="material-icons text-4xl text-transparentgray">
@@ -148,7 +148,7 @@ class Main extends React.Component {
                                     title={elem.titre}
                                     description={elem.description}
                                     imgUrl={elem.img_banniere}
-                                    membersNumber={elem.nb_participants}
+                                    membersNumber={elem.nb_participant}
                                     etat={elem.etat}
                                     location={elem.departement}
                                     startDate={elem.debut}
