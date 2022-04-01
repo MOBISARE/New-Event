@@ -42,7 +42,7 @@ module.exports.search = async (req, res) => {
             }
         })
 
-        let tab = result.data.map(e => e.departement.code)
+        let tab = result.data.map(e => "'"+e.departement.nom+"'" )
         let unique = {};
         tab.forEach(i => {
             if (!unique[i]) {
