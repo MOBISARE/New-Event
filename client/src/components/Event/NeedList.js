@@ -9,7 +9,7 @@ class NeedLine extends React.Component {
         return(
             <div className={'border-b border-b-transparentgray p-2 pl-6 flex items-center'}>
                 <p className='title flex-grow'>{ this.props.need.description }</p>
-                <UserMini user={this.props.need} proposeMe={() => this.props.proposeMe(this.props.need)} />
+                <UserMini user={this.props.need} proposeMe={(this.props.proposeMe? () => this.props.proposeMe(this.props.need):undefined)} />
                 <div className={(this.props.actionType==='show')? "invisible":"visible"}>
                     <span className="material-icons pl-2 text-darkergray hover:cursor-pointer"
                           onClick={() => this.props.modify(this.props.need) }>
@@ -143,12 +143,13 @@ class NeedList extends React.Component {
                             this.state.needs && this.state.needs.length>0 ?
                                 this.state.needs.map((value) => {
                                     return <NeedLine key={value.id} need={value} modify={(need) => this.componentModifyNeed.current.showComponent(need)}
-                                                     delete={(need) => this.proposeDeleteNeed(need)} actionType={
-                                        (this.props.appartenance===1)?
-                                            (value.email === this.state.usermail)?
-                                                'modify':'show'
-                                            : this.props.actionType
-                                    } proposeMe={ (this.props.appartenance===1)? (need) => this.proposeMe(need) : undefined } />
+                                                     delete={(this.props.appartenance===1?
+                                                         (need) => this.proposeDeleteNeed(need):
+                                                         (need) => this.deleteNeed(need))}
+                                                     actionType={(this.props.appartenance===1)?
+                                                             (value.email === this.state.usermail)? 'modify':'show'
+                                                             : this.props.actionType}
+                                                     proposeMe={ (this.props.appartenance===1)? (need) => this.proposeMe(need) : undefined } />
                                 }, "")
                                 : <p className='text-center m-2'>Aucun besoin pour l'instant.</p>
                         }

@@ -129,7 +129,7 @@ class CreateNeed extends React.Component {
         return(
             <form ref={this.componentDiv} onSubmit={(evt) => this.validation(evt)}
                   className='flex place-items-center fixed right-0 left-0 bottom-0 top-0 bg-transparentgray z-50 hidden '>
-                <div className='flex flex-col relative bg-white m-auto max-h-[300px] h-1/2 w-7/12 rounded-2xl px-8 pt-4'>
+                <div className='flex flex-col relative bg-white m-auto max-h-[300px] h-1/2 min-w-[500px] w-max rounded-2xl px-8 pt-4'>
                     <span className="material-icons hover:cursor-pointer text-3xl font-bold absolute right-0 top-0 m-1"
                           onClick={() => this.hideComponent()}>
                         close

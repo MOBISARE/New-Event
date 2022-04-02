@@ -23,7 +23,7 @@ class EventCard extends React.Component {
             >
                 <div className={'w-72 grow rounded-t-lg overflow-hidden ' + this.state.bgColor}>
                     <img className='object-cover w-full h-auto'
-                         src={this.props.imgUrl} onError={event => event.target.hidden=true} alt=" "/>
+                         src={this.props.imgUrl} alt=" "/>
                 </div>
                 <div className={'flex flex-col p-2 border-t-8 border-darkgray transition-[max-height] ease-in-out delay-75 duration-1000 ' +
                     (this.state.descriptionVisible? "max-h-[80%]":"max-h-[6.8rem]")}>
