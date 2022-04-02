@@ -408,8 +408,16 @@ module.exports.rechercheUtilisateurAInviter = async(req, res) => {
         let ville = ""
         if(req.query.ville) ville = "AND ville LIKE " + DB.connection.escape("%" + req.query.ville + "%")
 
-        let users = await DB.query(`SELECT email, nom, prenom, img_profil FROM compte WHERE Concat(prenom, " ", nom, " ", email) LIKE ? ${ville} 
+        let users = await DB.query(`SELECT id_compte, email, nom, prenom, img_profil FROM compte WHERE Concat(prenom, " ", nom, " ", email) LIKE ? ${ville} 
             AND id_compte NOT IN (SELECT id_compte FROM participant WHERE id_evenement = ?)`, ["%" + req.query.search + "%", req.params.id]);
+
+        let invitedUsers = await DB.query(`SELECT id_participant FROM modele_invitation WHERE id_evenement = ?`, [req.params.id]);
+
+        users.forEach((elem) => {
+            if(invitedUsers.find(function(element){return element.id_participant == elem.id_compte})) elem['invite'] = true;
+            else elem['invite'] = false;
+            delete elem['id_compte'];
+        })
 
         res.status(200).json(users);
 
@@ -432,11 +440,15 @@ module.exports.postInviterParticipant = async (req, res) => {
         user = user[0];
 
         //verifie que utilisateur n est pas participant de evenement
-        let checkUtil = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = (SELECT id_compte FROM compte WHERE email = ?)', [req.params.id, req.params.email]);
+        let checkUtil = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, user.id_compte]);
         if (checkUtil.length) return res.sendStatus(403); // Forbidden
 
+        //verifie que utilisateur n'est pas déjà invité
+        let checkInvit = await DB.query('SELECT id_participant FROM modele_invitation WHERE id_evenement = ? AND id_participant = ?', [req.params.id, user.id_compte]);
+        if (checkInvit.length) return res.sendStatus(400);
+
         let proprio = await DB.query('SELECT id_proprietaire, nom, prenom, titre, evenement.departement FROM evenement INNER JOIN compte ON evenement.id_proprietaire=compte.id_compte WHERE id_evenement = ?', [req.params.id]);
-        if (!proprio.length && proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
+        if (!proprio.length || proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
         proprio = proprio[0]
 
         // --- REQUEST

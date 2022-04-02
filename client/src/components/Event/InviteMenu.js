@@ -48,7 +48,7 @@ class InviteMenu extends React.Component {
         let invite = () => {
             axios.post('/api/evenement/' + this.props.eventId + '/inviter/' + elem.email)
             .then((res) => {
-
+                this.handleSearch();
             })
             .then((err) => {
                 
@@ -62,7 +62,12 @@ class InviteMenu extends React.Component {
                     <div className='text-sm whitespace-nowrap'>{elem.prenom + " " + elem.nom}</div>
                 </Link>
                 
-                <div className='bg-blue text-white text-sm px-10 flex items-center justify-center hover:shadow-inner hover:bg-sky-600 cursor-pointer text-center' onClick={invite}>Inviter</div>
+                {
+                    elem.invite
+                    ? <div className='flex items-center justify-center text-center px-10 text-sm'>invité</div>
+                    : <div className='bg-blue text-white text-sm px-10 flex items-center justify-center hover:shadow-inner hover:bg-sky-600 cursor-pointer text-center' onClick={invite}>Inviter</div>
+                }
+                
             </div>
         );
     }
