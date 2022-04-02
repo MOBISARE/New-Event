@@ -354,13 +354,17 @@ module.exports.seRetirer = async (req, res) => {
 
 module.exports.demanderRejoindreEve = async (req, res) => {
     try {
-        var proprio = await this.getProprioEve(req.params.id_evenement)
-        notif.CreerNotifRejoindre(proprio, req.params.id_evenement, req.body.message, res)
+        let participe = await DB.query('SELECT id_compte FROM participant WHERE id_compte = ? AND id_evenement = ?', [res.locals.user.id_compte, req.params.id])
+        if(participe.length) return res.sendStatus(403); // Forbidden
+
+        let n = notif.CreerNotifRejoindre(req.params.id, res.locals.user);
+        if(n === -1) return res.sendStatus(500);
+
+        res.sendStatus(200);
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
-    res.sendStatus(200)
 }
 
 //le proprietaire d'un evenement ajoute un participant

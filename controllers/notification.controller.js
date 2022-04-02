@@ -135,16 +135,22 @@ module.exports.CreerNotifInvitation = async (id_compte, id_event, message, res) 
     }
 }
 
-module.exports.CreerNotifRejoindre = async (id_compte, id_event, message, res) => {
+module.exports.CreerNotifRejoindre = async (id_event, user) => { // IMPOSSIBLE AVEC LA BASE DE DONNEES ACTUELLE
     try {
-        await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES VALUES (?,?);", [id_compte], [id_event])
-        id_mod = await DB.query("SELECT `id_modele` from `modele_invitation` where `id_evenement` = ?", [id_event])
-        await DB.query("INSERT INTO `notif_ajouter`(`type`, `id_modele`) VALUES (2,?);", [id_mod])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message], new Date(), [id_mod], [req.params.id_compte])
-        return res.status(200)
+        let event = await DB.query('SELECT id_proprieraire, titre FROM evenement WHERE id_evenement = ?', [id_event])
+        event = event[0];
+
+        let message = `L'utilisateur ${user.prenom} ${user.nom} demande à rejoindre l'événement ${event.titre}`
+
+        return -1; // modele_invitation ne peut pas représenter les demandes pour rejoindre
+        let insert = await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES VALUES (?,?);", [user.id_compte, id_event])
+
+        let insert2 = await DB.query("INSERT INTO `notif_ajouter`(`type`, `id_modele`) VALUES (2,?);", [insert.insertId])
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message], new Date(), [insert2.insertId], [event.id_proprietaire])
+        return 0;
     } catch (error) {
         console.log(error)
-        res.sendStatus(500) //erreur lors de l execution de la requete
+        return -1; //erreur lors de l execution de la requete
     }
 }
 
@@ -199,8 +205,8 @@ module.exports.CreerNotifModifEvent = async (oldEvent, newData, user) => {
 
         let insertEvent = await DB.query("INSERT INTO `modele_evenement`(`id_vrai_evenement`, `titre`, `description`, `departement`, `debut`, `fin`, `img_banniere`) VALUES (?,?,?,?,?,?,?);", [oldEvent.id_evenement, newData.titre, newData.description, newData.departement, newData.debut, newData.fin, newData.img_banniere])
 
-        await DB.query("INSERT INTO `notif_modifier`(`type`, `id_modele`) VALUES (1,?);", [insertEvent.insertId])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?);", [message, new Date(), insertEvent.insertId, oldEvent.id_proprietaire])
+        let insertType = await DB.query("INSERT INTO `notif_modifier`(`type`, `id_modele`) VALUES (1,?);", [insertEvent.insertId])
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,3,0,?,?,?);", [message, new Date(), insertType.insertId, oldEvent.id_proprietaire])
 
         return 0;
     } catch (error) {
