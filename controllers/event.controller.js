@@ -385,7 +385,7 @@ module.exports.demanderRejoindreEve = async (req, res) => {
 //le proprietaire d'un evenement ajoute un participant
 module.exports.ajouterParticipant = async (req, res) => {
     try {
-        var result = await DB.query('INSERT INTO participant (id_compte,id_evenement) VALUES (?,?)', [req.body.id_compte, req.params.id_evenement])
+        var result = await DB.query('INSERT INTO participant (id_compte,id_evenement) VALUES (?,?)', [req.body.id_compte, req.params.id])
         notif.CreerNotifMess(req.body.id_compte, req.body.message, res)
 
         if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
