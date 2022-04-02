@@ -20,7 +20,7 @@ class Navbar extends React.Component {
 
         return(
             <nav className='select-none fixed container h-16 p-2 px-5 max-w-full flex justify-between bg-white shadow-md z-50'>
-                <Link to='/' className='flex items-end gap-1'><img className='object-cover h-full py-1' src='/images/icon.png' alt='Logo newEvent'/><span className='text-4xl font-logo font-black leading-7'>newEvent</span></Link>
+                <Link to='/' id='logo-link' className='flex items-end gap-1'><img className='object-cover h-full py-1' src='/images/icon.png' alt='Logo newEvent'/><span className='text-4xl font-logo font-black leading-7'>newEvent</span></Link>
                 <div className='flex gap-16'>
                     <div className='flex gap-12 items-center'>
                         <NavLink id='link-mainpage' to='/' 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import {Routes, Route, Link} from 'react-router-dom'
 
 import axios from 'axios';
 import { UidContext } from "./AppContext";
@@ -18,6 +18,7 @@ import MyEvents from './pages/MyEvents'
 import Navbar from './components/Header/Navbar';
 import Error from './pages/Error'
 import EventContainer from './pages/event/EventContainer'
+import LinkButton from "./components/LinkButton";
 
 class App extends React.Component {
 
@@ -53,25 +54,35 @@ class App extends React.Component {
                         <Route path='/connexion' element={<Login />} />
                         <Route path='/inscription' element={<Register />} />
                         <Route path='/reinitialisation-mot-de-passe' element={<LostPassword />} />
+                        <Route path='*' element={<div>
+                            <div className='container fixed h-16 p-2 px-5 max-w-full flex justify-between bg-white shadow-md z-50'>
+                                <Link to='/' id='logo-link' className='flex items-end gap-1'><img className='object-cover h-full py-1' src='/images/icon.png' alt='Logo newEvent'/><span className='text-4xl font-logo font-black leading-7'>newEvent</span></Link>
+
+                                <div className='flex gap-5 items-center'>
+                                    <LinkButton bg_class='bg-blue' text_class='text-gray' to='/inscription'>Inscription</LinkButton>
+                                    <LinkButton bg_class='bg-darkgray' text_class='text-gray' to='/connexion'>Connexion</LinkButton>
+                                </div>
+
+                            </div><div className='py-24'><Error/></div></div>}/>
                     </Routes>
                 </UidContext.Provider>
             )
         } else {
             return (
                 <UidContext.Provider value={this.state.uid}>
-                <div className='bg-gray w-full min-h-screen h-full'>
-                    <Navbar/>
-                    <div className='py-24 px-16 max-w-[1300px] mx-auto'>
-                        <Routes>
-                            <Route path='/' element={<Main/>}/>
-                            <Route path='a-propos' element={<About/>}/>
-                            <Route path='mes-evenements' element={<MyEvents/>}/>
-                            <Route path='evenement/:id' element={<EventContainer/>}/>
-                            <Route path='mon-profil' element={<UserProfile/>} />
-                            <Route path='modifier-profil' element={<ModifyProfile/>}/>
-                            <Route path='*' element={<Error/>}/>
-                        </Routes>
-                    </div>
+                    <div className='bg-gray w-full min-h-screen h-full'>
+                        <Navbar/>
+                        <div className='py-24 px-16 max-w-[1300px] mx-auto'>
+                            <Routes>
+                                <Route path='/' element={<Main/>}/>
+                                <Route path='a-propos' element={<About/>}/>
+                                <Route path='mes-evenements' element={<MyEvents/>}/>
+                                <Route path='evenement/:id' element={<EventContainer/>}/>
+                                <Route path='mon-profil' element={<UserProfile/>} />
+                                <Route path='modifier-profil' element={<ModifyProfile/>}/>
+                                <Route path='*' element={<Error/>}/>
+                            </Routes>
+                        </div>
                     </div>
                 </UidContext.Provider>
             );
