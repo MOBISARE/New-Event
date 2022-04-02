@@ -39,7 +39,4 @@ app.use('/api/evenement', eventRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/notification', notifRoutes);
 
-// V V V V V V V Doit être déplacé vers les routeurs (voir './routes/') V V V V V V V V
-
-//routage
 app.listen(port, () => console.log(`Server started on port ${port}`));

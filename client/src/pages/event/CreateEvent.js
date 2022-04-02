@@ -22,12 +22,16 @@ today = yyyy+'-'+mm+'-'+dd
 class CreateEvent extends React.Component {
     constructor(props) {
         super(props);
-        this.hiddenInput = React.createRef()
-        this.previewImage = React.createRef()
+        this.hiddenInput = React.createRef();
+        this.previewImage = React.createRef();
+        this.removeImg = false;
     }
 
     componentDidMount = () => {
-        if(this.props.eventModel.img_banniere) this.previewImage.current.style.backgroundImage = "url('"+this.props.eventModel.img_banniere+"')"
+        if(this.props.eventModel.img_banniere) {
+            this.previewImage.current.style.backgroundImage = "url('"+this.props.eventModel.img_banniere+"')"
+            document.getElementById('delete-imginput').hidden = false;
+        }
     }
 
     processImg = () => {
@@ -40,6 +44,7 @@ class CreateEvent extends React.Component {
 
         if(this.hiddenInput.current.files[0]){
             reader.readAsDataURL(this.hiddenInput.current.files[0]);
+            this.removeImg = false;
         }
     }
 
@@ -54,6 +59,7 @@ class CreateEvent extends React.Component {
             data.append('departement', document.getElementById('location').value);
             data.append('debut', document.getElementById('start-date').value);
             data.append('fin', document.getElementById('end-date').value);
+            if(this.removeImg) data.append('supprImg', true);
             data.append('img_banniere', document.getElementById('image').files[0]);
 
             await axios.put('/api/evenement/modifier/' + this.props.eventModel.id, data, {
@@ -79,6 +85,7 @@ class CreateEvent extends React.Component {
         data.append('departement', document.getElementById('location').value);
         data.append('debut', document.getElementById('start-date').value);
         data.append('fin', document.getElementById('end-date').value);
+        if(this.removeImg) data.append('supprImg', true);
         data.append('img_banniere', document.getElementById('image').files[0]);
 
         axios.put('/api/evenement/modifier/' + this.props.eventModel.id, data, {
@@ -86,13 +93,13 @@ class CreateEvent extends React.Component {
                 'content-type': 'multipart/form-data'
             }
         })
-            .then((res) => {
-                this.props.container.setEvent(res.data);
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        .then((res) => {
+            this.props.container.setEvent(res.data);
+            console.log(res);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     deleteEvent = () => {
@@ -125,6 +132,7 @@ class CreateEvent extends React.Component {
                                           this.previewImage.current.style.backgroundImage = ''
                                           this.hiddenInput.current.value = ''
                                           evt.target.hidden = true
+                                          this.removeImg = true;
                                       }} id='delete-imginput' hidden>
                                 cancel
                             </span>
@@ -149,12 +157,13 @@ class CreateEvent extends React.Component {
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
                                 <InputField type='date' id='end-date' children='Date de fin' required min={today}
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
-                                <InputLocation />
+                                <InputLocation isDepartement={true} />
                             </div>
                         </div>
                     </div>
                 </form>
                 <NeedList eventId={this.props.eventModel.id}
+                          appartenance={this.props.eventModel.etatAppartenance}
                           actionType='create' />
             </div>
         );

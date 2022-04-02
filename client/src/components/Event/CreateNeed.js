@@ -86,38 +86,37 @@ class CreateNeed extends React.Component {
         this.participants = React.createRef()
         this.inputParticipant = React.createRef()
         this.state = {
-            need: {
-                description: "",
-                email: ""
-            }
+            needId: undefined
         }
     }
 
     showComponent(need) {
         if (need) {
-            this.setState({
-                need: need
-            })
+            this.setState({ needId: need.id })
+            document.getElementById("associated-to"+this.props.actionType).value = need.email || ""
+            document.getElementById("need-title"+this.props.actionType).value = need.description
+        } else {
+            document.getElementById("associated-to"+this.props.actionType).value = ""
+            document.getElementById("need-title"+this.props.actionType).value = ""
         }
         this.componentDiv.current.classList.remove("hidden")
     }
 
     hideComponent() {
-        this.setState({
-            need: {
-                description: "",
-                email: ""
-            }
-        })
         this.componentDiv.current.classList.add("hidden")
+        document.getElementById("associated-to"+this.props.actionType).value = ""
+        document.getElementById("need-title"+this.props.actionType).value = ""
     }
 
     validation(evt) {
         evt.preventDefault()
-        let newNeed = this.state.need || {}
-        newNeed.email = document.getElementById("associated-to"+this.props.actionType).value
-        newNeed.description = document.getElementById("need-title"+this.props.actionType).value
-        this.props.addNeed(newNeed)
+        let newNeed = {
+            id: this.state.needId,
+            description : document.getElementById("need-title"+this.props.actionType).value,
+            email : document.getElementById("associated-to"+this.props.actionType).value,
+            eventId : this.props.eventId
+        }
+        this.props.callback(newNeed)
         this.hideComponent()
     }
 
@@ -130,7 +129,7 @@ class CreateNeed extends React.Component {
         return(
             <form ref={this.componentDiv} onSubmit={(evt) => this.validation(evt)}
                   className='flex place-items-center fixed right-0 left-0 bottom-0 top-0 bg-transparentgray z-50 hidden '>
-                <div className='flex flex-col relative bg-white m-auto max-h-[300px] h-1/2 w-1/2 rounded-2xl px-6 pt-4'>
+                <div className='flex flex-col relative bg-white m-auto max-h-[300px] h-1/2 w-7/12 rounded-2xl px-8 pt-4'>
                     <span className="material-icons hover:cursor-pointer text-3xl font-bold absolute right-0 top-0 m-1"
                           onClick={() => this.hideComponent()}>
                         close
@@ -140,15 +139,15 @@ class CreateNeed extends React.Component {
                     <div className='flex-grow flex flex-col justify-between my-6 mx-2'>
                         <div>
                             <label htmlFor={'need-title'+this.props.actionType} className='block leading-3 ml-4 text-lg relative z-20'>Intitulé</label>
-                            <input type='text' id={'need-title' + this.props.actionType} className='rounded-full border-transparentgray z-10 w-full bg-white'
-                                   defaultValue={this.state.need.description} required/>
+                            <input type='text' id={'need-title' + this.props.actionType} required
+                                   className='rounded-full border-transparentgray z-10 w-full bg-white'/>
                         </div>
                         <div className='w-2/5'>
                             <label htmlFor={'associated-to'+this.props.actionType} className='block leading-3 ml-4 text-lg relative z-20'>Associé à</label>
-                            <input type='text' id={'associated-to'+this.props.actionType} className='rounded-full border-transparentgray z-10 w-full bg-white' ref={this.inputParticipant}
-                                   defaultValue={this.state.need.email} onFocus={() => this.participants.current.toggleActive()} required />
+                            <input type='text' id={'associated-to'+this.props.actionType} className='rounded-full border-transparentgray z-10 w-full bg-white'
+                                   onFocus={() => this.participants.current.toggleActive()} ref={this.inputParticipant} />
                         </div>
-                        <FormButton value='Créer' />
+                        <FormButton value='Valider' />
                     </div>
 
                     <ParticipantsList ref={this.participants} eventId={this.props.eventId}

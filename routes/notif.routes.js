@@ -6,6 +6,6 @@ const notif = require('../controllers/notification.controller');
 router.get('/getAll', notif.getNotification);
 router.get('/:id/:type', notif.getNotificationSpe);
 
-router.post('/:id/supprimer/:type/:id_type/:type_notif', notif.supprimerNotif);
+router.post('/:id/supprimer', notif.supprimerNotif);
 
 module.exports = router;

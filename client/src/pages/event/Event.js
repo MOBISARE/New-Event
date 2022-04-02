@@ -19,12 +19,6 @@ class Event extends React.Component {
         this.inviteMenu = React.createRef();
     }
 
-    inviteUsers = () => {
-
-    }
-
-
-
     OwnerEventMenu = () => {
         let buttons = [
             {title: "Inviter des participants", onClick: () => {this.inviteMenu.current.showComponent()}},
@@ -133,7 +127,7 @@ class Event extends React.Component {
                             <div>
                                 Organisateur
                                 <div className='ml-10'>
-                                    <UserMini firstname={this.props.eventModel.proprietaire.prenom} lastname={this.props.eventModel.proprietaire.nom} />
+                                    <UserMini user={this.props.eventModel.proprietaire} />
                                 </div>
                             </div>
                             <div className='my-2'>
@@ -154,8 +148,9 @@ class Event extends React.Component {
 
                 <NeedList needs={this.props.eventModel.besoins}
                           eventId={this.props.eventModel.id}
-                          actionType={(this.props.eventModel.etatAppartenance === 0)? 'show':'modify'} />
-                <InviteMenu ref={this.inviteMenu}/>
+                          actionType={(this.props.eventModel.etatAppartenance === 0)? 'show':'modify'}
+                          appartenance={this.props.eventModel.etatAppartenance}/>
+                <InviteMenu ref={this.inviteMenu} eventId={this.props.eventModel.id}/>
             </div>
         );
     }

@@ -28,10 +28,14 @@ class ModifyEvent extends React.Component {
         this.previewImage = React.createRef()
         this.participantBtn = React.createRef();
         this.participantViewer = React.createRef();
+        this.removeImg = false;
     }
 
     componentDidMount = () => {
-        if(this.props.eventModel.img_banniere) this.previewImage.current.style.backgroundImage = "url('"+this.props.eventModel.img_banniere+"')"
+        if(this.props.eventModel.img_banniere) {
+            this.previewImage.current.style.backgroundImage = "url('"+this.props.eventModel.img_banniere+"')"
+            document.getElementById('delete-imginput').hidden = false;
+        }
     }
 
     processImg = () => {
@@ -44,6 +48,7 @@ class ModifyEvent extends React.Component {
 
         if(this.hiddenInput.current.files[0]){
             reader.readAsDataURL(this.hiddenInput.current.files[0]);
+            this.removeImg = false;
         }
     }
 
@@ -56,6 +61,7 @@ class ModifyEvent extends React.Component {
         data.append('departement', document.getElementById('location').value);
         data.append('debut', document.getElementById('start-date').value);
         data.append('fin', document.getElementById('end-date').value);
+        if(this.removeImg) data.append('supprImg', true);
         data.append('img_banniere', document.getElementById('image').files[0]);
 
         axios.put('/api/evenement/modifier/' + this.props.eventModel.id, data, {
@@ -63,28 +69,70 @@ class ModifyEvent extends React.Component {
                 'content-type': 'multipart/form-data'
             }
         })
-            .then((res) => {
-                this.props.container.setState({event: res.data, isModifing: false})
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        .then((res) => {
+            this.props.container.setState({event: res.data, isModifing: false})
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    proposeToSaveEvent = async(e) => {
+        e.preventDefault();
+        
+        let data = new FormData();
+
+        data.append('titre', document.getElementById('title').value);
+        data.append('description', document.getElementById('description').value);
+        data.append('departement', document.getElementById('location').value);
+        data.append('debut', document.getElementById('start-date').value);
+        data.append('fin', document.getElementById('end-date').value);
+        if(this.removeImg) data.append('supprImg', true);
+        data.append('img_banniere', document.getElementById('image').files[0]);
+
+        axios.put('/api/evenement/proposermodifier/' + this.props.eventModel.id, data, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        })
+        .then((res) => {
+            //this.props.container.setState({event: res.data, isModifing: false})
+            console.log(res);
+            this.props.container.setState({isModifing: false})
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     archiveEvent = () => {
         axios.post('/api/evenement/archiver/' + this.props.eventModel.id)
-            .then((res) => {
-                this.props.container.props.router.navigate('/');
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        .then((res) => {
+            this.props.container.props.router.navigate('/');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    FormButtons = () => {
+        return (
+            <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
+                <FormButton value={this.props.eventModel.etatAppartenance === 2 ? 'Sauvegarder' : 'Proposer la modification'} name='submit-action' className='bg-green-valid' />
+                <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.setState({isModifing: false})}>Annuler</Button>
+                {
+                this.props.eventModel.etatAppartenance === 2
+                ?<Button className='bg-red-600' onClick={this.archiveEvent}>Archiver</Button>
+                :<></>
+                }
+            </div>
+        );
     }
 
     render(){
         return(
             <div className='max-w-[1000px] mx-auto'>
-                <form onSubmit={this.saveEvent} >
+                <form onSubmit={this.props.eventModel.etatAppartenance === 2 ? this.saveEvent : this.proposeToSaveEvent} >
                     <div className='flex'>
                         <div className='flex flex-col w-3/5 bg-white rounded-3xl shadow mr-4'>
                             <div className='relative flex-grow bg-darkgray h-80 rounded-t-3xl overflow-hidden'>
@@ -101,6 +149,7 @@ class ModifyEvent extends React.Component {
                                           this.previewImage.current.style.backgroundImage = ''
                                           this.hiddenInput.current.value = ''
                                           evt.target.hidden = true
+                                          this.removeImg = true;
                                       }} id='delete-imginput' hidden>
                                 cancel
                             </span>
@@ -114,24 +163,22 @@ class ModifyEvent extends React.Component {
                             </div>
                         </div>
                         <div className='w-2/5'>
-                            <div className='flex flex-col gap-3 h-fit bg-white rounded-3xl shadow ml-4 p-6'>
-                                <FormButton value='Sauvegarder' name='submit-action' className='bg-green-valid' />
-                                <Button name='submit-action' className='bg-neutral-500' onClick={() => this.props.container.setState({isModifing: false})}>Annuler</Button>
-                                <Button className='bg-red-600' onClick={this.archiveEvent}>Archiver</Button>
-                            </div>
+
+                            {this.FormButtons()}
+
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                                 <InputField type='date' id='start-date' children='Date de début' required
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
                                 <InputField type='date' id='end-date' children='Date de fin' required
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
-                                <InputLocation defaultValue={this.props.eventModel.departement} />
+                                <InputLocation defaultValue={this.props.eventModel.departement} isDepartement={true} />
                             </div>
 
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
                                 <div>
                                     Organisateur
                                     <div className='ml-10'>
-                                        <UserMini firstname={this.props.eventModel.proprietaire.prenom} lastname={this.props.eventModel.proprietaire.nom} />
+                                        <UserMini user={this.props.eventModel.proprietaire} />
                                     </div>
                                 </div>
                                 <div className='my-2'>
@@ -157,7 +204,7 @@ class ModifyEvent extends React.Component {
 
                 <NeedList needs={this.props.eventModel.besoins}
                           eventId={this.props.eventModel.id}
-                          actionType='modify' />
+                          actionType='modify' appartenance={this.props.eventModel.etatAppartenance} />
             </div>
         );
     }

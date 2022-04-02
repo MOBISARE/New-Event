@@ -11,8 +11,10 @@ class ParticipantViewer extends React.Component {
 
     constructor(props){
         super(props);
-        this.state = { active : false, participants : [] };
+        this.state = { active : false, participants : [], search : "" };
         this.DOM_element = createRef();
+
+        this.searchInput = createRef();
     }
 
     toggleActive = () => {
@@ -47,7 +49,7 @@ class ParticipantViewer extends React.Component {
         return (
             <div key={i} className='w-full px-3 flex hover:bg-selected-gray items-stretch justify-between'>
                 <Link to={'/profil/' + elem.email} className='flex py-2 gap-2 items-center grow'>
-                    <img className='rounded-full h-6 w-6 bg-green flex-none' src={this.props.imgUrl} alt='' />
+                    <img className='rounded-full h-6 w-6 bg-green flex-none' src={elem.img_profil} alt='' />
                     <div className='text-sm whitespace-nowrap'>{elem.prenom + " " + elem.nom}</div>
                     <div className='text-sm text-darkergray font-light text-right flex-1'>{elem.vous ? 'Vous' : elem.proprietaire ? 'Propriétaire' : ''}</div>
                 </Link>
@@ -70,17 +72,17 @@ class ParticipantViewer extends React.Component {
                     <span className="material-icons text-transparentgray">
                         search
                     </span>
-                    <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Rechercher des membres' />
+                    <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Rechercher des membres' onChange={() => this.setState({search : this.searchInput.current.value.toLowerCase()})} ref={this.searchInput} />
                 </div>
-
-                
 
                 <div className='overflow-y-scroll'>
                     <div className='flex flex-col gap-1'>
                         {
                             this.state.participants.length > 0
                             ? this.state.participants.map((elem, index) => {
-                                return this.showUser(elem, index)
+                                let val = elem.prenom + " " + elem.nom
+                                if(val.toLowerCase().indexOf(this.state.search) > -1)
+                                    return this.showUser(elem, index)
                             })
                             : <></>
                         }
