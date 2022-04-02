@@ -6,6 +6,7 @@ import Button from "../../components/Button"
 import ParticipantViewer from '../../components/Event/ParticipantViewer'
 import EventMenu from '../../components/Event/EventMenu'
 import InviteMenu from '../../components/Event/InviteMenu'
+import axios from 'axios'
 
 class Event extends React.Component {
     constructor(props) {
@@ -36,10 +37,21 @@ class Event extends React.Component {
     }
 
     ParticipantEventMenu = () => {
+
         let buttons = [
             {title: "Modifier événement", onClick: () => {this.props.container.setState({isModifing: true})}},
-            {title: "Quitter événement", onClick: () => {console.log("TODO: QUIT EVENT")}, color:'red-500'}
+            {title: "Quitter événement", onClick: () => quitEvent(), color:'red-500'}
         ]
+
+        let quitEvent = () => {
+            axios.post('/api/evenement/' + this.props.eventModel.id + '/seretirer')
+            .then((res) => {
+                this.props.container.props.router.navigate('/');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
 
         return (
             <div className='relative'>

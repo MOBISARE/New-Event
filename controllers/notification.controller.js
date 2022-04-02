@@ -1,6 +1,5 @@
 const DB = require("./db").DB
 const res = require("express/lib/response");
-const { NULL } = require("mysql/lib/protocol/constants/types");
 const event = require("./event.controller")
 
 //Consulte toute les notifs liées au compte dont l'id est passé en paramètre
@@ -111,14 +110,14 @@ async function SupprimerNotifModif(id, type) {
 }
 
 
-module.exports.CreerNotifMess = async (id_compte, message, res) => {
+module.exports.CreerNotifMess = async (id_compte, message) => {
     try {
-        await DB.query("INSERT INTO `notif_message`(`message`) VALUES (?);", [message])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,0,0,?,?,?)", [message], new Date(), NULL, [id_compte])
-        return res.status(200)
+        //await DB.query("INSERT INTO `notif_message`(`message`) VALUES (?);", [message]) la table notif_message est inutile !
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,0,0,?,0,?)", [message, new Date(), id_compte])
+        return 0;
     } catch (error) {
         console.log(error)
-        res.sendStatus(500) //erreur lors de l execution de la requete
+        return -1; //erreur lors de l execution de la requete
     }
 }
 

@@ -22,7 +22,7 @@ router.post('/archiver/:id', requireAuth, eventController.archiveEvent);
 
 router.put('/rejoindreEve/:id', requireAuth, eventController.ajouterParticipant)
 router.post('/demanderRejoindreEve/:id', requireAuth, eventController.demanderRejoindreEve)
-router.post('/seretirer/:id', requireAuth, eventController.seRetirer)
+router.post('/:id/seretirer', requireAuth, eventController.seRetirer)
 
 router.get('/:id/utilisateurAInviter', requireAuth, eventController.rechercheUtilisateurAInviter)
 router.post('/:id/inviter/:email', requireAuth, eventController.postInviterParticipant)

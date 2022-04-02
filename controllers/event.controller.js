@@ -340,21 +340,14 @@ module.exports.supprEvenement = async (req, res) => {
 //le participant veut se retirer d'un évenment
 
 module.exports.seRetirer = async (req, res) => {
-
     try {
-        result = await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte])
-        proprio = await this.getProprioEve(req.params.id_evenement)
-        notif.CreerNotifMess(proprio, req.body.message, res)
+        await DB.query('DELETE FROM participant WHERE id_evenement=? AND id_compte=?', [req.params.id, res.locals.user.id_compte]);
 
-
-        if (result == undefined || result.affectedRows == 0) res.sendStatus(404)
-
+        res.sendStatus(200);
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
-
-    res.sendStatus(200)
 }
 
 //le participant demande à rejoindre un evenement
