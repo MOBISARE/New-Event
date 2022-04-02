@@ -16,8 +16,6 @@ router.post('/inscription', upload.single('img_profil'), authController.register
 router.post('/deconnexion', authController.logout);
 
 // user
-router.get('/recherche/:search', requireAuth, userController.rechercheUtilisateur);
-
 router.get('/mes-evenements', requireAuth, eventController.getMesEvenements);
 router.get('/mes-participations', requireAuth, eventController.getMesParticipations);
 

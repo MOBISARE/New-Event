@@ -399,74 +399,26 @@ module.exports.getProprioBesoin = async (id) => {
     return proprio[0].id_proprietaire
 }
 
-module.exports.getInviterParticipantMethode1 = async (req, res) => {
+module.exports.rechercheUtilisateurAInviter = async(req, res) => {
     try {
-        // --- CHECK verifie proprio fait parti evenement + est bien proprietaire evnement
-        let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
-
+        let checkPrivileges = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
         if (!checkPrivileges.length) return res.sendStatus(404); // Not found
+        if (checkPrivileges[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(403); // Forbidden
 
-        let proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
-
-        if (!proprio.length && proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
-
-        // --- REQUEST
-        // tous les comptes qui ne sont pas participants de l evenement
-        let liste = await DB.query('SELECT id_compte, email, nom, prenom, departement, ville FROM compte WHERE id_compte NOT IN (SELECT id_compte FROM participant WHERE id_evenement = ?)', [req.params.id]);
-
-        res.status(200).json(liste);
-
-    } catch (err) {
-        console.log(err);
-        res.sendStatus(500); // Internal Server Error
-    }
-}
-
-module.exports.getInviterParticipantMethode2 = async (req, res) => {
-    try {
-        // --- CHECK verifie proprio fait parti evenement + est bien proprietaire evnement
-        let checkPrivileges = await DB.query('SELECT id_compte FROM participant WHERE id_evenement = ? AND id_compte = ?', [req.params.id, res.locals.user.id_compte]);
-
-        if (!checkPrivileges.length) return res.sendStatus(404); // Not found
-
-        let proprio = await DB.query('SELECT id_proprietaire FROM evenement WHERE id_evenement = ?', [req.params.id]);
-
-        if (!proprio.length && proprio[0].id_proprietaire != res.locals.user.id_compte) return res.sendStatus(404); // Not found
-
-        // --- REQUEST
-        let nom = ""
-        let prenom = ""
-        let email = ""
-        let dep = ""
         let ville = ""
+        if(req.query.ville) ville = "AND ville LIKE " + DB.connection.escape("%" + req.query.ville + "%")
 
-        if (req.query.nom)
-            nom = "and nom like " + DB.connection.escape("%" + req.query.nom + "%")
+        let users = await DB.query(`SELECT email, nom, prenom, img_profil FROM compte WHERE Concat(prenom, " ", nom, " ", email) LIKE ? ${ville} 
+            AND id_compte NOT IN (SELECT id_compte FROM participant WHERE id_evenement = ?)`, ["%" + req.query.search + "%", req.params.id]);
 
-        if (req.query.prenom)
-            prenom = "and prenom like " + DB.connection.escape("%" + req.query.prenom + "%")
-
-        if (req.query.email)
-            email = "and email like " + DB.connection.escape("%" + req.query.email + "%")
-
-        if (req.query.departement)
-            dep = "and departement = " + DB.connection.escape(req.query.departement)
-
-        if (req.query.ville)
-            ville = "and ville like " + DB.connection.escape("%" + req.query.ville + "%")
-
-        let query = `SELECT id_compte, email, nom, prenom, departement, ville FROM compte 
-        WHERE id_compte NOT IN (SELECT id_compte FROM participant WHERE id_evenement = ?) 
-        ${nom} ${prenom} ${email} ${dep} ${ville}`
-        let liste = await DB.query(query, [req.params.id]);
-
-        res.status(200).json(liste);
+        res.status(200).json(users);
 
     } catch (err) {
-        console.log(err);
-        res.sendStatus(500); // Internal Server Error
+        console.log(err)
+        res.sendStatus(500) // Internal Error
     }
 }
+
 
 module.exports.postInviterParticipant = async (req, res) => {
     try {

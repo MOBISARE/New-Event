@@ -7,6 +7,7 @@ class InviteMenu extends React.Component {
         super(props);
 
         this.searchField = React.createRef();
+        this.citySearchField = React.createRef();
         this.componentDiv = React.createRef();
 
         this.state = {users: [], isOpen: false};
@@ -30,7 +31,10 @@ class InviteMenu extends React.Component {
             return;
         }
 
-        axios.get('/api/compte/recherche/' + this.searchField.current.value, {signal: this.abortController.signal})
+        axios.get('/api/evenement/' + this.props.eventId + '/utilisateurAInviter', {
+            signal: this.abortController.signal, 
+            params: { "search" : this.searchField.current.value, "ville" : this.state.isOpen?this.citySearchField.current.value:"" }
+        })
         .then((res) => {
             this.setState({users: res.data});
         })
@@ -77,7 +81,7 @@ class InviteMenu extends React.Component {
                                 search
                             </span>
                             <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Rechercher des utilisateurs' onChange={this.handleSearch} ref={this.searchField}/>
-                            <span className="material-icons text-transparentgray cursor-pointer" onClick={() => this.setState({isOpen: !this.state.isOpen})}>
+                            <span className="material-icons text-transparentgray cursor-pointer" onClick={() => this.setState({isOpen: !this.state.isOpen}, this.handleSearch)}>
                                 manage_search
                             </span>
                         </div>
@@ -86,10 +90,10 @@ class InviteMenu extends React.Component {
                             <span className="material-icons text-transparentgray">
                                 location_on
                             </span>
-                            <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Lieu' />
+                            <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Lieu' onChange={this.handleSearch} ref={this.citySearchField} />
                         </div>
 
-                        <div className={'overflow-hidden overflow-y-scroll transition-transform ' /*+ (this.state.isOpen ? 'transition-[-mt-10]' : '')*/}>
+                        <div className={'overflow-hidden overflow-y-scroll transition-transform'}>
                             {
                                 this.state.users.map((elem, index) => {
                                     return this.showUser(elem, index);

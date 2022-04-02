@@ -16,18 +16,6 @@ module.exports.getMonCompte = async(req, res) => {
     }
 }
 
-module.exports.rechercheUtilisateur = async(req, res) => {
-    try {
-        let users = await DB.query('SELECT email, nom, prenom, img_profil FROM compte WHERE Concat(prenom, " ", nom, " ", email) LIKE ?', ["%" + req.params.search + "%"]);
-
-        res.status(200).json(users);
-
-    } catch (err) {
-        console.log(err)
-        res.sendStatus(500) // Internal Error
-    }
-}
-
 //modifier le compte
 module.exports.putCompteModification = async(req, res) => {
     let result = 0
