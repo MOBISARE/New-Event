@@ -1,5 +1,4 @@
 const DB = require("./db").DB
-const res = require("express/lib/response");
 const event = require("./event.controller")
 
 //Consulte toute les notifs liées au compte dont l'id est passé en paramètre
@@ -123,11 +122,9 @@ module.exports.CreerNotifMess = async (id_compte, message) => {
 
 module.exports.CreerNotifInvitation = async (id_compte, id_event, message, res) => {
     try {
-        await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES (?,?);", [id_compte, id_event])
-        id_mod = await DB.query("SELECT `id_m_invitation` from `modele_invitation` where `id_evenement` = ?", [id_event])
-        id_mod = id_mod[0].id_m_invitation
-        await DB.query("INSERT INTO `notif_ajouter`(`type`, `id_modele`) VALUES (1,?);", [id_mod])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message, new Date(), id_mod, id_compte])
+        let insert = await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES (?,?);", [id_compte, id_event])
+        let insertType = await DB.query("INSERT INTO `notif_ajouter`(`type`, `id_modele`) VALUES (1,?);", [insert.insertId])
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message, new Date(), insertType.insertId, id_compte])
         res.sendStatus(200)
     } catch (error) {
         console.log(error)
@@ -135,14 +132,13 @@ module.exports.CreerNotifInvitation = async (id_compte, id_event, message, res) 
     }
 }
 
-module.exports.CreerNotifRejoindre = async (id_event, user) => { // IMPOSSIBLE AVEC LA BASE DE DONNEES ACTUELLE
+module.exports.CreerNotifRejoindre = async (id_event, user) => {
     try {
-        let event = await DB.query('SELECT id_proprieraire, titre FROM evenement WHERE id_evenement = ?', [id_event])
+        let event = await DB.query('SELECT id_proprietaire, titre FROM evenement WHERE id_evenement = ?', [id_event])
         event = event[0];
 
         let message = `L'utilisateur ${user.prenom} ${user.nom} demande à rejoindre l'événement ${event.titre}`
 
-        return -1; // modele_invitation ne peut pas représenter les demandes pour rejoindre
         let insert = await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES VALUES (?,?);", [user.id_compte, id_event])
 
         let insert2 = await DB.query("INSERT INTO `notif_ajouter`(`type`, `id_modele`) VALUES (2,?);", [insert.insertId])
@@ -212,5 +208,67 @@ module.exports.CreerNotifModifEvent = async (oldEvent, newData, user) => {
     } catch (error) {
         console.log(error)
         return -1;
+    }
+}
+
+module.exports.accepterNotif = async (req, res) => {
+    try {
+        let notif = await DB.query('SELECT * FROM notification WHERE id_notif = ?', [req.params.id]);
+        if(!notif.length) return res.sendStatus(404);
+        notif = notif[0];
+        if(notif.id_compte != res.locals.user.id_compte) return res.sendStatus(403);
+
+        switch (notif.type) {
+            case 0: //Notifs de message
+            
+                break;
+            case 1: //Notifs d'invitation/demande pour rejoindre un event et ajout à un besoin
+                req.notification = notif;
+                await AccepterInvitation(req, res);
+                return;
+            case 2:
+                
+                break;
+            case 3: //Notifs de modification
+            
+                break;
+            default:
+                break
+        }
+
+        return res.sendStatus(200);
+    } catch (error) {
+        console.log(error)
+        return res.sendStatus(500);
+    }
+}
+
+AccepterInvitation = async(req, res) => {
+
+    try {
+        let notifType = await DB.query('SELECT * FROM notif_ajouter WHERE id_n_ajouter = ?', [req.notification.id_type])[0];
+        let modele = await DB.query('SELECT * FROM modele_invitation WHERE id_m_invitation = ?', [notifType.id_modele]);
+
+        await DB.query('INSERT INTO participant (id_compte, id_evenement) VALUES (?, ?)', [modele.id_participant, modele.id_evenement]);
+
+        res.sendStatus(200);
+    }
+    catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.refuserNotif = async (req, res) => {
+    try {
+        let notif = DB.query('SELECT * FROM notification WHERE id_notif = ?', [req.params.id]);
+        if(!notif.length) return res.sendStatus(404);
+        notif = notif[0];
+        if(notif.id_compte != res.locals.user.id_compte) return res.sendStatus(403);
+
+        return res.sendStatus(200);
+    } catch (error) {
+        console.log(error)
+        return res.sendStatus(500);
     }
 }
