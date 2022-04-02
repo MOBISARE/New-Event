@@ -5,9 +5,14 @@ USER = "new.event.mail@gmail.com";
 PASS = "BlegusMogus";
 SERVICE = "google.com";
 
-const sendEmail = async(email, subject, text) => {
 
-    let testAccount = await nodemailer.createTestAccount();
+/**
+ * Envoie un email à partir de USER
+ * @param {*} email email du receveur
+ * @param {*} subject sujet du mail
+ * @param {*} text corps du mail
+ */
+const sendEmail = async(email, subject, text) => {
 
     try {
         const transporter = nodemailer.createTransport({
@@ -27,12 +32,15 @@ const sendEmail = async(email, subject, text) => {
             text: text,
         });
 
-        console.log("email envoyé");
+        console.log("email envoyé")
     } catch (error) {
-        console.log(error, "email non envoyé");
+        console.log(error, "email non envoyé")
+        return -1
     }
+
+    return 0
 };
 
-sendEmail("lespagnolcesttropbien@gmail.com", "TestJs", "Pitié que ça fonctionne");
+//sendEmail("lespagnolcesttropbien@gmail.com", "TestJs", "Pitié que ça fonctionne");
 
 module.exports = sendEmail;

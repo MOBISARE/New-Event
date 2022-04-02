@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -10,14 +11,72 @@ class LostPassword extends React.Component {
     constructor(props){
         super(props);
 
-        this.state = {formState: 0};
+        this.state = {formState: 0, email: '', token:''};
+    }
+
+    checkAndSendEmail = (e) => {
+        e.preventDefault();
+        axios.post("/api/compte/recupmdp", 
+        { email : document.getElementById('email').value })
+        .then((res) => {
+            this.setState({email: document.getElementById('email').value, formState: this.state.formState + 1});
+        })
+        .catch((err) => {
+            console.log(err);
+            document.getElementById("email").setCustomValidity("L'adresse email n'est pas valide");
+            document.getElementById("email").reportValidity();
+        })
+    }
+
+    resendEmail = () => {
+        axios.post("/api/compte/recupmdp", 
+        { email : this.state.email })
+        .then((res) => {
+            // TODO : feedback
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    checkSecretCode = (e) => {
+        e.preventDefault();
+        axios.post("/api/compte/checkToken", 
+        { email : this.state.email, token : document.getElementById('token').value })
+        .then((res) => {
+            this.setState({token : document.getElementById('token').value, formState: this.state.formState + 1});
+            document.getElementById("form").reset();
+        })
+        .catch((err) => {
+            console.log(err);
+            document.getElementById("token").setCustomValidity("Le token n'est pas valide");
+            document.getElementById("token").reportValidity();
+        })
+    }
+
+    changePassword = (e) => {
+        e.preventDefault();
+        if(document.getElementById('password').value !== document.getElementById('cpassword').value) {
+            document.getElementById("cpassword").setCustomValidity("Les mots de passe sont différent");
+            document.getElementById("cpassword").reportValidity();
+            return;
+        }
+
+        axios.put("/api/compte/modifieMdp", 
+        { email : this.state.email, token : this.state.token, mot_de_passe : document.getElementById('password').value })
+        .then((res) => {
+            this.setState({formState: this.state.formState + 1});
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     form = () => {
         switch(this.state.formState){
             case 0:
                 return (
-                    <form className='flex flex-col gap-5 mt-10'>
+                    <form className='flex flex-col gap-5 mt-10' onSubmit={this.checkAndSendEmail} id='form'>
                         <InputField id='email' type='email' className='w-full' required>Adresse e-mail</InputField>
 
                         <FormButton>Confirmation</FormButton>
@@ -25,28 +84,28 @@ class LostPassword extends React.Component {
                 )
             case 1:
                 return (
-                    <form className='flex flex-col gap-5 mt-10'>
+                    <form className='flex flex-col gap-5 mt-10' onSubmit={this.checkSecretCode} id='form'>
                         <InputField id='email' type='email' className='w-full' disabled>Adresse e-mail</InputField>
                         <div className='flex flex-row gap-5 items-end'>
-                            <InputField id='code' className='w-full' required>Code de récupération</InputField>
-                            <Button bg_class='bg-purple'>Renvoyer</Button>
+                            <InputField id='token' className='w-full' required>Code de récupération</InputField>
+                            <Button bg_class='bg-purple' onClick={this.resendEmail}>Renvoyer</Button>
                         </div>
 
-                        <div onClick={() => this.setState({formState: this.state.formState+1})}>
-                            <FormButton>Confirmation</FormButton>
-                        </div>
+                        <FormButton>Confirmation</FormButton>
                     </form>
                 )
             case 2:
                 return (
-                    <form className='flex flex-col gap-5 mt-10'>
-                        <InputField id='password' className='w-full' required>Nouveau mot de passe</InputField>
-                        <InputField id='cpassword' className='w-full' required>Confirmer le mot de passe</InputField>
+                    <form className='flex flex-col gap-5 mt-10' id='form' onSubmit={this.changePassword}>
+                        <InputField id='password' className='w-full' type='password' required>Nouveau mot de passe</InputField>
+                        <InputField id='cpassword' className='w-full' type='password' required>Confirmer le mot de passe</InputField>
 
-                        <div onClick={() => this.setState({formState: this.state.formState+1})}>
-                            <FormButton>Confirmation</FormButton>
-                        </div>
+                        <FormButton>Confirmation</FormButton>
                     </form>
+                )
+            case 3:
+                return (
+                    <div>Mot de passe modifié</div>
                 )
         }
     }

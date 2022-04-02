@@ -1,85 +1,106 @@
 import React from 'react'
-import EventCard from '../components/EventCard'
-import {Link} from 'react-router-dom'
+import EventCard from '../components/Event/EventCard'
+import LoadingEventCard from '../components/Event/LoadingEventCard'
+import axios from "axios";
+import withRouter from '../withRouter'
 
-let fakeEvents = [
-    {
-        id:1,
-        title:"Titre d'événement",
-        description:"Description de cet événement",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    },
-    {
-        id:1,
-        title:"Titre d'événement",
-        description:"Description de cet événement",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    },
-    {
-        id:3,
-        title:"Titre d'événement",
-        description:"Description de cet événement",
-        imgUrl:"/images/icon.png",
-        membersNumber:"5",
-        location:"Nancy",
-        startDate:"26/02/2020",
-        endDate:"31/08/2020"
-    },
-]
 class MyEvents extends React.Component {
-    render(){
-        const myevents = [fakeEvents[0]].map(value =>
-            <EventCard
-                key={value.id}
-                title={value.title}
-                description={value.description}
-                imgUrl={value.imgUrl}
-                membersNumber={value.membersNumber}
-                location={value.location}
-                startDate={value.startDate}
-                endDate={value.endDate}
-            />
-        )
-        const mycontributing = [fakeEvents[1], fakeEvents[2]].map(value =>
-            <EventCard
-                key={value.id}
-                title={value.title}
-                description={value.description}
-                imgUrl={value.imgUrl}
-                membersNumber={value.membersNumber}
-                location={value.location}
-                startDate={value.startDate}
-                endDate={value.endDate}
-            />
-        )
 
+    constructor(props){
+        super(props);
+        this.state = {myevents: [], mycontributing: [], isMyEventsLoaded: false, isMyContribLoaded: false};
+    }
+
+    componentDidMount = () => {
+        axios.get('/api/compte/mes-evenements')
+        .then((res) => {
+            this.setState({myevents: res.data, isMyEventsLoaded: true});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+        axios.get('/api/compte/mes-participations')
+        .then((res) => {
+            this.setState({mycontributing: res.data, isMyContribLoaded: true});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
+
+    createEvent = () => {
+        axios.put('/api/evenement/creer')
+        .then(res => {
+            this.props.router.navigate("/evenement/" + res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    render(){
         return(
             <div>
-                <div className='pt-6'>
+                <div>
                     <span className='text-3xl mr-2'>Mes événements</span>
-                    <Link to='/creer-evenement'>
-                        <span className="material-icons">
+                    <span className="material-icons cursor-pointer" onClick={this.createEvent}>
                         add_circle_outline
                     </span>
-                    </Link>
+
                     <hr/>
-                    <div>
-                        { myevents }
+
+                    <div className='flex flex-wrap flex-row'>
+                        {
+                            !this.state.isMyEventsLoaded
+                            ? <LoadingEventCard/>
+                            : this.state.myevents.length===0
+                            ? <p className='text-center w-full my-3'>Vous n'avez pas créé d'événement.</p>
+                            : this.state.myevents.map((elem) => {
+                                if(elem.etat === 2) return(<div key={elem.id_evenement}/>)
+                                return(
+                                    <EventCard
+                                        key={elem.id_evenement}
+                                        id={elem.id_evenement}
+                                        title={elem.titre}
+                                        description={elem.description}
+                                        imgUrl={elem.img_banniere}
+                                        membersNumber={elem.nb_participants}
+                                        etat={elem.etat}
+                                        location={elem.departement}
+                                        startDate={elem.debut}
+                                        endDate={elem.fin}
+                                    />)
+                            })
+                        }
                     </div>
                 </div>
                 <div className='mt-6'>
                     <span className='text-3xl'>Mes participations</span>
                     <hr/>
                     <div className='flex flex-wrap flex-row'>
-                        { mycontributing }
+                        {
+                            !this.state.isMyContribLoaded
+                            ? <LoadingEventCard/>
+                            : this.state.mycontributing.length===0
+                            ? <p className='text-center w-full my-3'>Vous ne participez à aucun événement.</p>
+                            : this.state.mycontributing.map((elem) => {
+                                if(elem.etat === 2) return(<div key={elem.id_evenement}/>)
+                                return(
+                                    <EventCard
+                                        key={elem.id_evenement}
+                                        id={elem.id_evenement}
+                                        title={elem.titre}
+                                        description={elem.description}
+                                        imgUrl={elem.img_banniere}
+                                        membersNumber={elem.nb_participants}
+                                        etat={elem.etat}
+                                        location={elem.departement}
+                                        startDate={elem.debut}
+                                        endDate={elem.fin}
+                                    />)
+                            })
+                        }
                     </div>
                 </div>
             </div>
@@ -87,4 +108,4 @@ class MyEvents extends React.Component {
     }
 }
 
-export default MyEvents;
+export default withRouter(MyEvents);

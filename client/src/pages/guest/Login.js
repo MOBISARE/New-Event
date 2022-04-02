@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios'
 
 import FormButton from '../../components/FormButton';
 import InputField from '../../components/InputField'
@@ -8,7 +9,26 @@ class Login extends React.Component {
 
     handleLogin = (e) => {
         e.preventDefault();
-        console.log(e);
+        
+        axios({
+            method:"post",
+            url:"/api/compte/connexion",
+            withCredentials: true,
+            data: {
+                email: document.getElementById('email').value,
+                mot_de_passe: document.getElementById('mdp').value
+            }
+        })
+        .then((res) => {
+            window.location = "/";
+        })
+        .catch((err) => {
+            if(err.response.status === 400){
+                document.getElementById('mdp').setCustomValidity("L'email ou le mot de passe est erroné");
+                document.getElementById("mdp").reportValidity();
+            }
+            else console.log(err);
+        })
     }
     
     render(){

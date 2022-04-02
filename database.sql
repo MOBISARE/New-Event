@@ -7,7 +7,7 @@ CREATE TABLE `compte` (
   `mot_de_passe` varchar(255) NOT NULL,
   `prenom` varchar(255) DEFAULT NULL,
   `nom` varchar(255) DEFAULT NULL,
-  `naissance` varchar(255) DEFAULT NULL,
+  `naissance` datetime NOT NULL,
   `ville` varchar(255) DEFAULT NULL,
   `departement` varchar(255) DEFAULT NULL,
   `no_telephone` varchar(255) DEFAULT NULL,
@@ -17,12 +17,12 @@ CREATE TABLE `compte` (
   `notif_email` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_compte`),
   UNIQUE KEY `unique_email` (`email`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE `evenement` (
   `id_evenement` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `titre` varchar(255) NOT NULL,
-  `description` varchar(2048) DEFAULT 'NULL',
+  `description` varchar(2048) DEFAULT NULL,
   `departement` varchar(255) DEFAULT NULL,
   `debut` datetime NOT NULL,
   `fin` datetime NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `participant` (
 CREATE TABLE `besoin` (
   `id_besoin` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT '',
-  `id_participant` int(10) unsigned NOT NULL,
+  `id_participant` int(10) unsigned DEFAULT NULL,
   `id_evenement` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id_besoin`),
   KEY `besoin_fk_participant` (`id_participant`),
@@ -69,7 +69,8 @@ CREATE TABLE `besoin` (
 CREATE TABLE `modele_besoin` (
   `id_m_besoin` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `id_vrai_besoin` int(10) unsigned NOT NULL,
-  `message` varchar(255) NOT NULL DEFAULT '',
+  `message` varchar(255) DEFAULT NULL,
+  `id_participant` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id_m_besoin`),
   KEY `modele_besoin_fk_vraibesoin` (`id_vrai_besoin`),
   CONSTRAINT `modele_besoin_fk_vraibesoin` FOREIGN KEY (`id_vrai_besoin`) REFERENCES `besoin` (`id_besoin`) ON DELETE NO ACTION ON
@@ -110,7 +111,7 @@ CREATE TABLE `notification` (
   `type` int(11) NOT NULL DEFAULT 0,
   `etat` int(11) NOT NULL DEFAULT 0,
   `recu` datetime NOT NULL,
-  `id_type` int(10) unsigned NOT NULL,
+  `id_type` int(10) unsigned DEFAULT NULL,
   `id_compte` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id_notif`),
   KEY `notification_fk_compte` (`id_compte`),
@@ -145,6 +146,18 @@ CREATE TABLE `notif_modifier` (
   `id_modele` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `recuperation` (
+  `id_recuperation` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `token_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `token_id` varchar(255) NOT NULL,
+  `id_compte` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id_recuperation`),
+  KEY `recuperation_fk_compte` (`id_compte`),
+  CONSTRAINT `recuperation_fk_compte` FOREIGN KEY (`id_compte`) REFERENCES `compte` (`id_compte`) ON DELETE NO ACTION ON
+  UPDATE
+    NO ACTION
+) ENGINE = InnoDB AUTO_INCREMENT = 3 DEFAULT CHARSET = utf8mb4;
 
 
 
