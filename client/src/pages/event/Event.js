@@ -90,6 +90,16 @@ class Event extends React.Component {
         );
     }
 
+    joinEvent = () => {
+        axios.post('/api/evenement/' + this.props.eventModel.id + '/demanderRejoindreEve')
+        .then((res) => {
+            console.log("demande");
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
     render() {
         return(
             <div className='max-w-[1000px] mx-auto'>
@@ -130,7 +140,7 @@ class Event extends React.Component {
                             </div>
                             {
                                 this.props.eventModel.etatAppartenance === 0
-                                ? <Button className='bg-green-valid'>Rejoindre</Button>
+                                ? <Button className='bg-green-valid' onClick={this.joinEvent}>Rejoindre</Button>
                                 : <></>
                             }
                             

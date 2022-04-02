@@ -357,7 +357,22 @@ module.exports.demanderRejoindreEve = async (req, res) => {
         let participe = await DB.query('SELECT id_compte FROM participant WHERE id_compte = ? AND id_evenement = ?', [res.locals.user.id_compte, req.params.id])
         if(participe.length) return res.sendStatus(403); // Forbidden
 
-        let n = notif.CreerNotifRejoindre(req.params.id, res.locals.user);
+        let invit = await DB.query('SELECT id_m_invitation FROM modele_invitation WHERE id_participant = ? AND id_evenement = ?', [res.locals.user.id_compte, req.params.id]);
+        if(invit.length) {
+            // check if already invited
+            invit = invit[0];
+            let type = await DB.query('SELECT id_n_ajouter, type FROM notif_ajouter WHERE id_modele = ?', [invit.id_m_invitation]);
+            type = type[0];
+            if(type.type !== 1) return res.sendStatus(400); // already asked
+    
+            // already invited by owner
+            let notification = await DB.query('SELECT * FROM notification WHERE type = 1 AND id_type = ?', [type.id_n_ajouter]);
+            req.notification = notification[0];
+            await notif.AccepterInvitation(req, res);
+            return;
+        }
+
+        let n = await notif.CreerNotifRejoindre(req.params.id, res.locals.user);
         if(n === -1) return res.sendStatus(500);
 
         res.sendStatus(200);

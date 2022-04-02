@@ -139,10 +139,10 @@ module.exports.CreerNotifRejoindre = async (id_event, user) => {
 
         let message = `L'utilisateur ${user.prenom} ${user.nom} demande à rejoindre l'événement ${event.titre}`
 
-        let insert = await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES VALUES (?,?);", [user.id_compte, id_event])
+        let insert = await DB.query("INSERT INTO `modele_invitation`(`id_participant`, `id_evenement`) VALUES (?, ?)", [user.id_compte, id_event])
 
         let insert2 = await DB.query("INSERT INTO `notif_ajouter`(`type`, `id_modele`) VALUES (2,?);", [insert.insertId])
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message], new Date(), [insert2.insertId], [event.id_proprietaire])
+        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,1,0,?,?,?)", [message, new Date(), insert2.insertId, event.id_proprietaire])
         return 0;
     } catch (error) {
         console.log(error)
@@ -224,7 +224,7 @@ module.exports.accepterNotif = async (req, res) => {
                 break;
             case 1: //Notifs d'invitation/demande pour rejoindre un event et ajout à un besoin
                 req.notification = notif;
-                await AccepterInvitation(req, res);
+                await this.AccepterInvitation(req, res);
                 return;
             case 2:
                 
@@ -243,13 +243,18 @@ module.exports.accepterNotif = async (req, res) => {
     }
 }
 
-AccepterInvitation = async(req, res) => {
-
+module.exports.AccepterInvitation = async(req, res) => {
     try {
-        let notifType = await DB.query('SELECT * FROM notif_ajouter WHERE id_n_ajouter = ?', [req.notification.id_type])[0];
+        let notifType = await DB.query('SELECT * FROM notif_ajouter WHERE id_n_ajouter = ?', [req.notification.id_type]);
+        notifType = notifType[0];
         let modele = await DB.query('SELECT * FROM modele_invitation WHERE id_m_invitation = ?', [notifType.id_modele]);
+        modele = modele[0];
 
         await DB.query('INSERT INTO participant (id_compte, id_evenement) VALUES (?, ?)', [modele.id_participant, modele.id_evenement]);
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM notif_ajouter WHERE id_n_ajouter = ?', [notifType.id_n_ajouter]);
+        await DB.query('DELETE FROM modele_invitation WHERE id_m_invitation = ?', [modele.id_m_invitation]);
 
         res.sendStatus(200);
     }
