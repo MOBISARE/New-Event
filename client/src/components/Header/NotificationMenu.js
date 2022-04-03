@@ -18,7 +18,6 @@ class NotificationMenu extends React.Component {
     }
 
     refreshNotifs = () => {
-        console.log('refresh');
         axios.get('/api/notification/getAll')
         .then((res) => {
             this.setState({isLoading: false, notifications : res.data});

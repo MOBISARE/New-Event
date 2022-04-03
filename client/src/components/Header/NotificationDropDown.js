@@ -71,7 +71,6 @@ class NotificationDropDown extends React.Component {
         let accept = () => {
             axios.post('/api/notification/' + elem.id_notif + '/accepter')
             .then((res) => {
-                console.log('ok');
                 this.props.refresh();
             })
             .catch((err) => {
