@@ -27,27 +27,27 @@ class UserProfile extends React.Component {
             
             <div className='bg-gray'>
                 
-                <div className=' bg-white rounded-lg drop-shadow-md max-h-lg mx-auto  flex '>
-                    <div className='pb-40 px-8 border-solid border-0 border-r-2 border-r-selected-gray-2 mt-10 mr-10'>
+                <div className=' bg-white rounded-lg drop-shadow-md max-h-lg mx-auto flex p-8 gap-5 min-h-[500px]'>
+                    <div className='border-0 border-r border-r-selected-gray-2 pr-8 flex flex-col gap-2'>
+                        <img className='w-48 h-48 rounded-lg' src={this.state.myprofile.img_profil}></img>
+                        <div>
+                            <h1 className='inline text-2xl'>{this.state.myprofile.prenom} </h1>
+                            <h1 className='inline text-2xl'>{this.state.myprofile.nom}</h1>
+                        </div>
                         
-                            <img src='/images/icon.png'>{this.state.myprofile.img_profil}</img>
-                            <h1 className='font-bold inline '>{this.state.myprofile.prenom} </h1>
-                            <h1 className='font-bold inline'>{this.state.myprofile.nom}</h1>
-                            <LinkButton bg_class='h-1 px-1 m-2 bg-white' text_class='text-xs text-black' to='/modifier-profil' width='0'>Modifier informations</LinkButton>
+                        
+                        <LinkButton bg_class='bg-transparent' text_class='text-sm text-black' to='/modifier-profil'>Modifier profil</LinkButton>
                    </div>
 
-                    <div className='mt-10 '>
-                        <h2 className='font-bold mb-2'>Informations</h2>
-                        <ul>
-                            <li>Ville : {this.state.myprofile.ville}</li>
-                            <li>Département : {this.state.myprofile.departement}</li>
-                            <li>Date de Naissance : {new Date(this.state.myprofile.naissance).toLocaleDateString()}</li>
-                        </ul>
-                        <h2 className='font-bold mt-4 mb-2'>Contact</h2>
-                        <ul>
-                            <li>E-mail : {this.state.myprofile.email}</li>
-                            <li>Téléphone : {this.state.myprofile.no_telephone}</li>
-                        </ul>
+                    <div className='ml-4 mt-2 flex flex-col gap-1'>
+                        <h2 className='text-2xl mb-2'>Informations :</h2>
+                        <div className='indent-8'>Ville : {this.state.myprofile.ville}</div>
+                        <div className='indent-8'>Département : {this.state.myprofile.departement}</div>
+                        <div className='indent-8'>Date de Naissance : {new Date(this.state.myprofile.naissance).toLocaleDateString()}</div>
+
+                        <h2 className='text-2xl mt-10'>Contact</h2>
+                        <div className='indent-8'>Adresse e-mail : {this.state.myprofile.email}</div>
+                        <div className='indent-8'>Téléphone : {this.state.myprofile.no_telephone}</div>
                     </div>
                 </div> 
             </div>
