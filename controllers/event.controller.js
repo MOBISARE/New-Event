@@ -119,6 +119,9 @@ module.exports.getEvenement = async (req, res) => {
         let nbParticipants = await DB.query('SELECT Count(id_compte) as nbParticipants FROM participant WHERE id_evenement = ?', [req.params.id]);
         evenement['nbParticipants'] = nbParticipants[0].nbParticipants;
 
+        // get demande
+        let demande = await DB.query('SELECT id_participant, id_evenement FROM modele_invitation INNER JOIN notif_ajouter ON modele_invitation.id_m_invitation = notif_ajouter.id_modele WHERE type = 2 AND id_evenement = ? AND id_participant = ?', [req.params.id, res.locals.user.id_compte]);
+        if (demande.length) evenement['demande'] = true;
 
         res.status(200).json(evenement);
 
