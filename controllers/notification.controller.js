@@ -266,14 +266,60 @@ module.exports.AccepterInvitation = async(req, res) => {
 
 module.exports.refuserNotif = async (req, res) => {
     try {
-        let notif = DB.query('SELECT * FROM notification WHERE id_notif = ?', [req.params.id]);
+        let notif = await DB.query('SELECT * FROM notification WHERE id_notif = ?', [req.params.id]);
         if(!notif.length) return res.sendStatus(404);
         notif = notif[0];
         if(notif.id_compte != res.locals.user.id_compte) return res.sendStatus(403);
+
+        switch (notif.type) {
+            case 0: //Notifs de message
+            
+                break;
+            case 1: //Notifs d'invitation/demande pour rejoindre un event et ajout à un besoin
+                req.notification = notif;
+                await this.RefuserInvitation(req, res);
+                return;
+            case 2:
+                
+                break;
+            case 3: //Notifs de modification
+            
+                break;
+            default:
+                break
+        }
 
         return res.sendStatus(200);
     } catch (error) {
         console.log(error)
         return res.sendStatus(500);
+    }
+}
+
+module.exports.RefuserInvitation = async(req, res) => {
+    try {
+        let notifType = await DB.query('SELECT * FROM notif_ajouter WHERE id_n_ajouter = ?', [req.notification.id_type]);
+        notifType = notifType[0];
+        let modele = await DB.query('SELECT * FROM modele_invitation WHERE id_m_invitation = ?', [notifType.id_modele]);
+        modele = modele[0];
+
+        
+        if(notifType.type == 2) // rejoindre
+        {
+            let event = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [modele.id_evenement]);
+            event = event[0];
+            await this.CreerNotifMess(modele.id_participant, `Votre demande pour rejoindre l'événement ${event.titre} a été refusé`);
+        }
+            
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM notif_ajouter WHERE id_n_ajouter = ?', [notifType.id_n_ajouter]);
+        await DB.query('DELETE FROM modele_invitation WHERE id_m_invitation = ?', [modele.id_m_invitation]);
+
+        res.sendStatus(200);
+    }
+    catch (err) {
+        console.log(err);
+        res.sendStatus(500);
     }
 }
