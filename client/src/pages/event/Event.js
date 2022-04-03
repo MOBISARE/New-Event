@@ -138,7 +138,7 @@ class Event extends React.Component {
                             <div className='my-2'>
                                 Localisation :
                                 <div className='ml-10'>
-                                    {this.props.eventModel.departement}
+                                    {this.props.eventModel.departement || "Non renseignée."}
                                 </div>
                             </div>
                             {

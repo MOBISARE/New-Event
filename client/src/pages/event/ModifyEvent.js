@@ -29,6 +29,9 @@ class ModifyEvent extends React.Component {
         this.participantBtn = React.createRef();
         this.participantViewer = React.createRef();
         this.removeImg = false;
+        this.state = {
+            minEndDate: ""
+        }
     }
 
     componentDidMount = () => {
@@ -167,9 +170,9 @@ class ModifyEvent extends React.Component {
                             {this.FormButtons()}
 
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
-                                <InputField type='date' id='start-date' children='Date de début' required
+                                <InputField type='date' id='start-date' children='Date de début' required onInput={(evt) => this.setState({minEndDate: evt.target.value})}
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
-                                <InputField type='date' id='end-date' children='Date de fin' required
+                                <InputField type='date' id='end-date' children='Date de fin' required min={this.state.minEndDate}
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
                                 <InputLocation defaultValue={this.props.eventModel.departement} isDepartement={true} />
                             </div>

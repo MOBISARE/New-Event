@@ -25,6 +25,9 @@ class CreateEvent extends React.Component {
         this.hiddenInput = React.createRef();
         this.previewImage = React.createRef();
         this.removeImg = false;
+        this.state = {
+            minEndDate: "today",
+        }
     }
 
     componentDidMount = () => {
@@ -153,9 +156,9 @@ class CreateEvent extends React.Component {
                                 <Button className='bg-red-600' onClick={this.deleteEvent}>Supprimer</Button>
                             </div>
                             <div className='flex flex-col h-fit bg-white rounded-3xl shadow ml-4 p-6 mt-10'>
-                                <InputField type='date' id='start-date' children='Date de début' required min={today}
+                                <InputField type='date' id='start-date' children='Date de début' required min={today} onInput={(evt) => this.setState({minEndDate: evt.target.value})}
                                             className='max-w-min' name='debut' defaultValue={dateformat(this.props.eventModel.debut, 'yyyy-mm-dd')}/>
-                                <InputField type='date' id='end-date' children='Date de fin' required min={today}
+                                <InputField type='date' id='end-date' children='Date de fin' required min={this.state.minEndDate}
                                             className='my-3 max-w-min' name='fin' defaultValue={dateformat(this.props.eventModel.fin, 'yyyy-mm-dd')}/>
                                 <InputLocation isDepartement={true} />
                             </div>

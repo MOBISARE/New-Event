@@ -29,7 +29,8 @@ class UserProfile extends React.Component {
                 
                 <div className=' bg-white rounded-lg drop-shadow-md max-h-lg mx-auto flex p-8 gap-5 min-h-[500px]'>
                     <div className='border-0 border-r border-r-selected-gray-2 pr-8 flex flex-col gap-2'>
-                        <img className='w-48 h-48 rounded-lg' src={this.state.myprofile.img_profil}></img>
+                        <img className='w-48 h-48 rounded-lg border border-transparentgray text-center'
+                             src={this.state.myprofile.img_profil} alt='Image de profil'/>
                         <div>
                             <h1 className='inline text-2xl'>{this.state.myprofile.prenom} </h1>
                             <h1 className='inline text-2xl'>{this.state.myprofile.nom}</h1>
@@ -47,7 +48,7 @@ class UserProfile extends React.Component {
 
                         <h2 className='text-2xl mt-10'>Contact</h2>
                         <div className='indent-8'>Adresse e-mail : {this.state.myprofile.email}</div>
-                        <div className='indent-8'>Téléphone : {this.state.myprofile.no_telephone}</div>
+                        <div className='indent-8'>Téléphone : {this.state.myprofile.no_telephone || "non renseigné."}</div>
                     </div>
                 </div> 
             </div>
