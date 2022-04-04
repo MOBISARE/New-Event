@@ -1,4 +1,5 @@
 const DB = require("./db").DB
+const upload = require("./upload.controller")
 
 //Consulte toute les notifs liées au compte dont l'id est passé en paramètre
 module.exports.getNotification = async(req, res) => {
@@ -130,9 +131,9 @@ module.exports.CreerNotifModifEvent = async(oldEvent, newData, user) => {
     try {
         let message = "Nouvelle demande de modification de l'événement " + oldEvent.titre;
 
-        let insert = await DB.query("INSERT INTO `modele_evenement`(`id_vrai_evenement`, `titre`, `description`, `departement`, `debut`, `fin`, `img_banniere`) VALUES (?,?,?,?,?,?,?);", [oldEvent.id_evenement, newData.titre, newData.description, newData.departement, newData.debut, newData.fin, newData.img_banniere])
+        let insert = await DB.query("INSERT INTO modele_evenement(id_vrai_evenement, titre, description, departement, debut, fin, img_banniere) VALUES (?,?,?,?,?,?,?);", [oldEvent.id_evenement, newData.titre, newData.description, newData.departement, newData.debut, newData.fin, newData.img_banniere])
 
-        await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,?,0,?,?,?);", [message, Type_ModifEvent, new Date(), insert.insertId, oldEvent.id_proprietaire])
+        await DB.query("INSERT INTO notification(message, type, etat, recu, id_type, id_compte) VALUES (?,?,0,?,?,?);", [message, Type_ModifEvent, new Date(), insert.insertId, oldEvent.id_proprietaire])
 
         return 0;
     } catch (error) {
@@ -169,15 +170,15 @@ module.exports.accepterNotif = async(req, res) => {
                 return;
 
             case Type_ModifBesoin:
-
+                await this.AccepterModifBesoin(req, res);
                 return;
 
             case Type_SupprBesoin:
-
+                await this.AccepterSupprBesoin(req, res);
                 return;
 
             case Type_ModifEvent:
-
+                await this.AccepterModifEvent(req, res);
                 return;
         }
 
@@ -222,6 +223,60 @@ module.exports.AccepterAjoutBesoin = async(req, res) => {
     }
 }
 
+module.exports.AccepterModifBesoin = async(req, res) => {
+    try {
+        let modele = await DB.query('SELECT * FROM modele_besoin WHERE id_m_besoin = ?', [req.notification.id_type]);
+        modele = modele[0];
+
+        await DB.query('UPDATE besoin SET description = ?, id_participant = ? WHERE id_besoin = ?', [modele.description, modele.id_participant, modele.id_vrai_besoin]);
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM modele_besoin WHERE id_m_besoin = ?', [modele.id_m_besoin]);
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.AccepterSupprBesoin = async(req, res) => {
+    try {
+        let modele = await DB.query('SELECT * FROM modele_besoin WHERE id_m_besoin = ?', [req.notification.id_type]);
+        modele = modele[0];
+
+        await DB.query('DELETE FROM besoin WHERE id_besoin = ?', [modele.id_vrai_besoin]);
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM modele_besoin WHERE id_m_besoin = ?', [modele.id_m_besoin]);
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.AccepterModifEvent = async(req, res) => {
+    try {
+        let modele = await DB.query('SELECT * FROM modele_evenement WHERE id_m_evenement = ?', [req.notification.id_type]);
+        modele = modele[0];
+
+        let oldEvent = await DB.query('SELECT img_banniere FROM evenement WHERE id_evenement = ?', [modele.id_vrai_evenement]);
+        if(modele.img_banniere !== oldEvent[0].img_banniere) upload.removeImage(oldEvent[0].img_banniere);
+
+        await DB.query('UPDATE evenement SET titre = ?, description = ?, departement = ?, debut = ?, fin = ?, img_banniere = ? WHERE id_evenement = ?', [modele.titre, modele.description, modele.departement, modele.debut, modele.fin, modele.img_banniere, modele.id_vrai_evenement]);
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM modele_evenement WHERE id_m_evenement = ?', [modele.id_m_besoin]);
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
 module.exports.refuserNotif = async(req, res) => {
     try {
         let notif = await DB.query('SELECT * FROM notification WHERE id_notif = ?', [req.params.id]);
@@ -244,19 +299,19 @@ module.exports.refuserNotif = async(req, res) => {
                 return;
 
             case Type_AjoutBesoin:
-                this.RefuserAjoutBesoin(req, res);
+                await this.RefuserAjoutBesoin(req, res);
                 return;
 
             case Type_ModifBesoin:
-
+                await this.RefuserModifBesoin(req, res);
                 return;
 
             case Type_SupprBesoin:
-
+                await this.RefuserSupprBesoin(req, res);
                 return;
 
             case Type_ModifEvent:
-
+                await this.RefuserModifEvent(req, res);
                 return;
         }
 
@@ -296,6 +351,54 @@ module.exports.RefuserAjoutBesoin = async(req, res) => {
 
         await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
         await DB.query('DELETE FROM modele_besoin WHERE id_m_besoin = ?', [modele.id_m_besoin]);
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.RefuserModifBesoin = async(req, res) => {
+    try {
+        let modele = await DB.query('SELECT * FROM modele_besoin WHERE id_m_besoin = ?', [req.notification.id_type]);
+        modele = modele[0];
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM modele_besoin WHERE id_m_besoin = ?', [modele.id_m_besoin]);
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.RefuserSupprBesoin = async(req, res) => {
+    try {
+        let modele = await DB.query('SELECT * FROM modele_besoin WHERE id_m_besoin = ?', [req.notification.id_type]);
+        modele = modele[0];
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM modele_besoin WHERE id_m_besoin = ?', [modele.id_m_besoin]);
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+module.exports.RefuserModifEvent = async(req, res) => {
+    try {
+        let modele = await DB.query('SELECT * FROM modele_evenement WHERE id_m_evenement = ?', [req.notification.id_type]);
+        modele = modele[0];
+
+        if(modele.img_banniere)
+            upload.removeImage(modele.img_banniere);
+
+        await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
+        await DB.query('DELETE FROM modele_evenement WHERE id_m_evenement = ?', [modele.id_m_besoin]);
 
         res.sendStatus(200);
     } catch (err) {
