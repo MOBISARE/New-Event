@@ -71,7 +71,7 @@ CREATE TABLE `modele_besoin` (
   `id_vrai_besoin` int(10) unsigned DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `id_participant` int(10) unsigned DEFAULT NULL,
-  `id_evenement` int(10) unsigned NOT NULL,
+  `id_evenement` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id_m_besoin`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 

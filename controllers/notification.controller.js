@@ -1,5 +1,4 @@
 const DB = require("./db").DB
-const event = require("./event.controller")
 
 //Consulte toute les notifs liées au compte dont l'id est passé en paramètre
 module.exports.getNotification = async(req, res) => {
@@ -113,12 +112,11 @@ module.exports.CreerNotifModifBesoin = async(id, message, description, id_partic
     }
 }
 
-module.exports.CreerNotifSupprBesoin = async(id, message) => {
+module.exports.CreerNotifSupprBesoin = async(id, event) => {
     try {
-        let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, message) VALUES (?,?);", [id, message])
-        var proprio_id = await event.getProprioBesoin(id)
+        let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin) VALUES (?, ?)", [id]);
 
-        await DB.query("INSERT INTO notification(message, type, etat, recu, id_type, id_compte) VALUES (?,?,0,?,?,?)", [message, Type_SupprBesoin, new Date(), id_mod[0].id_m_besoin, proprio_id])
+        await DB.query("INSERT INTO notification(message, type, etat, recu, id_type, id_compte) VALUES (?,?,0,?,?,?)", [message, Type_SupprBesoin, new Date(), insert.insertId, event.id_proprietaire]);
 
         return 0
     } catch (error) {
@@ -155,8 +153,8 @@ module.exports.accepterNotif = async(req, res) => {
 
         switch (notif.type) {
             case Type_Message:
-
-                break;
+                res.sendStatus(400);
+                return;
 
             case Type_Invitation:
                 await this.AccepterInvitation(req, res);
@@ -234,8 +232,8 @@ module.exports.refuserNotif = async(req, res) => {
 
         switch (notif.type) {
             case Type_Message:
-
-                break;
+                res.sendStatus(400);
+                return;
 
             case Type_Invitation:
                 await this.RefuserInvitation(req, res);

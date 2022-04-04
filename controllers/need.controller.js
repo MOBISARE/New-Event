@@ -129,27 +129,31 @@ module.exports.postProposerBesoin = async(req, res) => {
     }
 }
 
-module.exports.postProposerSupprBesoin = async(req, res) => {
+module.exports.postProposerModifBesoin = async(req, res) => {
     try {
-        var result = notif.CreerNotifSupprBesoin(req.params.idbesoin, req.body.message)
-
-        if (result == -1) res.sendStatus(500)
-        else res.sendStatus(200)
-
+        var infos = await DB.query("SELECT prenom, nom FROM compte WHERE id_compte = ?", [res.locals.user.id_compte]);
+        
+        let event = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
+        
+        var result = await notif.CreerNotifModifBesoin(req.params.idbesoin, infos[0].prenom + " " + infos[0].nom + " propose de modifier un besoin", req.body.description, req.body.id_participant, event)
+        if (result == -1) return res.sendStatus(500);
+        
+        res.sendStatus(200);
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
 }
 
-module.exports.postProposerModifBesoin = async(req, res) => {
+module.exports.postProposerSupprBesoin = async(req, res) => {
     try {
-        var infos = await DB.query("SELECT prenom, nom FROM compte WHERE id_compte = ?", [res.locals.user.id_compte]);
+        let event = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        var result = notif.CreerNotifModifBesoin(req.params.idbesoin, infos[0].prenom + " " + infos[0].nom + " propose de modifier un besoin", req.body.message, req.body.id_participant)
+        var result = notif.CreerNotifSupprBesoin(req.params.idbesoin, event)
 
         if (result == -1) res.sendStatus(500)
         else res.sendStatus(200)
+
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
