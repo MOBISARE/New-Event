@@ -28,7 +28,7 @@ module.exports.postAjouterBesoin = async(req, res) => {
 
 module.exports.putModifierBesoin = async(req, res) => {
     try {
-        let compte=[]
+        let compte = []
         if (req.body.email) {
             compte = await DB.query('SELECT id_compte FROM compte WHERE email = ?', [req.body.email])
             if (compte[0] === undefined)
@@ -37,7 +37,7 @@ module.exports.putModifierBesoin = async(req, res) => {
 
         let newNeed = {
             description: req.body.description,
-            id_participant: compte[0]? compte[0].id_compte:null
+            id_participant: compte[0] ? compte[0].id_compte : null
         }
         let result = await DB.query('UPDATE besoin SET ? WHERE id_besoin = ? AND id_evenement = ?', [newNeed, req.params.idbesoin, req.params.id])
         if (compte[0]) {
@@ -121,9 +121,9 @@ module.exports.postProposerBesoin = async(req, res) => {
 
         let event = await DB.query('SELECT description FROM evenement WHERE id_evenement=?', [req.params.id])
 
-        let msg = participant[0].prenom+" "+participant[0].nom+" souhaite ajouter le besoin "+req.body.description
+        let msg = participant[0].prenom + " " + participant[0].nom + " souhaite ajouter le besoin " + req.body.description
         if (event[0])
-            msg += " à l'événement "+event[0].description
+            msg += " à l'événement " + event[0].description
         let result = await notif.CreerNotifAjoutBesoin(last_id[0].id_besoin, msg)
 
         if (result === -1) return res.sendStatus(500)
@@ -143,6 +143,29 @@ module.exports.postProposerSupprBesoin = async(req, res) => {
         if (result == -1) res.sendStatus(500)
         else res.sendStatus(200)
 
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
+
+module.exports.postProposerModifBesoin = async(req, res) => {
+    try {
+        var infos = await DB.query("SELECT prenom, nom FROM compte WHERE id_compte = ?", [res.locals.user.id_compte]);
+
+        var result = notif.CreerNotifModifBesoin(req.params.idbesoin, infos[0].prenom + " " + infos[0].nom + " propose de modifier un besoin", req.body.message, req.body.id_participant)
+
+        if (result == -1) res.sendStatus(500)
+        else res.sendStatus(200)
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
+
+module.exports.postSeProposerBesoin = async(req, res) => {
+    try {
+        var result = DB.query("INSERT INTO ")
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
