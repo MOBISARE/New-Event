@@ -68,14 +68,11 @@ CREATE TABLE `besoin` (
 
 CREATE TABLE `modele_besoin` (
   `id_m_besoin` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `id_vrai_besoin` int(10) unsigned NOT NULL,
-  `message` varchar(255) DEFAULT NULL,
+  `id_vrai_besoin` int(10) unsigned DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
   `id_participant` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id_m_besoin`),
-  KEY `modele_besoin_fk_vraibesoin` (`id_vrai_besoin`),
-  CONSTRAINT `modele_besoin_fk_vraibesoin` FOREIGN KEY (`id_vrai_besoin`) REFERENCES `besoin` (`id_besoin`) ON DELETE NO ACTION ON
-  UPDATE
-    NO ACTION
+  `id_evenement` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id_m_besoin`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE `modele_evenement` (

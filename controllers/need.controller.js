@@ -111,20 +111,13 @@ module.exports.getListeBesoins = async(req, res) => {
 module.exports.postProposerBesoin = async(req, res) => {
     try {
         let participant = await DB.query('SELECT id_compte, nom, prenom FROM compte WHERE email=?', [req.body.email])
-        if (participant[0] === undefined) {
-            console.log(participant)
-            return
-        }
+        let id_participant = undefined;
+        if (participant.length) id_participant = participant[0].id_compte;
 
-        await DB.query('INSERT INTO besoin(description, id_participant, id_evenement) VALUES (?, ?, ?)', [req.body.description, participant[0].id_compte, req.params.id])
-        let last_id = await DB.query('SELECT last_insert_id() as id_besoin')
-
-        let event = await DB.query('SELECT description FROM evenement WHERE id_evenement=?', [req.params.id])
-
-        let msg = participant[0].prenom + " " + participant[0].nom + " souhaite ajouter le besoin " + req.body.description
-        if (event[0])
-            msg += " à l'événement " + event[0].description
-        let result = await notif.CreerNotifAjoutBesoin(last_id[0].id_besoin, msg)
+        let event = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id])
+        let msg = res.locals.user.prenom + " " + res.locals.user.nom + " souhaite ajouter le besoin " + req.body.description + " à l'événement " + event[0].description;
+        
+        let result = await notif.CreerNotifAjoutBesoin(msg, req.body.description, id_participant, event[0])
 
         if (result === -1) return res.sendStatus(500)
 

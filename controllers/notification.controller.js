@@ -88,14 +88,12 @@ module.exports.CreerNotifRejoindre = async(id_event, user) => {
     }
 }
 
-module.exports.CreerNotifAjoutBesoin = async(id, message) => {
+module.exports.CreerNotifAjoutBesoin = async(message, description, id_participant, event) => {
     try {
-        let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, message) VALUES (?,?);", [id, message])
-        var proprio_id = await event.getProprioBesoin(id)
+        let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, description, id_participant, id_evenement) VALUES (0, ?, ?, ?)", [description, id_participant, event.id_evenement]);
+        await DB.query("INSERT INTO notification(message, type, etat, recu, id_type, id_compte) VALUES (?,?,0,?,?,?)", [message, Type_AjoutBesoin, new Date(), insert.insertId, event.id_proprietaire])
 
-        await DB.query("INSERT INTO notification(message, type, etat, recu, id_type, id_compte) VALUES (?,?,0,?,?,?)", [message, Type_AjoutBesoin, new Date(), insert.insertId, proprio_id])
-
-        return 0
+        return 0;
 
     } catch (err) {
         console.log(err)
@@ -103,12 +101,11 @@ module.exports.CreerNotifAjoutBesoin = async(id, message) => {
     }
 }
 
-module.exports.CreerNotifModifBesoin = async(id, message, message_besoin, id_participant) => {
+module.exports.CreerNotifModifBesoin = async(id, message, description, id_participant, event) => {
     try {
-        let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, message, id_participant) VALUES (?,?,?);", [id, message_besoin, id_participant]);
-        var proprio_id = await event.getProprioBesoin(id)
+        let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, description, id_participant, id_evenement) VALUES (?, ?, ?, ?)", [id, description, id_participant, event.id_evenement]);
 
-        await DB.query("INSERT INTO notification(message, type, etat, recu, id_type, id_compte) VALUES (?,?,0,?,?,?);", [message, Type_ModifBesoin, new Date(), insert.insertId, proprio_id])
+        await DB.query("INSERT INTO notification(message, type, etat, recu, id_type, id_compte) VALUES (?,?,0,?,?,?);", [message, Type_ModifBesoin, new Date(), insert.insertId, event.id_proprietaire]);
         return 0
     } catch (error) {
         console.log(error)
@@ -171,19 +168,19 @@ module.exports.accepterNotif = async(req, res) => {
 
             case Type_AjoutBesoin:
                 await this.AccepterAjoutBesoin(req, res);
-                break;
+                return;
 
             case Type_ModifBesoin:
 
-                break;
+                return;
 
             case Type_SupprBesoin:
 
-                break;
+                return;
 
             case Type_ModifEvent:
 
-                break;
+                return;
         }
 
         return res.sendStatus(200);
@@ -215,7 +212,7 @@ module.exports.AccepterAjoutBesoin = async(req, res) => {
         let modele = await DB.query('SELECT * FROM modele_besoin WHERE id_m_besoin = ?', [req.notification.id_type]);
         modele = modele[0];
 
-        await DB.query('INSERT INTO besoin (description, id_participant, id_evenement) VALUES (?, ?, ?)', [modele.id_participant, modele.id_evenement]);
+        await DB.query('INSERT INTO besoin (description, id_participant, id_evenement) VALUES (?, ?, ?)', [modele.description, modele.id_participant, modele.id_evenement]);
 
         await DB.query('DELETE FROM notification WHERE id_notif = ?', [req.notification.id_notif]);
         await DB.query('DELETE FROM modele_besoin WHERE id_m_besoin = ?', [modele.id_m_besoin]);
@@ -254,15 +251,15 @@ module.exports.refuserNotif = async(req, res) => {
 
             case Type_ModifBesoin:
 
-                break;
+                return;
 
             case Type_SupprBesoin:
 
-                break;
+                return;
 
             case Type_ModifEvent:
 
-                break;
+                return;
         }
 
         return res.sendStatus(200);
