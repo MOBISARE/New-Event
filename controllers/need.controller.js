@@ -151,7 +151,7 @@ module.exports.postProposerSupprBesoin = async(req, res) => {
 
         var result = notif.CreerNotifSupprBesoin(req.params.idbesoin, event)
 
-        if (result == -1) res.sendStatus(500)
+        if (result === -1) res.sendStatus(500)
         else res.sendStatus(200)
 
     } catch (err) {
