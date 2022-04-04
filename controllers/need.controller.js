@@ -165,6 +165,8 @@ module.exports.postProposerModifBesoin = async(req, res) => {
 
 module.exports.postSeProposerBesoin = async(req, res) => {
     try {
+        // !!!! Impossible avec la db actuelle
+
         var result = DB.query("INSERT INTO ")
     } catch (err) {
         console.log(err)
