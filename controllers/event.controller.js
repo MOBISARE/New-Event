@@ -120,7 +120,7 @@ module.exports.getEvenement = async (req, res) => {
         evenement['nbParticipants'] = nbParticipants[0].nbParticipants;
 
         // get demande
-        let demande = await DB.query('SELECT id_participant, id_evenement FROM modele_invitation INNER JOIN notif_ajouter ON modele_invitation.id_m_invitation = notif_ajouter.id_modele WHERE type = 2 AND id_evenement = ? AND id_participant = ?', [req.params.id, res.locals.user.id_compte]);
+        let demande = await DB.query('SELECT id_participant, id_evenement FROM modele_invitation INNER JOIN notification ON modele_invitation.id_m_invitation = notification.id_type WHERE type = 2 AND id_evenement = ? AND id_participant = ?', [req.params.id, res.locals.user.id_compte]);
         if (demande.length) evenement['demande'] = true;
 
         res.status(200).json(evenement);
@@ -364,12 +364,11 @@ module.exports.demanderRejoindreEve = async (req, res) => {
         if(invit.length) {
             // check if already invited
             invit = invit[0];
-            let type = await DB.query('SELECT id_n_ajouter, type FROM notif_ajouter WHERE id_modele = ?', [invit.id_m_invitation]);
-            type = type[0];
-            if(type.type !== 1) return res.sendStatus(400); // already asked
+            let type = await DB.query('SELECT * FROM notification WHERE id_type = ? AND type = 2', [invit.id_m_invitation]);
+            if(type.length) return res.sendStatus(400); // already asked
     
             // already invited by owner
-            let notification = await DB.query('SELECT * FROM notification WHERE type = 1 AND id_type = ?', [type.id_n_ajouter]);
+            let notification = await DB.query('SELECT * FROM notification WHERE id_type = ? AND type = 1', [invit.id_m_invitation]);
             req.notification = notification[0];
             await notif.AccepterInvitation(req, res);
             return;
