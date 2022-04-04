@@ -135,7 +135,7 @@ module.exports.postProposerModifBesoin = async(req, res) => {
         
         let event = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
         
-        var result = await notif.CreerNotifModifBesoin(req.params.idbesoin, infos[0].prenom + " " + infos[0].nom + " propose de modifier un besoin", req.body.description, req.body.id_participant, event)
+        var result = await notif.CreerNotifModifBesoin(req.params.idbesoin, infos[0].prenom + " " + infos[0].nom + " propose de modifier un besoin", req.body.description, req.body.id_participant, event[0])
         if (result == -1) return res.sendStatus(500);
         
         res.sendStatus(200);
@@ -149,7 +149,7 @@ module.exports.postProposerSupprBesoin = async(req, res) => {
     try {
         let event = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        var result = notif.CreerNotifSupprBesoin(req.params.idbesoin, event)
+        let result = await notif.CreerNotifSupprBesoin(req.params.idbesoin, event[0], res.locals.user);
 
         if (result === -1) res.sendStatus(500)
         else res.sendStatus(200)
