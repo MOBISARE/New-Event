@@ -98,8 +98,10 @@ module.exports.CreerNotifRejoindre = async(id_event, user) => {
     }
 }
 
-module.exports.CreerNotifAjoutBesoin = async(message, description, id_participant, event) => {
+module.exports.CreerNotifAjoutBesoin = async(description, id_participant, event, user) => {
     try {
+        let message = `L'utilisateur ${user.prenom} ${user.nom} propose d'ajouter le besoin ${description} à l'événement ${event.titre}`;
+
         let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, description, id_participant, id_evenement) VALUES (0, ?, ?, ?)", [description, id_participant, event.id_evenement]);
         await this.CreerNotification(message, Type_AjoutBesoin, insert.insertId, event.id_proprietaire);
         
@@ -110,8 +112,11 @@ module.exports.CreerNotifAjoutBesoin = async(message, description, id_participan
     }
 }
 
-module.exports.CreerNotifModifBesoin = async(id, message, description, id_participant, event) => {
+module.exports.CreerNotifModifBesoin = async(id, description, id_participant, event, user) => {
     try {
+        let besoin = await DB.query("SELECT description FROM besoin WHERE id_besoin = ?", [id]);
+        let message = `L'utilisateur ${user.prenom} ${user.nom} propose de modifier le besoin ${besoin[0].description}(${event.titre})`;
+
         let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin, description, id_participant, id_evenement) VALUES (?, ?, ?, ?)", [id, description, id_participant, event.id_evenement]);
         await this.CreerNotification(message, Type_ModifBesoin, insert.insertId, event.id_proprietaire);
 
@@ -124,7 +129,8 @@ module.exports.CreerNotifModifBesoin = async(id, message, description, id_partic
 
 module.exports.CreerNotifSupprBesoin = async(id, event, user) => {
     try {
-        let message = `L'utilisateur ${user.prenom} ${user.nom} demande à supprimer un besoin`
+        let besoin = await DB.query("SELECT description FROM besoin WHERE id_besoin = ?", [id]);
+        let message = `L'utilisateur ${user.prenom} ${user.nom} propose de supprimer le besoin ${besoin[0].description}(${event.titre})`
 
         let insert = await DB.query("INSERT INTO modele_besoin(id_vrai_besoin) VALUES (?)", [id]);
         await this.CreerNotification(message, Type_SupprBesoin, insert.insertId, event.id_proprietaire);
@@ -139,7 +145,7 @@ module.exports.CreerNotifSupprBesoin = async(id, event, user) => {
 
 module.exports.CreerNotifModifEvent = async(oldEvent, newData, user) => {
     try {
-        let message = "Nouvelle demande de modification de l'événement " + oldEvent.titre;
+        let message = `L'utilisateur ${user.prenom} ${user.nom} propose de modifier l'événement ${oldEvent.titre}`;
 
         let insert = await DB.query("INSERT INTO modele_evenement(id_vrai_evenement, titre, description, departement, debut, fin, img_banniere) VALUES (?,?,?,?,?,?,?);", [oldEvent.id_evenement, newData.titre, newData.description, newData.departement, newData.debut, newData.fin, newData.img_banniere])
         await this.CreerNotification(message, Type_ModifEvent, insert.insertId, oldEvent.id_proprietaire);
