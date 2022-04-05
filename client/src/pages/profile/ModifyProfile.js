@@ -168,7 +168,7 @@ class ModifyProfile extends React.Component {
                     <div className='my-6'>
                         <h3 className='text-3xl border-b'>Suppression du compte</h3>
                         <p className='my-2'>Attention ! La suppression du compte est définitive.</p>
-                        <button onClick={this.supprimerProfile} className='bg-red-600 text-white rounded-full py-2 px-6'>Supprimer mon compte</button>
+                        <Button onClick={this.supprimerProfile} className='bg-red-600 w-max'>Supprimer mon compte</Button>
                     </div>
                 </div>
             </div>
