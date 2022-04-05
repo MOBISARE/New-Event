@@ -1,6 +1,6 @@
 const DB = require("./db").DB
 const upload = require("./upload.controller")
-const mail = require("./sendEmail")
+const sendEmail = require("./sendEmail")
 
 //Consulte toute les notifs liées au compte dont l'id est passé en paramètre
 module.exports.getNotification = async(req, res) => {
@@ -55,9 +55,9 @@ const Type_ModifEvent = 6;
 
 module.exports.CreerNotification = async(message, type, id_type, id_compte) => {
     try {
-        let mailNotif = await DB.query("SELECT notif_email, email FROM compte WHERE id_compte = id_compte");
+        let mailNotif = await DB.query("SELECT notif_email, email FROM compte WHERE id_compte = ?", [id_compte]);
         mailNotif = mailNotif[0];
-        if(mailNotif[0].notif_email) mail.sendEmail(mailNotif[0].email, "Vous avez recu une notification", message);
+        if(mailNotif.notif_email) sendEmail(mailNotif.email, "Vous avez recu une notification", message);
 
         await DB.query("INSERT INTO `notification`(`message`, `type`, `etat`, `recu`, `id_type`, `id_compte`) VALUES (?,?,0,?,?,?)", [message, type, new Date(), id_type, id_compte])
         return 0;
