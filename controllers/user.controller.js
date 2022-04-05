@@ -17,7 +17,8 @@ module.exports.getMonCompte = async(req, res) => {
         if (!compte.length) return res.sendStatus(404); // Not Found
         compte = compte[0];
 
-        console.log(compte);
+        delete compte.id_compte;
+        delete compte.mot_de_passe;
         res.status(200).json(compte);
     } catch (err) {
         console.log(err);
@@ -34,8 +35,7 @@ module.exports.getCompte = async(req, res) => {
         compte = compte[0];
 
         delete compte.id_compte;
-
-        console.log(compte);
+        delete compte.mot_de_passe;
         res.status(200).json(compte);
     } catch (err) {
         console.log(err);

@@ -12,7 +12,6 @@ class Profil extends React.Component {
     componentDidMount = () => {
         axios.get('/api/compte/profil/' + this.props.router.params.email)
         .then((res) => {
-            console.log(res.data);
             this.setState({profil: res.data, isProfileLoaded: true});
         })
         .catch((err) => {
