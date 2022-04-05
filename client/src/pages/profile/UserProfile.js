@@ -12,7 +12,6 @@ class UserProfile extends React.Component {
     componentDidMount = () => {
         axios.get('/api/compte/')
         .then((res) => {
-            console.log(res.data);
             this.setState({myprofile: res.data, isMyProfileLoaded: true});
         })
         .catch((err) => {

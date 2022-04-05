@@ -11,6 +11,7 @@ import LostPassword from './pages/guest/LostPassword'
 
 import UserProfile from './pages/profile/UserProfile';
 import ModifyProfile from './pages/profile/ModifyProfile';
+import Profil from './pages/profile/Profil';
 
 import Main from './pages/Main'
 import About from './pages/About'
@@ -80,6 +81,7 @@ class App extends React.Component {
                                 <Route path='evenement/:id' element={<EventContainer/>}/>
                                 <Route path='mon-profil' element={<UserProfile/>} />
                                 <Route path='modifier-profil' element={<ModifyProfile/>}/>
+                                <Route path='profil/:email' element={<Profil/>}/>
                                 <Route path='*' element={<Error/>}/>
                             </Routes>
                         </div>

@@ -9,6 +9,7 @@ const eventController = require('../controllers/event.controller');
 const recupController = require('../controllers/recup.controller');
 
 router.get('/', requireAuth, userController.getMonCompte);
+router.get('/profil/:email', requireAuth, userController.getCompte);
 
 // authentification
 router.post('/connexion', authController.login);

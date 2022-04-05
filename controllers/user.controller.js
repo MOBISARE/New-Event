@@ -10,6 +10,25 @@ module.exports.getMonCompte = async(req, res) => {
         if (!compte.length) return res.sendStatus(404); // Not Found
         compte = compte[0];
 
+        delete compte.id_compte;
+        delete compte.mot_de_passe;
+        res.status(200).json(compte);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500); // Internal error
+    }
+}
+
+module.exports.getCompte = async(req, res) => {
+    let compte;
+    try {
+        // recupere les informations du compte
+        compte = await DB.query('SELECT * FROM compte WHERE email = ?', [req.params.email])
+        if (!compte.length) return res.sendStatus(404); // Not Found
+        compte = compte[0];
+
+        delete compte.id_compte;
+        delete compte.mot_de_passe;
         res.status(200).json(compte);
     } catch (err) {
         console.log(err);
