@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from "react-router-dom";
 
 class UserMini extends React.Component {
     render(){
@@ -6,11 +7,11 @@ class UserMini extends React.Component {
             <div className='rounded-full border border-transparentgray w-fit'>
                 {
                     this.props.user.email?
-                        <div className='flex items-center h-8 pr-2'>
+                        <Link to={'/profil/'+this.props.user.email} className='flex items-center h-8 pr-2'>
                             <img className='rounded-full h-8 w-8 bg-green mr-1' src={this.props.user.img_profil} alt=''/>
                             <span className='username max-w-[130px] truncate'>
                                 {this.props.user.prenom} {this.props.user.nom}</span>
-                        </div>
+                        </Link>
                         : this.props.proposeMe?
                             <span className='flex items-center h-8 px-2 cursor-pointer' onClick={(evt) => {
                                 this.props.proposeMe()
