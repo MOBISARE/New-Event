@@ -213,7 +213,7 @@ module.exports.saveEvent = async (req, res) => {
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
         if (req.body.supprImg) {
             if (event[0].img_banniere) upload.removeImage(event[0].img_banniere);
-            data['img_banniere'] = "";
+            data['img_banniere'] = null;
         }
 
         await DB.query('UPDATE evenement SET ? WHERE id_evenement = ?', [data, req.params.id]);
@@ -248,7 +248,7 @@ module.exports.proposeToSaveEvent = async (req, res) => {
         if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
         else data['img_banniere'] = oldEvent.img_banniere;
         if (req.body.supprImg) {
-            data['img_banniere'] = "";
+            data['img_banniere'] = null;
         }
 
         // TODO : Link to notification controller (waiting)

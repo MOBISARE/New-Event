@@ -117,33 +117,6 @@ CREATE TABLE `notification` (
     NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE `notif_ajouter` (
-  `id_n_ajouter` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
-  `id_modele` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id_n_ajouter`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `notif_message` (
-  `id_n_message` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `message` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id_n_message`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `notif_supprimer` (
-  `id_n_supprimer` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
-  `id_modele` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id_n_supprimer`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `notif_modifier` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
-  `id_modele` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
 CREATE TABLE `recuperation` (
   `id_recuperation` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `token_date` datetime NOT NULL DEFAULT current_timestamp(),
@@ -155,13 +128,3 @@ CREATE TABLE `recuperation` (
   UPDATE
     NO ACTION
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 DEFAULT CHARSET = utf8mb4;
-
-
-
-
-
-
-
-
-
-
