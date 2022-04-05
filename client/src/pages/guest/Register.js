@@ -56,6 +56,10 @@ class Register extends React.Component {
             data.append("ville", res.data[0].nom);
             data.append("departement", res.data[0].codeDepartement);
             data.append("no_telephone", document.getElementById("telephone").value);
+            if(document.getElementById("notif").value == "on")
+                data.append("notif", 1);
+            else 
+                data.append("notif", 0);
             if(document.getElementById("picture").files[0] !== undefined)
                 data.append("img_profil", document.getElementById("picture").files[0]);
 
