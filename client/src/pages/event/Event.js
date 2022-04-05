@@ -124,7 +124,7 @@ class Event extends React.Component {
                                 }
                             </div>
                             
-                            <p>{ this.props.eventModel.description }</p>
+                            <p style={{hyphens:'auto'}}>{ this.props.eventModel.description }</p>
                         </div>
                     </div>
                     <div className='w-2/5'>
