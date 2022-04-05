@@ -82,6 +82,12 @@ class ModifyEvent extends React.Component {
 
     proposeToSaveEvent = async(e) => {
         e.preventDefault();
+
+        if(document.getElementById('end-date').value < document.getElementById('start-date').value){
+            document.getElementById("end-date").setCustomValidity("La date de fin doit être après la date de début");
+            document.getElementById("end-date").reportValidity();
+            return;
+        }
         
         let data = new FormData();
 
