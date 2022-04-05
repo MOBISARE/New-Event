@@ -19,8 +19,9 @@ router.post('/deconnexion', authController.logout);
 router.get('/mes-evenements', requireAuth, eventController.getMesEvenements);
 router.get('/mes-participations', requireAuth, eventController.getMesParticipations);
 
-router.put('/modifier/:id', requireAuth, userController.putCompteModification);
-router.put('/supprimer/:id', requireAuth, userController.supprCompte);
+router.put('/modifier', requireAuth, upload.single('img_profil'), userController.putCompteModification);
+router.put('/modifierMdp', requireAuth, userController.putMDPModification)
+router.put('/supprimer', requireAuth, userController.supprCompte);
 
 router.post('/recupmdp', recupController.postStartRecuperation)
 router.post('/checkToken', recupController.checkRecuperation)

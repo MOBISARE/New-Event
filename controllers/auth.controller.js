@@ -44,7 +44,7 @@ module.exports.register = async(req, res) => {
 
 module.exports.login = async(req, res) => {
     try {
-        let user = await await DB.query('SELECT id_compte, mot_de_passe FROM compte WHERE email = ?', [req.body.email]);
+        let user = await DB.query('SELECT id_compte, mot_de_passe FROM compte WHERE email = ? AND etat=0', [req.body.email]);
 
         if (!user.length) return res.sendStatus(400); // Bad Request
         user = user[0];
