@@ -2,13 +2,6 @@ const crypto = require("./cryptographie");
 const jwt = require("jsonwebtoken");
 const DB = require("./db").DB
 
-const maxAge = 3 * 24 * 60 * 60 * 1000;
-const createToken = (id) => {
-    return jwt.sign({ id }, process.env.TOKEN_SECRET, {
-        expiresIn: maxAge
-    })
-};
-
 module.exports.getMonCompte = async(req, res) => {
     let compte;
     try {
@@ -17,7 +10,6 @@ module.exports.getMonCompte = async(req, res) => {
         if (!compte.length) return res.sendStatus(404); // Not Found
         compte = compte[0];
 
-        console.log(compte);
         res.status(200).json(compte);
     } catch (err) {
         console.log(err);
@@ -36,7 +28,7 @@ module.exports.putCompteModification = async(req, res) => {
             naissance: req.body.naissance,
             ville: req.body.ville,
             departement: req.body.departement,
-            no_telephone: ((req.body.no_telephone == "") ? null : req.body.no_telephone),
+            no_telephone: ((req.body.no_telephone === "") ? null : req.body.no_telephone),
             img_profil: ((req.file) ? 'http://localhost:5000/api/upload/' + req.file.filename : null),
         };
 
@@ -57,12 +49,6 @@ module.exports.putMDPModification = async(req, res) => {
         user = user[0];
 
         if(await crypto.verifierMotDePasse(req.body.old_password, user.mot_de_passe)){
-            /*
-            const token = createToken(user.id_compte);
-            res.cookie('jwt', token, { httpOnly: true, maxAge });
-             */
-            res.cookie('jwt', '', { maxAge: 1 });
-
             await DB.query('UPDATE compte SET mot_de_passe = ? WHERE id_compte = ?',
                 [await crypto.hasherMotDePasse(req.body.new_password), res.locals.user.id_compte])
 

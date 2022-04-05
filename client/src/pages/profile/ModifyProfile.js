@@ -16,9 +16,9 @@ class ModifyProfile extends React.Component {
         super(props);
         this.state = {
             myprofile: {},
-            isMyProfileLoaded: false,
-            mdpMessage: ""
-        };
+            isMyProfileLoaded: false
+        }
+        this.spanPasswordChange = React.createRef();
     }
 
     componentDidMount = () => {
@@ -55,22 +55,16 @@ class ModifyProfile extends React.Component {
             old_password: document.getElementById('old_mdp').value,
             new_password: document.getElementById("new_mdp").value
         }).then(() => {
-            this.setState({
-                mdpMessage: "Mot de passe modifié."
-            })
+            this.spanPasswordChange.current.classList.add("hidden")
         }).catch((err) => {
             console.log(err)
-            this.setState({
-                mdpMessage: "Erreur."
-            })
             if(err.response.status === 400){
                 document.getElementById('old_mdp').setCustomValidity("Le mot de passe est erroné");
                 document.getElementById('old_mdp').reportValidity();
             }
+            this.spanPasswordChange.current.classList.add("hidden")
         })
-        this.setState({
-            mdpMessage: "Chargement..."
-        })
+        this.spanPasswordChange.current.classList.remove("hidden")
     }
 
     saveProfile = async(e) => {
@@ -161,7 +155,9 @@ class ModifyProfile extends React.Component {
                             <InputField id='new_mdp' type='password' className='col-span-5' required>Nouveau mot de passe</InputField>
                             <InputField id='confmdp' type='password' className='col-span-5' required>Confirmation du mot de passe</InputField>
                             <FormButton className='bg-white'>Modifier mon mot de passe</FormButton>
-                            <span className='flex items-center'>{this.state.mdpMessage}</span>
+                            <span ref={this.spanPasswordChange} className='hidden animate-spin flex items-center justify-center material-icons'>
+                                sync
+                            </span>
                         </div>
                     </form>
 
