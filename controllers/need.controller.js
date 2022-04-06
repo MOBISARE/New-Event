@@ -133,7 +133,7 @@ module.exports.postProposerModifBesoin = async(req, res) => {
         let participant = await DB.query('SELECT id_compte FROM compte WHERE email=?', [req.body.email])
         let event = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        let id_participant = (participant.length) ? participant[0].id_compte : "";
+        let id_participant = (participant.length) ? participant[0].id_compte : null;
         var result = await notif.CreerNotifModifBesoin(req.params.idbesoin, req.body.description, id_participant, event[0], res.locals.user);
         if (result === -1) return res.sendStatus(500);
         
