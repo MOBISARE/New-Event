@@ -1,6 +1,7 @@
 const crypto = require("./cryptographie");
 const jwt = require("jsonwebtoken");
 const DB = require("./db").DB
+const upload = require("./upload.controller")
 
 module.exports.getMonCompte = async(req, res) => {
     let compte;
@@ -49,8 +50,11 @@ module.exports.putCompteModification = async(req, res) => {
             departement: req.body.departement,
             no_telephone: ((req.body.no_telephone === "") ? null : req.body.no_telephone)
         };
-        if(req.file) data["img_profil"] = 'http://localhost:5000/api/upload/' + req.file.filename
-
+        if(req.file) {
+            data["img_profil"] = 'http://localhost:5000/api/upload/' + req.file.filename
+            upload.removeImage(res.locals.user.img_profil);
+        }
+        
         result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [data, res.locals.user.id_compte])
 
     } catch (err) {
