@@ -47,9 +47,9 @@ module.exports.putCompteModification = async(req, res) => {
             naissance: req.body.naissance,
             ville: req.body.ville,
             departement: req.body.departement,
-            no_telephone: ((req.body.no_telephone === "") ? null : req.body.no_telephone),
-            img_profil: ((req.file) ? 'http://localhost:5000/api/upload/' + req.file.filename : null),
+            no_telephone: ((req.body.no_telephone === "") ? null : req.body.no_telephone)
         };
+        if(req.file) data["img_profil"] = 'http://localhost:5000/api/upload/' + req.file.filename
 
         result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [data, res.locals.user.id_compte])
 
