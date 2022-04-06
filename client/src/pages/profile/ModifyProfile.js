@@ -45,13 +45,19 @@ class ModifyProfile extends React.Component {
     }
 
     modifierMDP = (e) => {
+        e.preventDefault()
         if (document.getElementById("new_mdp").value !== document.getElementById("confmdp").value) {
             document.getElementById("confmdp").setCustomValidity("Les mots de passe sont différent");
             document.getElementById("confmdp").reportValidity();
             return;
         }
 
-        e.preventDefault()
+        if(!document.getElementById("new_mdp").value.match(/.*[a-z].*/) || !document.getElementById("new_mdp").value.match(/.*[A-Z].*/) || !document.getElementById("new_mdp").value.match(/.*[0-9].*/) || !document.getElementById("new_mdp").value.match(/.*[!@#\$%\^&\(\)\{\}\[\]:";'<>,\.\?\/~`_\+-=\|\]].*/) || document.getElementById("new_mdp").value.length < 8){
+            document.getElementById("new_mdp").setCustomValidity("Le mot de passe doit contenir au moins une minuscule, une majuscule, une lettre, un caractère spéciaux et doit faire au minimum 8 charactère");
+            document.getElementById("new_mdp").reportValidity();
+            return;
+        }
+        
         axios.put('/api/compte/modifierMdp', {
             old_password: document.getElementById('old_mdp').value,
             new_password: document.getElementById("new_mdp").value
@@ -135,7 +141,7 @@ class ModifyProfile extends React.Component {
                                 <InputField id='naissance' type='date' required defaultValue={this.state.myprofile.naissance} >
                                     Date de naissance *</InputField>
                             </div>
-                            <PictureField id='picture' className='col-span-1 h-3/4 w-auto' defaultValue={this.state.myprofile.img_profil}>Photo</PictureField>
+                            <PictureField id='picture' className='col-span-1 w-64 h-64' defaultValue={this.state.myprofile.img_profil}>Photo</PictureField>
                         </div>
                         <div className='my-6 grid gap-2'>
                             <h3 className='text-3xl border-b'>Contact</h3>
