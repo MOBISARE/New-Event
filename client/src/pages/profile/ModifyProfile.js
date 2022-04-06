@@ -24,6 +24,7 @@ class ModifyProfile extends React.Component {
     componentDidMount = () => {
         axios.get('/api/compte')
             .then((res) => {
+                res.data.naissance = dateformat(res.data.naissance, "isoDate")
                 this.setState({myprofile: res.data, isMyProfileLoaded: true});
             })
             .catch((err) => {
@@ -104,7 +105,7 @@ class ModifyProfile extends React.Component {
             }
         })
             .then(() => {
-                window.location = "modifier-profil"
+                window.location = "mon-profil"
             })
             .catch((err) => {
                 console.log(err);
@@ -131,8 +132,7 @@ class ModifyProfile extends React.Component {
                                 <InputField id='prenom' className='' defaultValue={this.state.myprofile.prenom} required>Prénom *</InputField>
                                 <InputField id='nom' className='' defaultValue={this.state.myprofile.nom} required>Nom *</InputField>
                                 <InputLocation inputId='ville' className='' defaultValue={this.state.myprofile.ville} required>Ville *</InputLocation>
-                                <InputField id='naissance' type='date' required
-                                            defaultValue={dateformat(this.state.myprofile.naissance, "isoDate")} >
+                                <InputField id='naissance' type='date' required defaultValue={this.state.myprofile.naissance} >
                                     Date de naissance *</InputField>
                             </div>
                             <PictureField id='picture' className='col-span-1 h-3/4 w-auto' defaultValue={this.state.myprofile.img_profil}>Photo</PictureField>
