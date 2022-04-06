@@ -9,6 +9,7 @@ const eventController = require('../controllers/event.controller');
 const recupController = require('../controllers/recup.controller');
 
 router.get('/', requireAuth, userController.getMonCompte);
+router.get('/profil/:email', requireAuth, userController.getCompte);
 
 // authentification
 router.post('/connexion', authController.login);
@@ -16,13 +17,12 @@ router.post('/inscription', upload.single('img_profil'), authController.register
 router.post('/deconnexion', authController.logout);
 
 // user
-router.get('/recherche/:search', requireAuth, userController.rechercheUtilisateur);
-
 router.get('/mes-evenements', requireAuth, eventController.getMesEvenements);
 router.get('/mes-participations', requireAuth, eventController.getMesParticipations);
 
-router.put('/modifier/:id', requireAuth, userController.putCompteModification);
-router.put('/supprimer/:id', requireAuth, userController.supprCompte);
+router.put('/modifier', requireAuth, upload.single('img_profil'), userController.putCompteModification);
+router.put('/modifierMdp', requireAuth, userController.putMDPModification)
+router.put('/supprimer', requireAuth, userController.supprCompte);
 
 router.post('/recupmdp', recupController.postStartRecuperation)
 router.post('/checkToken', recupController.checkRecuperation)

@@ -82,7 +82,7 @@ class NeedList extends React.Component {
     }
 
     proposeModifyNeed(need) {
-        axios.put(`/api/evenement/${this.props.eventId}/besoin/${need.id}/modifier`, need).catch(console.log)
+        axios.post(`/api/evenement/${this.props.eventId}/besoin/${need.id}/demande/modifier`, need).catch(console.log)
     }
 
     proposeDeleteNeed(need) {

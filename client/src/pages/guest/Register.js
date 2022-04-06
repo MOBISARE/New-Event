@@ -37,6 +37,12 @@ class Register extends React.Component {
                 return;
             }
 
+            if(!document.getElementById("mdp").value.match(/.*[a-z].*/) || !document.getElementById("mdp").value.match(/.*[A-Z].*/) || !document.getElementById("mdp").value.match(/.*[0-9].*/) || !document.getElementById("mdp").value.match(/.*[!@#\$%\^&\(\)\{\}\[\]:";'<>,\.\?\/~`_\+-=\|\]].*/) || document.getElementById("mdp").value.length < 8){
+                document.getElementById("mdp").setCustomValidity("Le mot de passe doit contenir au moins une minuscule, une majuscule, une lettre, un caractère spéciaux et doit faire au minimum 8 charactère");
+                document.getElementById("mdp").reportValidity();
+                return;
+            }
+
             let email = document.getElementById("mail").value
             let mdp = document.getElementById("mdp").value
 
@@ -50,6 +56,10 @@ class Register extends React.Component {
             data.append("ville", res.data[0].nom);
             data.append("departement", res.data[0].codeDepartement);
             data.append("no_telephone", document.getElementById("telephone").value);
+            if(document.getElementById("notif").value == "on")
+                data.append("notif", 1);
+            else 
+                data.append("notif", 0);
             if(document.getElementById("picture").files[0] !== undefined)
                 data.append("img_profil", document.getElementById("picture").files[0]);
 

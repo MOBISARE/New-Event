@@ -7,6 +7,7 @@ class InviteMenu extends React.Component {
         super(props);
 
         this.searchField = React.createRef();
+        this.citySearchField = React.createRef();
         this.componentDiv = React.createRef();
 
         this.state = {users: [], isOpen: false};
@@ -30,7 +31,10 @@ class InviteMenu extends React.Component {
             return;
         }
 
-        axios.get('/api/compte/recherche/' + this.searchField.current.value, {signal: this.abortController.signal})
+        axios.get('/api/evenement/' + this.props.eventId + '/utilisateurAInviter', {
+            signal: this.abortController.signal, 
+            params: { "search" : this.searchField.current.value, "ville" : this.state.isOpen?this.citySearchField.current.value:"" }
+        })
         .then((res) => {
             this.setState({users: res.data});
         })
@@ -44,7 +48,7 @@ class InviteMenu extends React.Component {
         let invite = () => {
             axios.post('/api/evenement/' + this.props.eventId + '/inviter/' + elem.email)
             .then((res) => {
-
+                this.handleSearch();
             })
             .then((err) => {
                 
@@ -58,7 +62,12 @@ class InviteMenu extends React.Component {
                     <div className='text-sm whitespace-nowrap'>{elem.prenom + " " + elem.nom}</div>
                 </Link>
                 
-                <div className='bg-blue text-white text-sm px-10 flex items-center justify-center hover:shadow-inner hover:bg-sky-600 cursor-pointer text-center' onClick={invite}>Inviter</div>
+                {
+                    elem.invite
+                    ? <div className='flex items-center justify-center text-center px-10 text-sm'>invité</div>
+                    : <div className='bg-blue text-white text-sm px-10 flex items-center justify-center hover:shadow-inner hover:bg-sky-600 cursor-pointer text-center' onClick={invite}>Inviter</div>
+                }
+                
             </div>
         );
     }
@@ -77,7 +86,7 @@ class InviteMenu extends React.Component {
                                 search
                             </span>
                             <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Rechercher des utilisateurs' onChange={this.handleSearch} ref={this.searchField}/>
-                            <span className="material-icons text-transparentgray cursor-pointer" onClick={() => this.setState({isOpen: !this.state.isOpen})}>
+                            <span className="material-icons text-transparentgray cursor-pointer" onClick={() => this.setState({isOpen: !this.state.isOpen}, this.handleSearch)}>
                                 manage_search
                             </span>
                         </div>
@@ -86,10 +95,10 @@ class InviteMenu extends React.Component {
                             <span className="material-icons text-transparentgray">
                                 location_on
                             </span>
-                            <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Lieu' />
+                            <input className='flex-grow placeholder:text-transparentgray text-sm focus-visible:outline-none px-1 py-2' placeholder='Lieu' onChange={this.handleSearch} ref={this.citySearchField} />
                         </div>
 
-                        <div className={'overflow-hidden overflow-y-scroll transition-transform ' /*+ (this.state.isOpen ? 'transition-[-mt-10]' : '')*/}>
+                        <div className={'overflow-hidden overflow-y-scroll transition-transform'}>
                             {
                                 this.state.users.map((elem, index) => {
                                     return this.showUser(elem, index);

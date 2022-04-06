@@ -6,6 +6,7 @@ import Button from "../../components/Button"
 import ParticipantViewer from '../../components/Event/ParticipantViewer'
 import EventMenu from '../../components/Event/EventMenu'
 import InviteMenu from '../../components/Event/InviteMenu'
+import axios from 'axios'
 
 class Event extends React.Component {
     constructor(props) {
@@ -36,10 +37,21 @@ class Event extends React.Component {
     }
 
     ParticipantEventMenu = () => {
+
         let buttons = [
             {title: "Modifier événement", onClick: () => {this.props.container.setState({isModifing: true})}},
-            {title: "Quitter événement", onClick: () => {console.log("TODO: QUIT EVENT")}, color:'red-500'}
+            {title: "Quitter événement", onClick: () => quitEvent(), color:'red-500'}
         ]
+
+        let quitEvent = () => {
+            axios.post('/api/evenement/' + this.props.eventModel.id + '/seretirer')
+            .then((res) => {
+                this.props.container.props.router.navigate('/');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
 
         return (
             <div className='relative'>
@@ -78,6 +90,19 @@ class Event extends React.Component {
         );
     }
 
+    joinEvent = async() => {
+        try{
+            let res = await axios.post('/api/evenement/' + this.props.eventModel.id + '/demanderRejoindreEve')
+            
+            res = await axios.get('/api/evenement/' + this.props.eventModel.id);
+            this.props.container.setState({event: res.data});
+        }
+        catch (err) {
+            console.log(err);
+        }
+        
+    }
+
     render() {
         return(
             <div className='max-w-[1000px] mx-auto'>
@@ -99,7 +124,7 @@ class Event extends React.Component {
                                 }
                             </div>
                             
-                            <p>{ this.props.eventModel.description }</p>
+                            <p style={{hyphens:'auto'}}>{ this.props.eventModel.description }</p>
                         </div>
                     </div>
                     <div className='w-2/5'>
@@ -113,12 +138,14 @@ class Event extends React.Component {
                             <div className='my-2'>
                                 Localisation :
                                 <div className='ml-10'>
-                                    {this.props.eventModel.departement}
+                                    {this.props.eventModel.departement || "Non renseignée."}
                                 </div>
                             </div>
                             {
                                 this.props.eventModel.etatAppartenance === 0
-                                ? <Button className='bg-green-valid'>Rejoindre</Button>
+                                ? this.props.eventModel.demande
+                                ? <div className='border-solid border rounded-full border-transparentgray px-8 py-2 flex items-center justify-center bg-gray text-xl'>Demande envoyé</div>
+                                : <Button className='bg-green-valid' onClick={this.joinEvent}>Rejoindre</Button>
                                 : <></>
                             }
                             

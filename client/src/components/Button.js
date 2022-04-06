@@ -11,7 +11,7 @@ class Button extends React.Component {
 
     render(){
         return(
-            <div className={'border-solid border rounded-full border-transparentgray px-8 py-2 flex items-center justify-center bg-darkgray transition hover:scale-105 cursor-pointer ' + this.props.className} onClick={this.props.onClick}>
+            <div className={'border-solid border rounded-full border-transparentgray px-8 py-2 flex items-center justify-center bg-darkgray ' + this.props.className + ' transition hover:scale-105 cursor-pointer'} onClick={this.props.onClick}>
                 <div className= {'text-xl text-gray ' + this.props.text_class}>
                     {this.props.children}
                 </div>

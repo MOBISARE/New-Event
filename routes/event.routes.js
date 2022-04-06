@@ -21,11 +21,10 @@ router.post('/supprimer/:id', requireAuth, eventController.supprEvenement);
 router.post('/archiver/:id', requireAuth, eventController.archiveEvent);
 
 router.put('/rejoindreEve/:id', requireAuth, eventController.ajouterParticipant)
-router.post('/demanderRejoindreEve/:id', requireAuth, eventController.demanderRejoindreEve)
-router.post('/seretirer/:id', requireAuth, eventController.seRetirer)
-router.get('/inviter/m1/:id', requireAuth, eventController.getInviterParticipantMethode1)
-router.get('/inviter/m2/:id', requireAuth, eventController.getInviterParticipantMethode2)
+router.post('/:id/demanderRejoindreEve', requireAuth, eventController.demanderRejoindreEve)
+router.post('/:id/seretirer', requireAuth, eventController.seRetirer)
 
+router.get('/:id/utilisateurAInviter', requireAuth, eventController.rechercheUtilisateurAInviter)
 router.post('/:id/inviter/:email', requireAuth, eventController.postInviterParticipant)
 
 // besoins
@@ -35,6 +34,7 @@ router.post('/:id/besoin/:idbesoin/supprimer', requireAuth, needController.postS
 router.get('/:id/besoin/:idbesoin', requireAuth, needController.getBesoin)
 router.get('/:id/besoins', requireAuth, needController.getListeBesoins)
 router.post('/:id/besoin/proposer', requireAuth, needController.postProposerBesoin)
+router.post('/:id/besoin/:idbesoin/demande/modifier', requireAuth, needController.postProposerModifBesoin)
 router.post('/:id/besoin/:idbesoin/demande/suppression', requireAuth, needController.postProposerSupprBesoin)
 
 module.exports = router;

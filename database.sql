@@ -68,14 +68,11 @@ CREATE TABLE `besoin` (
 
 CREATE TABLE `modele_besoin` (
   `id_m_besoin` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `id_vrai_besoin` int(10) unsigned NOT NULL,
-  `message` varchar(255) DEFAULT NULL,
+  `id_vrai_besoin` int(10) unsigned DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
   `id_participant` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id_m_besoin`),
-  KEY `modele_besoin_fk_vraibesoin` (`id_vrai_besoin`),
-  CONSTRAINT `modele_besoin_fk_vraibesoin` FOREIGN KEY (`id_vrai_besoin`) REFERENCES `besoin` (`id_besoin`) ON DELETE NO ACTION ON
-  UPDATE
-    NO ACTION
+  `id_evenement` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id_m_besoin`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE `modele_evenement` (
@@ -120,33 +117,6 @@ CREATE TABLE `notification` (
     NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE `notif_ajouter` (
-  `id_n_ajouter` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
-  `id_modele` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id_n_ajouter`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `notif_message` (
-  `id_n_message` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `message` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id_n_message`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `notif_supprimer` (
-  `id_n_supprimer` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
-  `id_modele` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id_n_supprimer`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `notif_modifier` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
-  `id_modele` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
 CREATE TABLE `recuperation` (
   `id_recuperation` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `token_date` datetime NOT NULL DEFAULT current_timestamp(),
@@ -158,13 +128,3 @@ CREATE TABLE `recuperation` (
   UPDATE
     NO ACTION
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 DEFAULT CHARSET = utf8mb4;
-
-
-
-
-
-
-
-
-
-

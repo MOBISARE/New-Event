@@ -17,7 +17,7 @@ module.exports.register = async(req, res) => {
         
         // Create data
         let mdp = await crypto.hasherMotDePasse(req.body.mot_de_passe);
-
+        console.log(req.body.notif)
         let data = {
             nom: req.body.nom,
             prenom: req.body.prenom,
@@ -28,7 +28,8 @@ module.exports.register = async(req, res) => {
             departement: req.body.departement,
             no_telephone: ((req.body.no_telephone == "") ? null : req.body.no_telephone),
             img_profil: ((req.file) ? 'http://localhost:5000/api/upload/' + req.file.filename : null),
-            role: "ROLE_USER"
+            role: "ROLE_USER",
+            notif_email: req.body.notif
         };
 
         // Insert data to database
@@ -44,7 +45,7 @@ module.exports.register = async(req, res) => {
 
 module.exports.login = async(req, res) => {
     try {
-        let user = await await DB.query('SELECT id_compte, mot_de_passe FROM compte WHERE email = ?', [req.body.email]);
+        let user = await DB.query('SELECT id_compte, mot_de_passe FROM compte WHERE email = ? AND etat=0', [req.body.email]);
 
         if (!user.length) return res.sendStatus(400); // Bad Request
         user = user[0];

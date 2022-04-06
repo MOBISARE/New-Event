@@ -1,5 +1,7 @@
+const crypto = require("./cryptographie");
+const jwt = require("jsonwebtoken");
 const DB = require("./db").DB
-
+const upload = require("./upload.controller")
 
 module.exports.getMonCompte = async(req, res) => {
     let compte;
@@ -9,6 +11,8 @@ module.exports.getMonCompte = async(req, res) => {
         if (!compte.length) return res.sendStatus(404); // Not Found
         compte = compte[0];
 
+        delete compte.id_compte;
+        delete compte.mot_de_passe;
         res.status(200).json(compte);
     } catch (err) {
         console.log(err);
@@ -16,15 +20,20 @@ module.exports.getMonCompte = async(req, res) => {
     }
 }
 
-module.exports.rechercheUtilisateur = async(req, res) => {
+module.exports.getCompte = async(req, res) => {
+    let compte;
     try {
-        let users = await DB.query('SELECT email, nom, prenom, img_profil FROM compte WHERE Concat(prenom, " ", nom, " ", email) LIKE ?', ["%" + req.params.search + "%"]);
+        // recupere les informations du compte
+        compte = await DB.query('SELECT * FROM compte WHERE email = ?', [req.params.email])
+        if (!compte.length) return res.sendStatus(404); // Not Found
+        compte = compte[0];
 
-        res.status(200).json(users);
-
+        delete compte.id_compte;
+        delete compte.mot_de_passe;
+        res.status(200).json(compte);
     } catch (err) {
-        console.log(err)
-        res.sendStatus(500) // Internal Error
+        console.log(err);
+        res.sendStatus(500); // Internal error
     }
 }
 
@@ -32,8 +41,21 @@ module.exports.rechercheUtilisateur = async(req, res) => {
 module.exports.putCompteModification = async(req, res) => {
     let result = 0
     try {
-        result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [req.body, req.params.id])
-        console.log(result)
+        let data = {
+            nom: req.body.nom,
+            prenom: req.body.prenom,
+            email: req.body.email,
+            naissance: req.body.naissance,
+            ville: req.body.ville,
+            departement: req.body.departement,
+            no_telephone: ((req.body.no_telephone === "") ? null : req.body.no_telephone)
+        };
+        if(req.file) {
+            data["img_profil"] = 'http://localhost:5000/api/upload/' + req.file.filename
+            upload.removeImage(res.locals.user.img_profil);
+        }
+        
+        result = await DB.query('UPDATE compte SET ? WHERE id_compte = ?', [data, res.locals.user.id_compte])
 
     } catch (err) {
         console.log(err)
@@ -42,11 +64,32 @@ module.exports.putCompteModification = async(req, res) => {
     res.sendStatus(200)
 }
 
+module.exports.putMDPModification = async(req, res) => {
+    try {
+        let user = await DB.query('SELECT mot_de_passe FROM compte WHERE id_compte = ?', [res.locals.user.id_compte]);
+
+        if (!user.length) return res.sendStatus(400); // Bad Request
+        user = user[0];
+
+        if(await crypto.verifierMotDePasse(req.body.old_password, user.mot_de_passe)){
+            await DB.query('UPDATE compte SET mot_de_passe = ? WHERE id_compte = ?',
+                [await crypto.hasherMotDePasse(req.body.new_password), res.locals.user.id_compte])
+
+            return res.sendStatus(200);
+        }
+
+        res.sendStatus(400)
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500) // erreur lors de l execution de la requete (500)
+    }
+}
+
 //supprimer le compte
 module.exports.supprCompte = async(req, res) => {
-    let result = 0
     try {
-        result = DB.query('UPDATE compte SET etat=1 WHERE id_compte=?', [req.params.id])
+        res.cookie('jwt', '', { maxAge: 1 });
+        await DB.query('UPDATE compte SET etat=1 WHERE id_compte=?', [res.locals.user.id_compte])
     } catch (err) {
         console.log(err)
         res.sendStatus(500) //erreur lors de l execution de la requete (500)

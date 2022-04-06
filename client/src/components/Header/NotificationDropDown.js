@@ -68,14 +68,34 @@ class NotificationDropDown extends React.Component {
     }
 
     ChoiceNotification = (elem, index) => {
+        let accept = () => {
+            axios.post('/api/notification/' + elem.id_notif + '/accepter')
+            .then((res) => {
+                this.props.refresh();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+
+        let refuse = () => {
+            axios.post('/api/notification/' + elem.id_notif + '/refuser')
+            .then((res) => {
+                this.props.refresh();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+
         return (
             <div key={index} className='flex  pl-4 hover:bg-selected-gray cursor-pointer gap-1 place-items-stretch'>
                 <p className='flex-1 text-sm py-1'>{elem.message}</p>
                 <div className='flex'>
-                    <span className="material-icons flex items-center justify-center px-2 hover:bg-selected-gray-2 text-green-valid">
+                    <span className="material-icons flex items-center justify-center px-2 hover:bg-selected-gray-2 text-green-valid" onClick={accept}>
                     check
                     </span>
-                    <span className="material-icons flex items-center justify-center px-2 hover:bg-selected-gray-2 text-red-500">
+                    <span className="material-icons flex items-center justify-center px-2 hover:bg-selected-gray-2 text-red-500" onClick={refuse}>
                     clear
                     </span>
                 </div>
