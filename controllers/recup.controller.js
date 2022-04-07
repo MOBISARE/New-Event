@@ -23,7 +23,7 @@ module.exports.postStartRecuperation = async(req, res) => {
             res.sendStatus(404)
         }
 
-        if (await sendEmail(req.body.email, "recup mdp", "lien et tout tmtc: " + tokenStr) != 0) res.sendStatus(500)
+        if (await sendEmail(req.body.email, "Récupération de mot de passe", "Voici le code de récupération : " + tokenStr) !== 0) res.sendStatus(500)
 
         res.sendStatus(200)
 
