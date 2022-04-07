@@ -51,7 +51,7 @@ module.exports.putCompteModification = async(req, res) => {
             no_telephone: ((req.body.no_telephone === "") ? null : req.body.no_telephone)
         };
         if(req.file) {
-            data["img_profil"] = 'http://localhost:5000/api/upload/' + req.file.filename
+            data["img_profil"] = '/api/upload/' + req.file.filename
             upload.removeImage(res.locals.user.img_profil);
         }
         

@@ -27,7 +27,7 @@ module.exports.register = async(req, res) => {
             ville: req.body.ville,
             departement: req.body.departement,
             no_telephone: ((req.body.no_telephone == "") ? null : req.body.no_telephone),
-            img_profil: ((req.file) ? 'http://localhost:5000/api/upload/' + req.file.filename : null),
+            img_profil: ((req.file) ? '/api/upload/' + req.file.filename : null),
             role: "ROLE_USER",
             notif_email: req.body.notif
         };

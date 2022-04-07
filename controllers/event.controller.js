@@ -210,7 +210,7 @@ module.exports.saveEvent = async (req, res) => {
             fin: req.body.fin,
         }
 
-        if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
+        if (req.file) data['img_banniere'] = '/api/upload/' + req.file.filename;
         if (req.body.supprImg) {
             if (event[0].img_banniere) upload.removeImage(event[0].img_banniere);
             data['img_banniere'] = null;
@@ -245,7 +245,7 @@ module.exports.proposeToSaveEvent = async (req, res) => {
 
         let oldEvent = await DB.query('SELECT * FROM evenement WHERE id_evenement = ?', [req.params.id]);
 
-        if (req.file) data['img_banniere'] = 'http://localhost:5000/api/upload/' + req.file.filename;
+        if (req.file) data['img_banniere'] = '/api/upload/' + req.file.filename;
         else data['img_banniere'] = oldEvent.img_banniere;
         if (req.body.supprImg) {
             data['img_banniere'] = null;
